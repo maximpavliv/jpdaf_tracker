@@ -35,6 +35,7 @@ class Node {
         ros::Subscriber image_sub_;
         //ros::Subscriber mocap_sub_;
 
+        bool track_init;
         std::vector<darknet_ros_msgs::BoundingBoxes> bounding_boxes_msgs_buffer_;
         //std::vector<nav_msgs::Odometry> gt_odom_buffer_;
         std::vector<sensor_msgs::Image> image_buffer_;
@@ -42,10 +43,14 @@ class Node {
         image_transport::Publisher image_pub_;
         ros::Publisher tracks_pub_;
 
+        double last_timestamp;
+        std::vector<int> lost_tracks;
 
         void detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes);
         void imageCallback(const sensor_msgs::ImageConstPtr& img_msg);
         //void gtCallback(const nav_msgs::OdometryConstPtr& msg);
+
+        void track();
 
         
 
