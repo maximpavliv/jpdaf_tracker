@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+<!--package-->
+  <name>jpdaf_tracker</name>
+  <version>0.0.8</version>
+  <description>JPDAF Tracker</description>
+
+  <maintainer email="maxim.pavliv@epfl.ch">gcross</maintainer>
+  <author>Maxim</author>
+  <license>Apache 2</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <depend>geometry_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <!--depend>galt_common</depend-->
+  <!--depend>message_filters</depend-->
+  <depend>eigen_conversions</depend>
+  <depend>cv_bridge</depend>
+  <depend>opencv2</depend>
+  <depend>darknet_ros_msgs</depend>
+  <depend>image_transport</depend>
+  <!--depend>diagnostic_updater</depend-->
+
+  <export>
+  </export>
+</package>

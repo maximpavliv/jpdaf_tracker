@@ -1,0 +1,25 @@
+<launch>
+
+  <arg name="detection_topic" default="/darknet_ros/bounding_boxes"/>
+  <arg name="image_topic" default="/darknet_ros/detection_image"/>
+  <!--arg name="gt_topic" default="/"/-->
+
+  <node pkg="jpdaf_tracker" type="jpdaf_tracker" name="jpdaf_tracker" output="screen">
+      <remap from="~detection" to="$(arg detection_topic)"/>
+      <remap from="~image" to="$(arg image_topic)"/>
+      <!--remap from="~gt" to="$(arg gt_topic)"/-->
+
+      <param name="pd" value="1"/>
+      <param name="pg" value="1"/>
+      <param name="lambda" value="1"/>
+      <param name="max_missed_rate" value="25"/>
+      <param name="min_acceptance_rate" value="15"/>
+      <rosparam param="R"> [10, 10]</rosparam>
+      <rosparam param="T"> [10, 10]</rosparam>
+      <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
+      <param name="nb_drones" value="3"/>
+
+
+  </node>
+  
+</launch>
