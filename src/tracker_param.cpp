@@ -27,6 +27,7 @@ namespace jpdaf
                0, 0, P_0_vector[2], 0,
                0, 0, 0, P_0_vector[3];
         nh_priv_.getParam("nb_drones", nb_drones);
+        nh_priv_.getParam("assoc_cost", assoc_cost);
 
         ROS_INFO("===========================================");
         ROS_INFO("Pd: %f", pd);

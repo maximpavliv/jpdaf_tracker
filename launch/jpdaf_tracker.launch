@@ -18,6 +18,7 @@
       <rosparam param="T"> [10, 10]</rosparam>
       <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
       <param name="nb_drones" value="3"/>
+      <param name="assoc_cost" value="50"/>
 
 
   </node>

@@ -53,8 +53,10 @@ namespace jpdaf
       Eigen::Matrix2f T;
       Eigen::Matrix4f P_0;
       int nb_drones;
+      float assoc_cost;
 
       TrackerParam(ros::NodeHandle nh_priv_);
+      TrackerParam(){};
 
   };
 }

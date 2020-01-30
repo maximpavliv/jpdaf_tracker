@@ -62,6 +62,7 @@ namespace jpdaf
 	    this->m_h = d_copy.h();
 	    return *this;
       }
+      int getNb() {return 5;}
     private:
       float m_x, m_y;
       int m_w, m_h;
