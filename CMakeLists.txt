@@ -57,6 +57,7 @@ add_executable(${PROJECT_NAME}
   src/tracker_param.cpp
   src/hungarian_alg.cpp
   src/track.cpp
+  src/kalman.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${RELEVANT_LIBRARIES} ${OpenCV_LIBRARIES})
 

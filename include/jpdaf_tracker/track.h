@@ -37,8 +37,8 @@
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/opencv.hpp>
 #include <jpdaf_tracker/tracker_param.h>
+#include <jpdaf_tracker/kalman.h>
 
-//#include "kalman.h"
 
 namespace jpdaf
 {
@@ -46,15 +46,7 @@ namespace jpdaf
   {
     public:
       Track(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params);
-      /*cv::Point2f predict();
-      void setColor(const cv::Scalar& _color) 
-      {
-	    color_ = _color;
-      }
-      const cv::Scalar getColor() const
-      {
-	    return color_;
-      }
+      void predict(float dt);
       void setId(const int& _id)
       {
 	    id = _id;
@@ -63,80 +55,23 @@ namespace jpdaf
       {
 	    return id;
       }
-      const cv::Point2f getLastPrediction() const
-      {
-	    return KF->getLastPrediction();
-      }
-      const Eigen::Vector2f getLastPredictionEigen() 
-      {
-	    return KF->getLastPredictionEigen();
-      }
-      const cv::Mat S_cv() 
-      {
-	    const Eigen::Matrix2f& S = KF->getS();
-	    cv::Mat Scv;
-	    cv::eigen2cv(S, Scv);
-	    return Scv;
-      }
       const Eigen::Matrix2f S() const
       {
     	return KF->getS();
       }
-      const float getEllipseVolume() const
+      void gainUpdate();
+      void update(const std::vector<Detection> detections, std::vector<float> beta, float beta_0);
+      bool isDeprecated()
       {
-    	return ellipse_volume;
-      }
-      const void gainUpdate(const float& beta)
-      {
-	    KF->gainUpdate(beta);
-      }
-      const Eigen::Vector4f update(const std::vector< Eigen::Vector2f >& selected_detections, const Eigen::VectorXf& beta, const float& last_beta)
-      {
-	    life_time++;
-	    nodetections = 0;
-	    return KF->update(selected_detections, beta, last_beta);
-      }
-      void increaseLifetime()
-      {
-    	life_time++;
-      }
-      void notDetected()
-      {
-    	nodetections++;
-      }
-      bool isAlive()
-      {
-    	return nodetections < maxMissedRate;
-      }
-      enum TrackState {NONE, ACCEPT, DISCARD};
-      const TrackState getEntropy() const
-      {
-    	return entropy_sentinel;
-      }
-      void setDt(const double& _dt)
-      {
-    	KF->setDt(_dt);
-      }
-      const Eigen::Vector4f getUpdate()
-      {
-	    return KF->getUpdate();
+    	return noDetections >= maxMissedRate;
       }
     private:
       int id;
       int maxMissedRate;
       int minAcceptanceRate;
       std::shared_ptr<Kalman> KF;
-      float ellipse_volume;
-      int number_returns;
-      float side;
-      float g_sigma;
-      float gamma;
+      int noDetections;
       int life_time;
-      int nodetections;
-//      float initial_entropy;
-      TrackState entropy_sentinel;
-      cv::Point2f last_prediction;
-      cv::Scalar color_;*/
   };
 }
 

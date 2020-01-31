@@ -204,11 +204,6 @@ std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxe
     std::vector<Detection> norm_det;
     for(int i=0; i<(int)last_detection.bounding_boxes.size(); i++)\
     {
-//        std::vector<cv::Point2f> det(2);
-//        det[0] = cv::Point2f((float)last_detection.bounding_boxes[i].xmin, (float)last_detection.bounding_boxes[i].ymin);
-//        det[1] = cv::Point2f((float)last_detection.bounding_boxes[i].xmax, (float)last_detection.bounding_boxes[i].ymax);
-//        std::vector<cv::Point2f> undist_det(2);
-//        cv::fisheye::undistortPoints(det, undist_det, K_, dist_coeff_);
         Detection one_det(float(last_detection.bounding_boxes[i].xmin+last_detection.bounding_boxes[i].xmax)/2, 
                           float(last_detection.bounding_boxes[i].ymin+last_detection.bounding_boxes[i].ymax)/2, 
                           last_detection.bounding_boxes[i].xmax-last_detection.bounding_boxes[i].xmin, 

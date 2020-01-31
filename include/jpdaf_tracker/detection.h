@@ -54,6 +54,12 @@ namespace jpdaf
       {
 	    return point;
       }
+      const Eigen::Vector2f getVect() const
+      {
+        Eigen::Vector2f p;
+        p << x(), y();
+	    return p;
+      }
       Detection& operator=(const Detection& d_copy)
       {
 	    this->m_x = d_copy.x();
