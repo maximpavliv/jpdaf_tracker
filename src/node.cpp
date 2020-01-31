@@ -57,6 +57,7 @@ void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 
 void Node::track()
 {
+    ROS_INFO("---------------------------------------------");
     auto last_image = image_buffer_.back();
     auto last_detection = bounding_boxes_msgs_buffer_.back();
     //int number_detections = last_detection.bounding_boxes.size();
@@ -82,6 +83,7 @@ void Node::track()
         ROS_INFO("number of not associated detections: %d", (int)not_assoc_dets.size());
         
         manage_new_tracks(detections, not_assoc_dets);
+        //TODO WARNING: nb of tracks can be different than nb of columns in assoc_matrix - 1 !! (Since potentially new Tracks). Handle this possibility!!
 
     }
 
@@ -106,7 +108,6 @@ std::vector<int> Node::not_associated_detections(cv::Mat_<int> assoc_mat)
     {
         row_sum += assoc_mat.col(i);
     }
-    //cout << "row_sum:" << endl << row_sum << endl;
     std::vector<int> not_associated_detections;
     for(int j=0; j<assoc_mat.rows; j++)
     {
@@ -150,10 +151,12 @@ void Node::manage_new_tracks(std::vector<Detection> detections, std::vector<int>
                 costMat.at<float>(i, j) = costs.at(i + j*prev_unassoc_size);
             }
         }
-    
+            
         std::vector<int> assignments;
         AssignmentProblemSolver APS;
         APS.Solve(costs, prev_unassoc_size, unassoc_size, assignments, AssignmentProblemSolver::optimal);
+        //returned assignments is of length previous unassigned
+
         const uint& assSize = assignments.size();
         cv::Mat assigmentsBin = cv::Mat::zeros(cv::Size(unassoc_size, prev_unassoc_size), CV_32SC1);
         for(uint i = 0; i < assSize; ++i)
@@ -163,12 +166,10 @@ void Node::manage_new_tracks(std::vector<Detection> detections, std::vector<int>
             	assigmentsBin.at<int>(i, assignments[i]) = 1;
             }
         }
-        const uint& rows = assigmentsBin.rows;
-        const uint& cols = assigmentsBin.cols;
-        
-        for(uint i = 0; i < rows; ++i)
+
+        for(uint i = 0; i < prev_unassoc_size; ++i)
         {
-            for(uint j = 0; j < cols; ++j)
+            for(uint j = 0; j < unassoc_size; ++j)
             {
                 if(assigmentsBin.at<int>(i, j))
                 {
@@ -180,22 +181,21 @@ void Node::manage_new_tracks(std::vector<Detection> detections, std::vector<int>
             }
         }
     
-        cv::Mat notAssignedDet(cv::Size(assigmentsBin.cols, 1), CV_32SC1, cv::Scalar(0));
-        for(int i = 0; i < assigmentsBin.rows; ++i)
+        cv::Mat sumAssoc(cv::Size(unassoc_size, 1), CV_32SC1, cv::Scalar(0));
+        for(uint i = 0; i < prev_unassoc_size; ++i)
         {
-            notAssignedDet += assigmentsBin.row(i);
+            sumAssoc += assigmentsBin.row(i);
         }
-    
-        notAssignedDet.convertTo(notAssignedDet, CV_8UC1);
-        notAssignedDet = notAssignedDet == 0;
-    
-        cv::Mat dets;
-        cv::findNonZero(notAssignedDet, dets);
+
         prev_unassoc_detections.clear();
-        for(uint i = 0; i < dets.total(); ++i)
+        for(uint i=0; i<unassoc_size; i++)
         {
-            prev_unassoc_detections.push_back(unassoc_detections.at(i));
+            if(sumAssoc.at<int>(0, i) == 0)
+            {
+                prev_unassoc_detections.push_back(unassoc_detections.at(i));                
+            }
         }
+        return;
     }
 }
 
@@ -209,7 +209,6 @@ std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxe
 //        det[1] = cv::Point2f((float)last_detection.bounding_boxes[i].xmax, (float)last_detection.bounding_boxes[i].ymax);
 //        std::vector<cv::Point2f> undist_det(2);
 //        cv::fisheye::undistortPoints(det, undist_det, K_, dist_coeff_);
-//        ROS_INFO("detection: %f %f %f %f", undist_det[0].x, undist_det[0].y, undist_det[1].x, undist_det[1].y);
         Detection one_det(float(last_detection.bounding_boxes[i].xmin+last_detection.bounding_boxes[i].xmax)/2, 
                           float(last_detection.bounding_boxes[i].ymin+last_detection.bounding_boxes[i].ymax)/2, 
                           last_detection.bounding_boxes[i].xmax-last_detection.bounding_boxes[i].xmin, 
