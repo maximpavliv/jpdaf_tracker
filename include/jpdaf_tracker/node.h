@@ -3,6 +3,8 @@
 
 #include <ros/ros.h>
 
+#include <math.h>
+
 #include <sensor_msgs/Image.h>
 #include <nav_msgs/Odometry.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
@@ -77,7 +79,9 @@ class Node {
         void validate_new_tracks();
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
-        
+
+        std::vector<cv::Mat_<int>> generate_hypothesis_matrices(cv::Mat_<int> assoc_mat);
+        std::vector<int> get_nonzero_indexes_row(cv::Mat_<int> mat);
 
 };
 

@@ -104,7 +104,7 @@ cv::Mat_<int> Node::association_matrix(const std::vector<Detection> detections)
         {
             Eigen::Vector2f measure = detections[i].getVect();
             Eigen::Vector2f prediction = tracks_[j].get_z_predict();
-            if((measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction) <= params.gamma)
+            if((measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction) <= pow(params.gamma, 2))
                 q.at<int>(i, j+1)=1;
         }
     }
@@ -126,6 +126,22 @@ std::vector<int> Node::not_associated_detections(cv::Mat_<int> assoc_mat)
     }
     return not_associated_detections;
 }
+
+std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> assoc_mat)
+{
+    std::vector<cv::Mat_<int>> hypothesis_matrices;
+
+    std::vector<std::vector<int>> non_zero_indexes_per_row;
+    for(int i=0; i<assoc_mat.rows; i++)
+    {
+        non_zero_indexes_per_row.push_back(get_nonzero_indexes_row(assoc_mat.row(i)));
+    }
+
+    //TODO stopped here
+
+    return hypothesis_matrices;
+}
+
 
 void Node::manage_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections_idx)
 {
@@ -257,6 +273,26 @@ std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxe
     }
     return norm_det;
 }
+
+
+std::vector<int> Node::get_nonzero_indexes_row(cv::Mat_<int> mat)
+{
+    std::vector<int> nonzero_elements;
+    if (mat.rows != 1)
+    {
+        ROS_ERROR("get_nonzero_elements_row called, argument not row!");
+        return nonzero_elements;
+    }
+    for (int i=0; i<mat.cols; i++)
+    {
+        if(mat.at<int>(0,i) != 0)
+        {
+            nonzero_elements.push_back(i);
+        }    
+    }
+    return nonzero_elements;
+}
+
 
 
 }
