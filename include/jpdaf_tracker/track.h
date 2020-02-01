@@ -47,7 +47,7 @@ namespace jpdaf
     public:
       Track(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params);
       void predict(float dt);
-      void setId(const int& _id)
+      void setId(const int _id)
       {
 	    id = _id;
       }
@@ -64,6 +64,10 @@ namespace jpdaf
       bool isDeprecated()
       {
     	return noDetections >= maxMissedRate;
+      }
+      bool isValidated()
+      {
+    	return life_time >= minAcceptanceRate;
       }
     private:
       int id;

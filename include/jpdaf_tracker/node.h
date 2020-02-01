@@ -55,11 +55,6 @@ class Node {
 
         std::vector<Detection> prev_unassoc_detections;
 
-        //cv::Vec4d intrinsics_ = cv::Vec4d(563.8468268482402, 564.6810365069715, 489.72053329588323, 267.87267464280427);
-        //cv::Matx33f K_;
-
-        //cv::Vec4d dist_coeff_ = cv::Vec4d(-0.008676, -0.0020932263092602963, -0.0006822598360511227, -0.0012038437708690075); //Found different coefficients than in Tobii_VIO! check if correct
-
         TrackerParam params;
 
 //----------------------------
@@ -77,6 +72,9 @@ class Node {
         std::vector<int> not_associated_detections(cv::Mat_<int> q);
 
         void manage_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections);
+
+        void manage_old_tracks();
+        void validate_new_tracks();
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
         

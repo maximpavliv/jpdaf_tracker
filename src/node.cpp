@@ -199,6 +199,41 @@ void Node::manage_new_tracks(std::vector<Detection> detections, std::vector<int>
     }
 }
 
+
+void Node::validate_new_tracks()
+{
+    for(auto track : tracks_)
+    {
+        if(track.getId() == -1 && track.isValidated())
+        {
+            if(!(lost_tracks.empty()))
+            {
+                track.setId(lost_tracks[0]);
+                lost_tracks.erase(lost_tracks.begin());
+            }
+        }
+    }
+}
+
+void Node::manage_old_tracks()
+{
+    std::vector<Track> tmp;
+    for(uint i=0; i<tracks_.size(); i++)
+    {
+        if(!(tracks_[i].isDeprecated()))
+        {            
+            tmp.push_back(tracks_[i]);
+        }
+        else
+        {
+            if(tracks_[i].getId() != -1)
+                lost_tracks.push_back(tracks_[i].getId());
+        }
+    }
+    tracks_.clear();
+    tracks_ = tmp;
+}
+
 std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxes last_detection)
 {
     std::vector<Detection> norm_det;
