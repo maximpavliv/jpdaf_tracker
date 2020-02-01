@@ -10,7 +10,7 @@
       <!--remap from="~gt" to="$(arg gt_topic)"/-->
 
       <param name="pd" value="1"/>
-      <param name="pg" value="1"/>
+      <param name="gamma" value="1"/>
       <param name="lambda" value="1"/>
       <param name="max_missed_rate" value="25"/>
       <param name="min_acceptance_rate" value="15"/>

@@ -24,6 +24,7 @@ namespace jpdaf
       {
     	return x_filter;
       }
+      Eigen::Vector2f get_z_predict(){return z_predict;}
     private:
       Eigen::Matrix4f P_init; //Covariance Matrix predicted error
       Eigen::MatrixXf C;

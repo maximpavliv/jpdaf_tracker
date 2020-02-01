@@ -45,7 +45,7 @@ namespace jpdaf
   {
     public:
       float pd;
-      float pg; // Or gamma? Or both??
+      float gamma; // Or Pg? Or both??
       float lambda;
       int max_missed_rate;
       int min_acceptance_rate;

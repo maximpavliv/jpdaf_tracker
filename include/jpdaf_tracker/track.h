@@ -69,6 +69,7 @@ namespace jpdaf
       {
     	return life_time >= minAcceptanceRate;
       }
+      Eigen::Vector2f get_z_predict(){return KF->get_z_predict();}
     private:
       int id;
       int maxMissedRate;

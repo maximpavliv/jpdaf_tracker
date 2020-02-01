@@ -96,15 +96,25 @@ void Node::track()
 cv::Mat_<int> Node::association_matrix(const std::vector<Detection> detections)
 {
     cv::Mat_<int> q(cv::Size(tracks_.size()+1, detections.size()), int(0));
-    for(int i=0; i<(int)detections.size(); i++) {q.at<int>(i,0)=1;} // Setting first column to 1
-    //TODO finish here
+    for(uint i=0; i<detections.size(); i++) {q.at<int>(i,0)=1;} // Setting first column to 1
+
+    for(uint i=0; i<detections.size(); i++)
+    {
+        for (uint j=0; j<tracks_.size(); j++)
+        {
+            Eigen::Vector2f measure = detections[i].getVect();
+            Eigen::Vector2f prediction = tracks_[j].get_z_predict();
+            if((measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction) <= params.gamma)
+                q.at<int>(i, j+1)=1;
+        }
+    }
     return q;
 }
 
 std::vector<int> Node::not_associated_detections(cv::Mat_<int> assoc_mat)
 {
     cv::Mat row_sum(cv::Size(1, assoc_mat.rows), assoc_mat.type(), cv::Scalar(-1));
-    for(int i=0; i < (int)assoc_mat.cols; ++i)
+    for(int i=0; i < assoc_mat.cols; ++i)
     {
         row_sum += assoc_mat.col(i);
     }
@@ -237,7 +247,7 @@ void Node::manage_old_tracks()
 std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxes last_detection)
 {
     std::vector<Detection> norm_det;
-    for(int i=0; i<(int)last_detection.bounding_boxes.size(); i++)\
+    for(uint i=0; i<last_detection.bounding_boxes.size(); i++)\
     {
         Detection one_det(float(last_detection.bounding_boxes[i].xmin+last_detection.bounding_boxes[i].xmax)/2, 
                           float(last_detection.bounding_boxes[i].ymin+last_detection.bounding_boxes[i].ymax)/2, 

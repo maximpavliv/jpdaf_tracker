@@ -9,7 +9,7 @@ namespace jpdaf
     TrackerParam::TrackerParam(ros::NodeHandle nh_priv_)
     {
         nh_priv_.getParam("pd", pd);
-        nh_priv_.getParam("pg", pg);
+        nh_priv_.getParam("gamma", gamma);
         nh_priv_.getParam("lambda", lambda);
         nh_priv_.getParam("max_missed_rate", max_missed_rate);
         nh_priv_.getParam("min_acceptance_rate", min_acceptance_rate);
@@ -31,7 +31,7 @@ namespace jpdaf
 
         ROS_INFO("===========================================");
         ROS_INFO("Pd: %f", pd);
-        ROS_INFO("Pg: %f", pg);
+        ROS_INFO("Gamma: %f", gamma);
         ROS_INFO("Lambda: %f", lambda);
         ROS_INFO("Max missed rate: %d", max_missed_rate);
         ROS_INFO("Min acceptance rate: %d", min_acceptance_rate);
