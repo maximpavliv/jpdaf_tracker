@@ -27,8 +27,17 @@ void Track::gainUpdate()
 
 void Track::update(const std::vector<Detection> detections, std::vector<float> beta, float beta_0)
 {
-    //noDetections = 0;
-    //TODO Add no Detections handling!!
+    float sum_betas = 0;
+    for(auto beta_i : beta)
+    {
+        sum_betas += beta_i;
+    }
+    if(sum_betas == 0)
+        noDetections++;
+    else
+        noDetections = 0;    
+
     life_time++;
+
     KF->update(detections, beta, beta_0);
 }

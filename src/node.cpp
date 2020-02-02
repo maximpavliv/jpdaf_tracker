@@ -77,13 +77,40 @@ void Node::track()
         double time_step = last_detection.header.stamp.toSec() - last_timestamp;
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
 
+        for(auto track : tracks_)
+        {
+            track.predict(time_step);
+        }
+
         auto assoc_mat = association_matrix(detections);
         std::cout << "assoc_mat: " << endl << assoc_mat << endl;
+
+        std::vector<cv::Mat_<int>> hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
+/*        cout << "hypothesis matrices: " << endl;
+        for(auto hyp : hypothesis_mats)
+        {
+            cout << hyp << endl << endl;
+        }*/
+
+        for(auto track : tracks_)
+        {
+            track.gainUpdate();
+        }
+
+
+        for(auto track : tracks_)
+        {
+            std::vector<float> beta(detections.size(), 0.0);
+            float beta_0 = 1;
+            track.update(detections, beta, beta_0);
+        }
+
         auto not_assoc_dets = not_associated_detections(assoc_mat);
         ROS_INFO("number of not associated detections: %d", (int)not_assoc_dets.size());
         
         manage_new_tracks(detections, not_assoc_dets);
-        //TODO WARNING: nb of tracks can be different than nb of columns in assoc_matrix - 1 !! (Since potentially new Tracks). Handle this possibility!!
+        manage_old_tracks();
+        validate_tracks();
 
     }
 
@@ -96,8 +123,11 @@ void Node::track()
 cv::Mat_<int> Node::association_matrix(const std::vector<Detection> detections)
 {
     cv::Mat_<int> q(cv::Size(tracks_.size()+1, detections.size()), int(0));
-    for(uint i=0; i<detections.size(); i++) {q.at<int>(i,0)=1;} // Setting first column to 1
 
+    cv::Mat_<float> evaluation_mat(cv::Size(tracks_.size(), detections.size()), float(0));
+
+    for(uint i=0; i<detections.size(); i++) {q.at<int>(i,0)=1;} // Setting first column to 1
+    
     for(uint i=0; i<detections.size(); i++)
     {
         for (uint j=0; j<tracks_.size(); j++)
@@ -105,9 +135,14 @@ cv::Mat_<int> Node::association_matrix(const std::vector<Detection> detections)
             Eigen::Vector2f measure = detections[i].getVect();
             Eigen::Vector2f prediction = tracks_[j].get_z_predict();
             if((measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction) <= pow(params.gamma, 2))
+            {
                 q.at<int>(i, j+1)=1;
+            }
+
+            evaluation_mat.at<float>(i,j) = (measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction);
         }
     }
+    std::cout << "evaluation_mat computed: " << endl << evaluation_mat << endl;
     return q;
 }
 
@@ -130,14 +165,61 @@ std::vector<int> Node::not_associated_detections(cv::Mat_<int> assoc_mat)
 std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> assoc_mat)
 {
     std::vector<cv::Mat_<int>> hypothesis_matrices;
-
+    
     std::vector<std::vector<int>> non_zero_indexes_per_row;
     for(int i=0; i<assoc_mat.rows; i++)
     {
         non_zero_indexes_per_row.push_back(get_nonzero_indexes_row(assoc_mat.row(i)));
     }
 
-    //TODO stopped here
+    std::vector<int> row_iterators(assoc_mat.rows, 0);
+    
+    bool finished = false;
+
+    while(!finished)
+    {
+        //creating hypothesis matrix and pushing it if feasible
+        cv::Mat_<int> hypothesis(cv::Size(assoc_mat.cols, assoc_mat.rows), int(0));
+        for(int i=0; i<assoc_mat.rows; i++)
+        {
+            hypothesis.at<int>(i, (non_zero_indexes_per_row[i])[row_iterators[i]])=1;
+        }
+
+        cv::Mat col_sum(cv::Size(hypothesis.cols, 1), hypothesis.type(), cv::Scalar(0));
+        for(int i=0; i < hypothesis.rows; ++i)
+        {
+            col_sum += hypothesis.row(i);
+        }
+        
+        bool feasible = true;
+        for(int j=1;j<hypothesis.cols; j++)
+        {
+            if(col_sum.at<int>(0,j)>1)
+            feasible = false;
+        }
+        if(feasible)
+        {
+            hypothesis_matrices.push_back(hypothesis);
+        }
+
+        //switching iterators for next hypothesis matrix
+        row_iterators[0] = row_iterators[0]+1;
+        for(int i=0; i<assoc_mat.rows; i++)
+        {
+            if(row_iterators[i] == (int)non_zero_indexes_per_row[i].size())
+            {
+                if(i != assoc_mat.rows -1)
+                {
+                    row_iterators[i] = 0;
+                    row_iterators[i+1]++;
+                }
+                else
+                {
+                    finished = true;
+                }
+            }
+        }
+    }
 
     return hypothesis_matrices;
 }
@@ -226,7 +308,7 @@ void Node::manage_new_tracks(std::vector<Detection> detections, std::vector<int>
 }
 
 
-void Node::validate_new_tracks()
+void Node::validate_tracks()
 {
     for(auto track : tracks_)
     {

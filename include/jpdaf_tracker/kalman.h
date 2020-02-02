@@ -22,11 +22,11 @@ namespace jpdaf
       }
       const Eigen::Vector4f getUpdate()
       {
-    	return x_filter;
+    	return x_update;
       }
       Eigen::Vector2f get_z_predict(){return z_predict;}
     private:
-      Eigen::Matrix4f P_init; //Covariance Matrix predicted error
+      //Eigen::Matrix4f P_init; //Covariance Matrix predicted error
       Eigen::MatrixXf C;
       Eigen::Matrix2f R; //Proces measurement Covariance matrix
       Eigen::Matrix2f T; //Proces measurement Covariance matrix
@@ -35,12 +35,12 @@ namespace jpdaf
       Eigen::Matrix4f P_predict; //Covariance Matrix predicted error
       Eigen::Vector4f x_predict;
       Eigen::Matrix4f P_update; //Covariance Matrix
-      Eigen::Vector4f x_filter;
+      Eigen::Vector4f x_update;
       Eigen::Vector2f z_predict;
-      cv::Point2f init_prediction; //added by Max
-      cv::Point2f init_speed; // added by Max
-      bool first_predict;
-      bool first_update;
+      //cv::Point2f init_prediction; //added by Max
+      //cv::Point2f init_speed; // added by Max
+      //bool first_predict;
+      //bool first_update;
   };
 }
 

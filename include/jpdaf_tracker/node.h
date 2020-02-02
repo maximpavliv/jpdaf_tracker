@@ -76,7 +76,7 @@ class Node {
         void manage_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections);
 
         void manage_old_tracks();
-        void validate_new_tracks();
+        void validate_tracks();
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
 
