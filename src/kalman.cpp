@@ -104,7 +104,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<f
     x_update = x_predict + K * nu;
 
     Eigen::Matrix4f P_c;
-    P_c = P_predict + K * S * K.transpose();
+    P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
 /*    cout << "computation of P_c:" << endl;
     cout << "P_predict" << endl << P_predict << endl;
     cout << "S" << endl << S << endl;
