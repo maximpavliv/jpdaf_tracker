@@ -60,7 +60,7 @@ namespace jpdaf
     	return KF->getS();
       }
       void gainUpdate();
-      void update(const std::vector<Detection> detections, std::vector<float> beta, float beta_0);
+      void update(const std::vector<Detection> detections, std::vector<double> beta, double beta_0);
       bool isDeprecated()
       {
     	return noDetections >= maxMissedRate;

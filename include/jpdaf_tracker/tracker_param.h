@@ -45,8 +45,8 @@ namespace jpdaf
   {
     public:
       float pd;
-      float gamma; // Or Pg? Or both??
-      float lambda;
+      float gamma;
+      double false_measurements_density;
       int max_missed_rate;
       int min_acceptance_rate;
       Eigen::Matrix2f R;

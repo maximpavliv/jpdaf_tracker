@@ -10,8 +10,8 @@
       <!--remap from="~gt" to="$(arg gt_topic)"/-->
 
       <param name="pd" value="1"/>
-      <param name="gamma" value="25"/>
-      <param name="lambda" value="1"/>
+      <param name="gamma" value="15"/>
+      <param name="false_measurements_density" value="1"/>
       <param name="max_missed_rate" value="25"/>
       <param name="min_acceptance_rate" value="15"/>
       <rosparam param="R"> [10, 10]</rosparam>

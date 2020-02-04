@@ -57,6 +57,9 @@ void Kalman::predict(const float dt) //added by Max
   {*/
     x_predict = A*x_update;
     P_predict = A * P_update * A.transpose() + Q;
+
+//    cout << "P_predict: " << endl << P_predict << endl;
+
   //}
 
   z_predict = C * x_predict;
@@ -64,6 +67,8 @@ void Kalman::predict(const float dt) //added by Max
   //Error Measurement Covariance Matrix
 //  cout << "P_update: " << endl << P_update << endl;
   S = C * P_predict * C.transpose() + R;
+
+//  cout << "S: " << endl << S << endl;
     
   return; // added by Max
 }
@@ -74,19 +79,13 @@ void Kalman::gainUpdate()
 }
 
 
-void Kalman::update(const std::vector<Detection> detections, const std::vector<float> beta, float beta_0)
+void Kalman::update(const std::vector<Detection> detections, const std::vector<double> beta, double beta_0)
 {
     /*if(first_update)
     {
         first_update = false;
         return;
     }*/
-
-    if(detections.size() != beta.size())
-    {
-        ROS_ERROR("number of detections is different from betas length. If this happens, there is a problem in the code"); //TODO delete once verified
-        return;
-    }
 
     std::vector<Eigen::Vector2f> nus;
     for(uint i=0; i<detections.size(); i++)
@@ -125,6 +124,10 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<f
     cout << "P_tild: " << endl << P_tild << endl;*/
 
     P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;
+
+//    cout << "P_update: " << endl << P_update << endl;
+
+
 }
 
 

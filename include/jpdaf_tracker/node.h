@@ -80,7 +80,19 @@ class Node {
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
 
+        std::vector<double> compute_beta(int track_nb, std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<double> hypothesis_probabilities);
+
         std::vector<cv::Mat_<int>> generate_hypothesis_matrices(cv::Mat_<int> assoc_mat);
+
+        std::vector<double> compute_probabilities_of_hypothesis_matrices(std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<Detection> detections);
+
+        double probability_of_hypothesis_unnormalized(cv::Mat_<int> hypothesis, std::vector<Detection> detections);
+
+        cv::Mat_<int> tau(cv::Mat_<int> hypothesis);//THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
+        cv::Mat_<int> delta(cv::Mat_<int> hypothesis);    //THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
+
+
+
         std::vector<int> get_nonzero_indexes_row(cv::Mat_<int> mat);
 
 };

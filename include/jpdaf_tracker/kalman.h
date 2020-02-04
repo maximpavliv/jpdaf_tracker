@@ -15,7 +15,7 @@ namespace jpdaf
       Kalman(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params);
       void predict(const float dt); // added by Max
       void gainUpdate(); //added by Max
-      void update(const std::vector< Detection> detections, const std::vector<float> beta, float beta_0); //Added by Max
+      void update(const std::vector< Detection> detections, const std::vector<double> beta, double beta_0); //Added by Max
       inline const Eigen::Matrix2f getS() const
       {
     	return S;
