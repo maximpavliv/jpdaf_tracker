@@ -95,14 +95,16 @@ void Node::track()
         auto assoc_mat = association_matrix(detections);
         std::cout << "assoc_mat: " << endl << assoc_mat << endl;
 
-        std::vector<cv::Mat_<int>> hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
+        auto hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
         auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
 
-        /*cout << "hypothesis matrices and their respective probabilities:" << endl;
+        ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
+
+        cout << "hypothesis matrices and their respective probabilities:" << endl;
         for(uint h=0; h<hypothesis_mats.size(); h++)
         {
             cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
-        }*/
+        }
 
         std::vector<double> betas_0;//beta_0 of each track, used to determine if track has not been detected well
 
@@ -111,8 +113,7 @@ void Node::track()
             std::vector<double> beta = compute_beta(t, hypothesis_mats, hypothesis_probs);
             double sum_betas = 0; for(auto beta_i : beta){sum_betas += beta_i;}
             double beta_0 = 1 - sum_betas;
-            cout << "track " << t << " beta: ";
-            for(auto beta_i : beta){cout << beta_i << " ";}
+            cout << "track " << t << " beta: "; for(auto beta_i : beta){cout << beta_i << " ";}
             cout << endl;
             cout << "beta_0: " << beta_0 << endl;
             tracks_[t].update(detections, beta, beta_0);
@@ -120,12 +121,13 @@ void Node::track()
         }
         //------------
         auto alphas_0 = compute_alphas_0(hypothesis_mats, hypothesis_probs);
+        auto betas_0_bis = compute_betas_0(hypothesis_mats, hypothesis_probs);
 
 
         //auto not_assoc_dets = not_associated_detections(assoc_mat);
         //ROS_INFO("number of not associated detections: %d", (int)not_assoc_dets.size());
         
-        manage_new_old_tracks(detections, betas_0, alphas_0);
+        manage_new_old_tracks(detections, betas_0_bis, alphas_0);
 
         //manage_new_tracks(detections, not_assoc_dets);
         //manage_old_tracks();
@@ -179,28 +181,50 @@ std::vector<double> Node::compute_beta(int track_nb, std::vector<cv::Mat_<int>> 
                 beta_i += hypothesis_probabilities[h];
             }
         }
+        cout << "beta_" << i+1 << ": " << beta_i << " ";
         beta.push_back(beta_i);
     }
+    cout << endl;   
     return beta;
 }
 
-std::vector<double> Node::compute_alphas_0(std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<double> hypothesis_probabilities)
+std::vector<double> Node::compute_alphas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs)
 {
-    std::vector<double> alphas_0(hypothesis_matrices[0].cols - 1, 0.0);
+    std::vector<double> alphas_0(hypothesis_mats[0].cols - 1, 0.0);
 
-    for(uint h=0; h<hypothesis_matrices.size(); h++)
+    for(uint h=0; h<hypothesis_mats.size(); h++)
     {
-        for(int i=1; i<hypothesis_matrices[0].cols; i++)
+        auto detected_tracks = delta(hypothesis_mats[h]);
+        for(int i=1; i<hypothesis_mats[0].cols; i++)
         {
-            if(hypothesis_matrices[h].at<int>(i, 0) == 1)
+            if(detected_tracks.at<int>(i-1) == 0)
             {
-                alphas_0[i-1] += hypothesis_probabilities[h];
+                alphas_0[i-1] += hypothesis_probs[h];
             }
         }
     }
     
     return alphas_0;
 }
+
+std::vector<double> Node::compute_betas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs)
+{
+    std::vector<double> betas_0(hypothesis_mats[0].rows, 0.0);
+
+    for(uint h=0; h<hypothesis_mats.size(); h++)
+    {
+        for(int i=0; i<hypothesis_mats[0].rows; i++)
+        {
+            if(hypothesis_mats[h].at<int>(i, 0) == 1)
+            {
+                betas_0[i] += hypothesis_probs[h];
+            }
+        }
+    }
+    
+    return betas_0;
+}
+
  
 std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> assoc_mat)
 {
@@ -376,17 +400,20 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
     }
 
     std::vector<int> unassoc_detections_idx;
+
+//    ROS_INFO("Nb of betas_0: %d, nb of alphas_0: %d", (int)betas_0.size(), (int)alphas_0.size());
     for(uint i=0; i<betas_0.size(); i++)
     {
         if(betas_0[i] >= params.beta_0_threshold)
         {
             unassoc_detections_idx.push_back((int)i);
         }
+//        ROS_INFO("beta_0 of measurement %d is %f", (int)i, betas_0[i]);
     }
-    ROS_INFO("Nb of unassoc_detections: %d", (int)unassoc_detections_idx.size());    
+//    ROS_INFO("Nb of unassoc_detections: %d", (int)unassoc_detections_idx.size());    
 
     auto new_tracks = create_new_tracks(detections, unassoc_detections_idx);\
-    ROS_INFO("Created %d new tracks", (int)new_tracks.size());
+//    ROS_INFO("Created %d new tracks", (int)new_tracks.size());
 
     for(uint j=0; j<alphas_0.size(); j++)
     {

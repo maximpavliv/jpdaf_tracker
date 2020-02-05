@@ -80,6 +80,8 @@ class Node {
 
         std::vector<double> compute_alphas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs);
 
+        std::vector<double> compute_betas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs);
+
         std::vector<cv::Mat_<int>> generate_hypothesis_matrices(cv::Mat_<int> assoc_mat);
 
         std::vector<double> compute_probabilities_of_hypothesis_matrices(std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<Detection> detections);
