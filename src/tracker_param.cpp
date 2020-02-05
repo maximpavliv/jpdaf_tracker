@@ -11,6 +11,8 @@ namespace jpdaf
         nh_priv_.getParam("pd", pd);
         nh_priv_.getParam("gamma", gamma);
         nh_priv_.getParam("false_measurements_density", false_measurements_density);
+        nh_priv_.getParam("beta_0_threshold", beta_0_threshold);
+        nh_priv_.getParam("alpha_0_threshold", alpha_0_threshold);
         nh_priv_.getParam("max_missed_rate", max_missed_rate);
         nh_priv_.getParam("min_acceptance_rate", min_acceptance_rate);
         nh_priv_.getParam("min_acceptance_rate", min_acceptance_rate);
@@ -33,6 +35,8 @@ namespace jpdaf
         ROS_INFO("Pd: %f", pd);
         ROS_INFO("Gamma: %f", gamma);
         ROS_INFO("false measurements density: %f", false_measurements_density);
+        ROS_INFO("Beta_0 threshold: %f", beta_0_threshold);
+        ROS_INFO("Alpha_0 threshold: %f", alpha_0_threshold);
         ROS_INFO("Max missed rate: %d", max_missed_rate);
         ROS_INFO("Min acceptance rate: %d", min_acceptance_rate);
         ROS_INFO("R: %f, %f", R_vector[0], R_vector[1]);

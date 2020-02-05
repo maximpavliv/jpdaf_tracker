@@ -71,16 +71,14 @@ class Node {
 
         cv::Mat_<int> association_matrix(const std::vector<Detection> detections);
 
-        std::vector<int> not_associated_detections(cv::Mat_<int> q);
-
-        void manage_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections);
-
-        void manage_old_tracks();
-        void validate_tracks();
+        void manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> betas_0, std::vector<double> alphas_0);
+        std::vector<Track> create_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections);
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
 
         std::vector<double> compute_beta(int track_nb, std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<double> hypothesis_probabilities);
+
+        std::vector<double> compute_alphas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs);
 
         std::vector<cv::Mat_<int>> generate_hypothesis_matrices(cv::Mat_<int> assoc_mat);
 

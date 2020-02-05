@@ -61,6 +61,18 @@ namespace jpdaf
       }
       void gainUpdate();
       void update(const std::vector<Detection> detections, std::vector<double> beta, double beta_0);
+      void increase_lifetime()
+      {
+        life_time++;
+      }
+      void has_not_been_detected()
+      {
+        noDetections++;
+      }
+      void has_been_detected()
+      {
+        noDetections=0;
+      }
       bool isDeprecated()
       {
     	return noDetections >= maxMissedRate;

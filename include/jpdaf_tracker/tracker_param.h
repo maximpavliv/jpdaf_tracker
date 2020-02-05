@@ -47,6 +47,8 @@ namespace jpdaf
       float pd;
       float gamma;
       double false_measurements_density;
+      double beta_0_threshold;
+      double alpha_0_threshold;
       int max_missed_rate;
       int min_acceptance_rate;
       Eigen::Matrix2f R;
