@@ -66,30 +66,39 @@ void Node::track()
 
     if(track_init)
     {
-        for (auto det : detections)
+        for (uint d=0; d<detections.size(); d++)
         {
-            prev_unassoc_detections.push_back(det);
+            prev_unassoc_detections.push_back(detections[d]);
         }
         track_init = false;
     }
     else
     {
+        cout << "Currently tracked tracks indexes: " << endl; for(auto tr : tracks_){cout << tr.getId() << " ";} cout << endl;
+
         double time_step = last_detection.header.stamp.toSec() - last_timestamp;
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
         
         //PREDICTION
-        for(auto track : tracks_)
+        for(uint t=0; t<tracks_.size(); t++)
         {
-            track.predict(time_step);
+            tracks_[t].predict(time_step);
         }
         //------------
 
         //COMPUTE GAIN
-        for(auto track : tracks_)
+        for(uint t=0; t<tracks_.size(); t++)
         {
-            track.gainUpdate();
+            tracks_[t].gainUpdate();
         }
         //------------
+
+/*        for(uint t=0; t<tracks_.size(); t++)
+        {
+            cout << "pred: " << endl << tracks_[t].get_z_predict() << endl;
+            cout << "S: " << endl << tracks_[t].S() << endl;
+            ROS_INFO("Determinant of S: %f", tracks_[t].S().determinant());
+        }*/
 
         //UPDATE
         auto assoc_mat = association_matrix(detections);
@@ -100,22 +109,30 @@ void Node::track()
 
         ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
-        cout << "hypothesis matrices and their respective probabilities:" << endl;
+        /*cout << "hypothesis matrices and their respective probabilities:" << endl;
         for(uint h=0; h<hypothesis_mats.size(); h++)
         {
             cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
-        }
+        }*/
 
         std::vector<double> betas_0;//beta_0 of each track, used to determine if track has not been detected well
 
         for(uint t=0; t<tracks_.size(); t++)
         {
             std::vector<double> beta = compute_beta(t, hypothesis_mats, hypothesis_probs);
-            double sum_betas = 0; for(auto beta_i : beta){sum_betas += beta_i;}
+            double sum_betas = 0; 
+            for(uint b=0; b<beta.size(); b++)
+            {
+                sum_betas += beta[b];
+            }
             double beta_0 = 1 - sum_betas;
-            cout << "track " << t << " beta: "; for(auto beta_i : beta){cout << beta_i << " ";}
-            cout << endl;
-            cout << "beta_0: " << beta_0 << endl;
+//            cout << "track " << t << " beta: "; 
+//            for(uint b=0; b<beta.size(); b++)
+//            {
+//                cout << beta[b] << " ";
+//            }
+//            cout << endl;
+//            cout << "beta_0: " << beta_0 << endl;
             tracks_[t].update(detections, beta, beta_0);
             betas_0.push_back(beta_0);
         }
@@ -181,10 +198,10 @@ std::vector<double> Node::compute_beta(int track_nb, std::vector<cv::Mat_<int>> 
                 beta_i += hypothesis_probabilities[h];
             }
         }
-        cout << "beta_" << i+1 << ": " << beta_i << " ";
+        //cout << "beta_" << i+1 << ": " << beta_i << " ";
         beta.push_back(beta_i);
     }
-    cout << endl;   
+    //cout << endl;   
     return beta;
 }
 
@@ -291,22 +308,20 @@ std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> asso
 std::vector<double> Node::compute_probabilities_of_hypothesis_matrices(std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<Detection> detections)
 {
     std::vector<double> probabilities;
-    for(uint i=0; i<hypothesis_matrices.size(); i++)
+    for(uint h=0; h<hypothesis_matrices.size(); h++)
     {
-        //cout << "computing prob for following hyp mat: " << endl << hypothesis_matrices[i] << endl;
-        auto prob = probability_of_hypothesis_unnormalized(hypothesis_matrices[i], detections);
-        //cout << "unnormalized probability: " << prob << endl;
+        auto prob = probability_of_hypothesis_unnormalized(hypothesis_matrices[h], detections);
         probabilities.push_back(prob);
     }
     //Normalization:
     double sum = 0;
-    for(auto prob : probabilities)
+    for(uint p=0; p<probabilities.size(); p++)
     {
-        sum += prob;
+        sum += probabilities[p];
     }
     if(sum == 0)
     {
-        ROS_WARN("sum of probabilities is 0");
+        ROS_WARN("sum of probabilities is 0. This may mean the parameters are uncorrect.");
         for(uint i=0; i<probabilities.size(); i++)
         {
             probabilities[i] = 1/probabilities.size();
@@ -358,10 +373,20 @@ double Node::probability_of_hypothesis_unnormalized(cv::Mat_<int> hypothesis, st
     double product_1 = 1;
     for(int i=0; i< nb_associated_measurements; i++)
     {
+        /*if(Ss[i].determinant() == 0)
+        {
+            ROS_ERROR("Determinant of S is 0!!");
+        }
+        if(Ss[i].determinant() < 0)
+        {
+            ROS_ERROR("Sqrt of negative value!!");
+        }*/
         product_1 *= (exp((-1/2) * y_tilds[i].transpose()*Ss[i].inverse()*y_tilds[i])) / (sqrt(pow(2*M_PI, M) * Ss[i].determinant()));
+        
     }
     double product_2 = pow(params.pd, nb_associated_tracks);
     double product_3 = pow((1-params.pd), hypothesis.cols -1 - nb_associated_tracks);
+    //ROS_INFO("Probability comp: prefix=%f, P1=%f, P2=%f, P3=%f", pow(params.false_measurements_density, phi), product_1, product_2, product_3);
     double probability = pow(params.false_measurements_density, phi) * product_1 * product_2 * product_3;
 
     return probability;
@@ -394,9 +419,10 @@ cv::Mat_<int> Node::delta(cv::Mat_<int> hypothesis)
 
 void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> betas_0, std::vector<double> alphas_0)
 {
-    for(auto tr : tracks_)
+    for(uint i=0; i<tracks_.size(); i++)
     {
-        tr.increase_lifetime();
+        tracks_[i].increase_lifetime();
+//        tracks_[i].print_life_time();
     }
 
     std::vector<int> unassoc_detections_idx;
@@ -413,8 +439,6 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
 //    ROS_INFO("Nb of unassoc_detections: %d", (int)unassoc_detections_idx.size());    
 
     auto new_tracks = create_new_tracks(detections, unassoc_detections_idx);\
-//    ROS_INFO("Created %d new tracks", (int)new_tracks.size());
-
     for(uint j=0; j<alphas_0.size(); j++)
     {
         if(alphas_0[j] >= params.alpha_0_threshold)
@@ -428,35 +452,42 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
     }
 
     std::vector<Track> tmp;
-    for(auto tr : tracks_)
+    for(uint t=0; t<tracks_.size(); t++)
     {
-        if(!tr.isDeprecated())
+        if(!tracks_[t].isDeprecated())
         {
-            tmp.push_back(tr);
+            tmp.push_back(tracks_[t]);
         }
         else
         {
-            if(tr.getId() != -1)
+            if(tracks_[t].getId() != -1)
             {
-                lost_tracks.push_back(tr.getId());
+                lost_tracks.push_back(tracks_[t].getId());
             }
+            ROS_INFO("deleted track!");
         }
     }
-    for(auto tr : new_tracks)
+
+    for(uint t=0; t<new_tracks.size(); t++)
     {
-        tmp.push_back(tr);
+        tmp.push_back(new_tracks[t]);
     }
 
     tracks_.clear();
     tracks_ = tmp;
 
-    for(auto tr : tracks_)
+    for(uint t=0; t<tracks_.size(); t++)
     {
-        if(tr.getId() == -1 && tr.isValidated())
+/*        ROS_INFO("tracks_[t].id: %d", tracks_[t].getId());
+        if(tracks_[t].isValidated())
+            ROS_INFO("tr validated");
+        else
+            ROS_INFO("tr not validated");*/
+        if(tracks_[t].getId() == -1 && tracks_[t].isValidated())
         {
             if(!lost_tracks.empty())
             {
-                tr.setId(lost_tracks[0]);
+                tracks_[t].setId(lost_tracks[0]);
                 lost_tracks.erase(lost_tracks.begin());
             }
         }
@@ -470,9 +501,10 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
     const uint& prev_unassoc_size = prev_unassoc_detections.size();
     const uint& unassoc_size = unassoc_detections_idx.size();
     std::vector<Detection> unassoc_detections;
-    for(auto idx : unassoc_detections_idx)
+
+    for(uint i=0; i<unassoc_detections_idx.size(); i++)
     {
-        unassoc_detections.push_back(detections[idx]);
+        unassoc_detections.push_back(detections[unassoc_detections_idx[i]]);
     }
 
     if(prev_unassoc_size == 0)
@@ -525,6 +557,7 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
                     const float& vy = unassoc_detections.at(j).y() - prev_unassoc_detections.at(i).y();
                     Track tr(unassoc_detections.at(j).x(), unassoc_detections.at(j).y(), vx, vy, params);
                     new_tracks.push_back(tr);
+                    ROS_INFO("created new track!");
                 }
             }
         }
@@ -552,7 +585,7 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
 std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxes last_detection)
 {
     std::vector<Detection> norm_det;
-    for(uint i=0; i<last_detection.bounding_boxes.size(); i++)\
+    for(uint i=0; i<last_detection.bounding_boxes.size(); i++)
     {
         Detection one_det(float(last_detection.bounding_boxes[i].xmin+last_detection.bounding_boxes[i].xmax)/2, 
                           float(last_detection.bounding_boxes[i].ymin+last_detection.bounding_boxes[i].ymax)/2, 

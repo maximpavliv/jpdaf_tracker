@@ -63,8 +63,11 @@ namespace jpdaf
       void update(const std::vector<Detection> detections, std::vector<double> beta, double beta_0);
       void increase_lifetime()
       {
+        //ROS_INFO("life_time before increase: %d", life_time);
         life_time++;
+        //ROS_INFO("life_time after increase: %d", life_time);
       }
+      void print_life_time(){ROS_INFO("lifetime: %d", life_time);}
       void has_not_been_detected()
       {
         noDetections++;
