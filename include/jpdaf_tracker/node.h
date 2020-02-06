@@ -15,17 +15,10 @@
 #include <jpdaf_tracker/track.h>
 #include <jpdaf_tracker/hungarian_alg.h>
 
-//#include <sensor_msgs/Imu.h>
-//#include <sensor_msgs/MagneticField.h>
-//#include <std_srvs/Empty.h>
-//#include <diagnostic_updater/diagnostic_updater.h>
-//#include <diagnostic_updater/publisher.h>
-//#include <message_filters/synchronizer.h>
-//#include <message_filters/subscriber.h>
-//#include <message_filters/sync_policies/exact_time.h>
+#include <cv_bridge/cv_bridge.h>
 
-//#include <kr_attitude_eskf/AttitudeESKF.hpp>
-//#include <kr_attitude_eskf/AttitudeMagCalib.hpp>
+#include <image_transport/image_transport.h>
+
 
 namespace jpdaf {
 
@@ -37,6 +30,8 @@ class Node {
         //ros node handle
         ros::NodeHandle nh_;
         ros::NodeHandle nh_priv_;
+        image_transport::ImageTransport it_;
+
 
         ros::Subscriber detection_sub_;
         ros::Subscriber image_sub_;
@@ -45,7 +40,7 @@ class Node {
         bool track_init;
         std::vector<darknet_ros_msgs::BoundingBoxes> bounding_boxes_msgs_buffer_;
         //std::vector<nav_msgs::Odometry> gt_odom_buffer_;
-        std::vector<sensor_msgs::Image> image_buffer_;
+        std::vector<sensor_msgs::ImageConstPtr> image_buffer_;
 
         image_transport::Publisher image_pub_;
         ros::Publisher tracks_pub_;
@@ -91,6 +86,7 @@ class Node {
         cv::Mat_<int> tau(cv::Mat_<int> hypothesis);//THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
         cv::Mat_<int> delta(cv::Mat_<int> hypothesis);    //THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
 
+        void draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image);
 
 
         std::vector<int> get_nonzero_indexes_row(cv::Mat_<int> mat);

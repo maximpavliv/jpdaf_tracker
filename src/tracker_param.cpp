@@ -34,7 +34,7 @@ namespace jpdaf
         ROS_INFO("===========================================");
         ROS_INFO("Pd: %f", pd);
         ROS_INFO("Gamma: %f", gamma);
-        ROS_INFO("false measurements density: %f", false_measurements_density);
+        ROS_INFO("false measurements density: %0.9f", false_measurements_density);
         ROS_INFO("Beta_0 threshold: %f", beta_0_threshold);
         ROS_INFO("Alpha_0 threshold: %f", alpha_0_threshold);
         ROS_INFO("Max missed rate: %d", max_missed_rate);

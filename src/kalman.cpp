@@ -101,6 +101,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
     ROS_ERROR("Update covariance determinant is negative! %f", P_update.determinant());
   }
 
+  z_update = C * x_update;
 
 }
 

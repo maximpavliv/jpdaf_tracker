@@ -7,19 +7,20 @@ namespace jpdaf {
 
 Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     nh_(nh),
-    nh_priv_(nh_priv)
+    nh_priv_(nh_priv),
+    it_(nh_priv)
 {
     TrackerParam par(nh_priv_);
     params = par;
 
-/*    K_ << intrinsics_[0], 0., intrinsics_[2],
-                                   0., intrinsics_[1], intrinsics_[3],
-                                   0., 0., 1.f;*/
 
 
     detection_sub_ = nh_priv_.subscribe("detection", 10, &Node::detectionCallback, this);
     image_sub_ = nh_priv_.subscribe("image", 10, &Node::imageCallback, this);
     //mocap_sub_ = nh_priv_.subscribe("gt", 10, &Node::gtCallback, this);
+
+    image_pub_ = it_.advertise("image_tracked", 1);
+
     track_init = true;
     
     for(int i=1; i<=params.nb_drones; i++)
@@ -39,7 +40,7 @@ void Node::detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_
 
 void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 {
-    image_buffer_.push_back(*img_msg);
+    image_buffer_.push_back(img_msg);
     if(bounding_boxes_msgs_buffer_.size() != 0)
         track();
 }
@@ -60,7 +61,6 @@ void Node::track()
     ROS_INFO("---------------------------------------------");
     auto last_image = image_buffer_.back();
     auto last_detection = bounding_boxes_msgs_buffer_.back();
-    //int number_detections = last_detection.bounding_boxes.size();
     auto detections = get_detections(last_detection);
 
 
@@ -93,12 +93,6 @@ void Node::track()
         }
         //------------
 
-/*        for(uint t=0; t<tracks_.size(); t++)
-        {
-            cout << "pred: " << endl << tracks_[t].get_z_predict() << endl;
-            cout << "S: " << endl << tracks_[t].S() << endl;
-            ROS_INFO("Determinant of S: %f", tracks_[t].S().determinant());
-        }*/
 
         //UPDATE
         auto assoc_mat = association_matrix(detections);
@@ -131,19 +125,16 @@ void Node::track()
             tracks_[t].update(detections, beta, beta_0);
             betas_0.push_back(beta_0);
         }
+
         //------------
+        
+        draw_tracks_publish_image(last_image);
+
+        //-------------
         auto alphas_0 = compute_alphas_0(hypothesis_mats, hypothesis_probs);
         auto betas_0_bis = compute_betas_0(hypothesis_mats, hypothesis_probs);
 
-
-        //auto not_assoc_dets = not_associated_detections(assoc_mat);
-        //ROS_INFO("number of not associated detections: %d", (int)not_assoc_dets.size());
-        
         manage_new_old_tracks(detections, betas_0_bis, alphas_0);
-
-        //manage_new_tracks(detections, not_assoc_dets);
-        //manage_old_tracks();
-        //validate_tracks();
 
     }
 
@@ -193,10 +184,8 @@ std::vector<double> Node::compute_beta(int track_nb, std::vector<cv::Mat_<int>> 
                 beta_i += hypothesis_probabilities[h];
             }
         }
-        //cout << "beta_" << i+1 << ": " << beta_i << " ";
         beta.push_back(beta_i);
     }
-    //cout << endl;   
     return beta;
 }
 
@@ -340,10 +329,6 @@ double Node::probability_of_hypothesis_unnormalized(cv::Mat_<int> hypothesis, st
     int phi = tau_.rows - nb_associated_measurements; // nb of false measurements
     int nb_associated_tracks = (int)((float)sum(delta_)[0]);//one channel
 
-    /*cout << "hypothesis" << endl << hypothesis << endl;
-    cout << "tau" << endl << tau_ << endl;
-    cout << "delta" << endl << delta_ << endl << endl;
-    cout << "phi: " << phi << endl;*/
     std::vector<Eigen::Vector2f> y_tilds;
     std::vector<Eigen::Matrix2f> Ss;
 
@@ -368,20 +353,11 @@ double Node::probability_of_hypothesis_unnormalized(cv::Mat_<int> hypothesis, st
     double product_1 = 1;
     for(int i=0; i< nb_associated_measurements; i++)
     {
-        /*if(Ss[i].determinant() == 0)
-        {
-            ROS_ERROR("Determinant of S is 0!!");
-        }
-        if(Ss[i].determinant() < 0)
-        {
-            ROS_ERROR("Sqrt of negative value!!");
-        }*/
         product_1 *= (exp((-1/2) * y_tilds[i].transpose()*Ss[i].inverse()*y_tilds[i])) / (sqrt(pow(2*M_PI, M) * Ss[i].determinant()));
         
     }
     double product_2 = pow(params.pd, nb_associated_tracks);
     double product_3 = pow((1-params.pd), hypothesis.cols -1 - nb_associated_tracks);
-    //ROS_INFO("Probability comp: prefix=%f, P1=%f, P2=%f, P3=%f", pow(params.false_measurements_density, phi), product_1, product_2, product_3);
     double probability = pow(params.false_measurements_density, phi) * product_1 * product_2 * product_3;
 
     return probability;
@@ -417,21 +393,17 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
     for(uint i=0; i<tracks_.size(); i++)
     {
         tracks_[i].increase_lifetime();
-//        tracks_[i].print_life_time();
     }
 
     std::vector<int> unassoc_detections_idx;
 
-//    ROS_INFO("Nb of betas_0: %d, nb of alphas_0: %d", (int)betas_0.size(), (int)alphas_0.size());
     for(uint i=0; i<betas_0.size(); i++)
     {
         if(betas_0[i] >= params.beta_0_threshold)
         {
             unassoc_detections_idx.push_back((int)i);
         }
-//        ROS_INFO("beta_0 of measurement %d is %f", (int)i, betas_0[i]);
     }
-//    ROS_INFO("Nb of unassoc_detections: %d", (int)unassoc_detections_idx.size());    
 
     auto new_tracks = create_new_tracks(detections, unassoc_detections_idx);\
     for(uint j=0; j<alphas_0.size(); j++)
@@ -473,11 +445,6 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
 
     for(uint t=0; t<tracks_.size(); t++)
     {
-/*        ROS_INFO("tracks_[t].id: %d", tracks_[t].getId());
-        if(tracks_[t].isValidated())
-            ROS_INFO("tr validated");
-        else
-            ROS_INFO("tr not validated");*/
         if(tracks_[t].getId() == -1 && tracks_[t].isValidated())
         {
             if(!lost_tracks.empty())
@@ -573,6 +540,37 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
         }
         return new_tracks;
     }
+}
+
+void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image)
+{
+    //cv_bridge::CvImage image = cv_bridge::toCvShare(last_image, "rgb8");
+
+    cv_bridge::CvImageConstPtr im_ptr_ = cv_bridge::toCvShare(last_image, "rgb8");
+    cv::Mat im = im_ptr_->image;
+
+    if(im.empty()) return;
+
+    for(uint t=0; t<tracks_.size(); t++)
+    {
+        if(tracks_[t].getId() != -1)
+        {
+            cv::Point2f tr_pos((int)(tracks_[t].get_z_update())(0), (int)(tracks_[t].get_z_update())(1));
+            cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
+            cv::circle(im, tr_pos, 4, cv::Scalar(255, 0, 0), 2);
+            putText(im, to_string(tracks_[t].getId()), id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(255, 0, 0), 1, CV_AA);
+        }
+    }
+    
+    cv_bridge::CvImage processed_image_bridge;
+    processed_image_bridge.header.stamp = last_image->header.stamp;
+    processed_image_bridge.image = im;
+    processed_image_bridge.encoding = sensor_msgs::image_encodings::BGR8;
+    sensor_msgs::ImagePtr im_msg = processed_image_bridge.toImageMsg();
+    image_pub_.publish(im_msg);
+
+
+    return;
 }
 
 

@@ -4,27 +4,6 @@
 namespace jpdaf
 {
 
-/*AssignmentProblemSolver::AssignmentProblemSolver()
-{
-}
-
-AssignmentProblemSolver::~AssignmentProblemSolver()
-{
-}*/
-
-int AssignmentProblemSolver::addOne(int a)
-{
-    return a+1;
-}
-
-int AssignmentProblemSolver::getNb()
-{
-    int a = 88;
-    return a;
-}
-
-
-//track_t AssignmentProblemSolver::Solve(
 void AssignmentProblemSolver::Solve(
 	const std::vector<float> distMatrixIn,
 	uint nOfRows,
@@ -52,7 +31,6 @@ void AssignmentProblemSolver::Solve(
 		break;
 	}
 
-//	return cost;
 	return;
 }
 // --------------------------------------------------------------------------

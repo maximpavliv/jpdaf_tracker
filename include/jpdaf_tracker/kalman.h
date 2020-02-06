@@ -25,6 +25,7 @@ namespace jpdaf
     	return x_update;
       }
       Eigen::Vector2f get_z_predict(){return z_predict;}
+      Eigen::Vector2f get_z_update(){return z_update;}
     private:
       Eigen::MatrixXf C;
       Eigen::Matrix2f R; //Proces measurement Covariance matrix
@@ -36,6 +37,7 @@ namespace jpdaf
       Eigen::Matrix4f P_update; //Covariance Matrix
       Eigen::Vector4f x_update;
       Eigen::Vector2f z_predict;
+      Eigen::Vector2f z_update;
   };
 }
 

@@ -40,10 +40,6 @@ private:
 	void assignmentsuboptimal2(assignments_t& assignment, track_t& cost, const distMatrix_t& distMatrixIn, size_t nOfRows, size_t nOfColumns);
 
 public:
-	/*AssignmentProblemSolver();
-	~AssignmentProblemSolver();*/
-    int addOne(int a);
-    int k = 99;
 	enum TMethod
 	{
 		optimal,
@@ -51,10 +47,8 @@ public:
 		without_forbidden_assignments
 	};
 
-	//track_t Solve(const distMatrix_t& distMatrixIn, size_t nOfRows, size_t nOfColumns, assignments_t& assignment, TMethod Method = optimal);
 	void Solve(const std::vector<float> distMatrixIn, uint nOfRows, uint nOfColumns, std::vector<int>& assignment, TMethod Method = optimal);
-//    int getNb(){int a = 88; return a;};
-    int getNb();
+
 };
 
 }

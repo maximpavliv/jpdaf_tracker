@@ -9,14 +9,15 @@
       <remap from="~image" to="$(arg image_topic)"/>
       <!--remap from="~gt" to="$(arg gt_topic)"/-->
 
-      <param name="pd" value="1"/>
+      <param name="pd" value="0.952662721893"/>
       <param name="gamma" value="15"/>
-      <param name="false_measurements_density" value="1"/>
+      <!-- param name="false_measurements_density" value="3.03404259668e-08"/-->
+      <param name="false_measurements_density" value="0.00000003034"/>
       <param name="beta_0_threshold" value="0.8"/>
       <param name="alpha_0_threshold" value="0.8"/>
-      <param name="max_missed_rate" value="25"/>
+      <param name="max_missed_rate" value="15"/>
       <param name="min_acceptance_rate" value="15"/>
-      <rosparam param="R"> [10, 10]</rosparam>
+      <rosparam param="R"> [2, 2]</rosparam>
       <rosparam param="T"> [10, 10]</rosparam>
       <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
       <param name="nb_drones" value="3"/>
