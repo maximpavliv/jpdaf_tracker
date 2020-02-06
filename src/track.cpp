@@ -15,16 +15,19 @@ Track::Track(const float& x, const float& y, const float& vx, const float& vy, T
 
 void Track::predict(float dt)
 {
+    ROS_INFO("Predicting track %d", id);
     KF->predict(dt);  
 }
 
 
 void Track::gainUpdate()
 {
+    ROS_INFO("Gaining track %d", id);
     KF->gainUpdate();
 }
 
 void Track::update(const std::vector<Detection> detections, std::vector<double> beta, double beta_0)
 {
+    ROS_INFO("Updating track %d", id);
     KF->update(detections, beta, beta_0);
 }

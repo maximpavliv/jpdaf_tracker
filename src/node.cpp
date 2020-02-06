@@ -120,19 +120,14 @@ void Node::track()
         for(uint t=0; t<tracks_.size(); t++)
         {
             std::vector<double> beta = compute_beta(t, hypothesis_mats, hypothesis_probs);
+            cout << "track " << t << " betas: "; for(uint b=0; b<beta.size(); b++){cout << beta[b] << " ";} cout << endl;
             double sum_betas = 0; 
             for(uint b=0; b<beta.size(); b++)
             {
                 sum_betas += beta[b];
             }
             double beta_0 = 1 - sum_betas;
-//            cout << "track " << t << " beta: "; 
-//            for(uint b=0; b<beta.size(); b++)
-//            {
-//                cout << beta[b] << " ";
-//            }
-//            cout << endl;
-//            cout << "beta_0: " << beta_0 << endl;
+            cout << "beta_0: " << beta_0 << endl;
             tracks_[t].update(detections, beta, beta_0);
             betas_0.push_back(beta_0);
         }

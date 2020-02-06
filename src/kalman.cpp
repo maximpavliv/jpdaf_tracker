@@ -44,28 +44,15 @@ void Kalman::predict(const float dt) //added by Max
   
   x_predict = A*x_update;
   P_predict = A * P_update * A.transpose() + Q;
-  //cout << "x_predict: " << endl << x_predict << endl;
-  //cout << "P_predict: " << endl << P_predict << endl;
-  //cout << "determinant of P_predict: " << P_predict.determinant() << endl;
-  if(P_predict.determinant() <= 0)
+  if(P_predict.determinant() < 0)
   {
-    ROS_ERROR("Predicted covariance is 0 or negative!");
+    ROS_ERROR("Predicted covariance determinant is negative! %f", P_predict.determinant());
   }
 
   z_predict = C * x_predict;
-  //cout << "z_predict: " << endl << z_predict << endl;
 
   //Error Measurement Covariance Matrix
   S = C * P_predict * C.transpose() + R;
-  if(S.determinant() <= 0)
-  {
-    ROS_ERROR("Innovation covariance is 0 or negative!");
-  }
-
-  //cout << "S: " << endl << S << endl;
-  //cout << "determinant of S: " << S.determinant() << endl;
-
-//  cout << "S: " << endl << S << endl;
     
   return;
 }
@@ -95,33 +82,24 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
 
   Eigen::Matrix4f P_c;
   P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
-/*  cout << "computation of P_c:" << endl;
-  cout << "P_predict" << endl << P_predict << endl;
-  cout << "S" << endl << S << endl;
-  cout << "K" << endl << K << endl;*/
-
 
   Eigen::Matrix4f P_tild;
   Eigen::Matrix2f temp_sum;
   temp_sum << 0, 0, 0, 0;
+
   for(uint i=0; i<detections.size(); i++)
   {
-      temp_sum += beta[i]*nus[i]*nus[i].transpose() - nu*nu.transpose();
+      temp_sum += beta[i]*nus[i]*nus[i].transpose();
   }
+  temp_sum -= nu*nu.transpose();
   P_tild = K * temp_sum * K.transpose();
+
                 
-/*  cout << "P_predict: " << endl << P_predict << endl;
-  cout << "P_c: " << endl << P_c << endl;
-  cout << "P_tild: " << endl << P_tild << endl;*/
-
   P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;
-  if(P_update.determinant() <= 0)
+  if(P_update.determinant() < 0)
   {
-    ROS_ERROR("Update covariance is 0 or negative!");
+    ROS_ERROR("Update covariance determinant is negative! %f", P_update.determinant());
   }
-
-
-//    cout << "P_update: " << endl << P_update << endl;
 
 
 }
