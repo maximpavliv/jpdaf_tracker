@@ -17,9 +17,9 @@ for original_file in original_files:
             break
         split_line = line.split()
         f_treated.write(str(int(width*(float(split_line[1])-float(split_line[3])/2)))+" "
-                        +str(int(width*(float(split_line[2])-float(split_line[4])/2)))+" "
+                        +str(int(height*(float(split_line[2])-float(split_line[4])/2)))+" "
                         +str(int(width*(float(split_line[1])+float(split_line[3])/2)))+" "
-                        +str(int(width*(float(split_line[2])+float(split_line[4])/2)))+"\n")
+                        +str(int(height*(float(split_line[2])+float(split_line[4])/2)))+"\n")
     f_original.close()
     f_treated.close()
 
