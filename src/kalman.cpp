@@ -47,9 +47,9 @@ void Kalman::predict(const float dt) //added by Max
   Q = G * T * G.transpose();
   
   x_predict = A*x_update;
-  cout << "P_update: " << endl << P_update << endl;
+  //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;
-  cout << "P_predict: " << endl << P_predict << endl;
+  //cout << "P_predict: " << endl << P_predict << endl;
   if(P_predict.determinant() < 0)
   {
     ROS_ERROR("Predicted covariance determinant is negative! %f", P_predict.determinant());
