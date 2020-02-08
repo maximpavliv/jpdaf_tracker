@@ -22,6 +22,10 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
 
   x_update << x, vx, y, vy;
   P_update = params.P_0;
+
+  cout << "x_update" << endl << x_update << endl;
+  cout << "P_update" << endl << P_update << endl;
+
   
 }
 
@@ -80,6 +84,8 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
     
   x_update = x_predict + K * nu;
 
+  cout << "x_update" << endl << x_update << endl;
+
   Eigen::Matrix4f P_c;
   P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
 
@@ -100,6 +106,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   {
     ROS_ERROR("Update covariance determinant is negative! %f", P_update.determinant());
   }
+  cout << "P_update" << endl << P_update << endl;
 
   z_update = C * x_update;
 

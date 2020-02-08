@@ -103,18 +103,18 @@ void Node::track()
 
         ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
-        /*cout << "hypothesis matrices and their respective probabilities:" << endl;
+        cout << "hypothesis matrices and their respective probabilities:" << endl;
         for(uint h=0; h<hypothesis_mats.size(); h++)
         {
             cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
-        }*/
+        }
 
         std::vector<double> betas_0;//beta_0 of each track, used to determine if track has not been detected well
 
         for(uint t=0; t<tracks_.size(); t++)
         {
             std::vector<double> beta = compute_beta(t, hypothesis_mats, hypothesis_probs);
-            cout << "track " << t << " betas: "; for(uint b=0; b<beta.size(); b++){cout << beta[b] << " ";} cout << endl;
+            cout << "track " << tracks_[t].getId() << " betas: "; for(uint b=0; b<beta.size(); b++){cout << beta[b] << " ";} cout << endl;
             double sum_betas = 0; 
             for(uint b=0; b<beta.size(); b++)
             {
@@ -122,6 +122,7 @@ void Node::track()
             }
             double beta_0 = 1 - sum_betas;
             cout << "beta_0: " << beta_0 << endl;
+            cout << "updating track with ID " << tracks_[t].getId() << endl;
             tracks_[t].update(detections, beta, beta_0);
             betas_0.push_back(beta_0);
         }
@@ -353,7 +354,7 @@ double Node::probability_of_hypothesis_unnormalized(cv::Mat_<int> hypothesis, st
     double product_1 = 1;
     for(int i=0; i< nb_associated_measurements; i++)
     {
-        product_1 *= (exp((-1/2) * y_tilds[i].transpose()*Ss[i].inverse()*y_tilds[i])) / (sqrt(pow(2*M_PI, M) * Ss[i].determinant()));
+        product_1 *= (exp(-(double)(y_tilds[i].transpose()*Ss[i].inverse()*y_tilds[i])/2)) / (sqrt(pow(2*M_PI, M) * Ss[i].determinant()));
         
     }
     double product_2 = pow(params.pd, nb_associated_tracks);
@@ -557,8 +558,15 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image
         {
             cv::Point2f tr_pos((int)(tracks_[t].get_z_update())(0), (int)(tracks_[t].get_z_update())(1));
             cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
-            cv::circle(im, tr_pos, 4, cv::Scalar(255, 0, 0), 2);
-            putText(im, to_string(tracks_[t].getId()), id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(255, 0, 0), 1, CV_AA);
+            cv::circle(im, tr_pos, 4, cv::Scalar(0, 255, 255), 2);
+            putText(im, to_string(tracks_[t].getId()), id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(0, 255, 255), 1, CV_AA);
+        }
+        else
+        {
+            cv::Point2f tr_pos((int)(tracks_[t].get_z_update())(0), (int)(tracks_[t].get_z_update())(1));
+            cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
+            cv::circle(im, tr_pos, 4, cv::Scalar(0, 0, 255), 2);
+            putText(im, "-", id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(0, 0, 255), 1, CV_AA);
         }
     }
     
