@@ -103,11 +103,11 @@ void Node::track()
 
         ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
-        cout << "hypothesis matrices and their respective probabilities:" << endl;
+        /*cout << "hypothesis matrices and their respective probabilities:" << endl;
         for(uint h=0; h<hypothesis_mats.size(); h++)
         {
             cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
-        }
+        }*/
 
         std::vector<double> betas_0;//beta_0 of each track, used to determine if track has not been detected well
 
