@@ -133,7 +133,6 @@ void Node::track(bool called_from_detection)
         std::cout << "assoc_mat: " << endl << assoc_mat << endl;
 
         auto hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
-        ROS_INFO("123123");
         auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
         ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
@@ -271,11 +270,8 @@ std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> asso
 
     if(assoc_mat.rows == 0)
     {
-        ROS_INFO("1");
         cv::Mat_<int> hypothesis(cv::Size(assoc_mat.cols, assoc_mat.rows), int(0));
-        ROS_INFO("2");
         hypothesis_matrices.push_back(hypothesis);
-        ROS_INFO("3");
         return hypothesis_matrices;
     }
     
