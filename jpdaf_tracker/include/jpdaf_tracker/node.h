@@ -18,7 +18,9 @@
 #include <cv_bridge/cv_bridge.h>
 
 #include <image_transport/image_transport.h>
-
+#include <jpdaf_tracker_msgs/Track.h>
+#include <jpdaf_tracker_msgs/Tracks.h>
+#include <std_msgs/Int32.h>
 
 namespace jpdaf {
 
@@ -63,6 +65,7 @@ class Node {
 
         void track();
 
+        void publishTracks();
 
         cv::Mat_<int> association_matrix(const std::vector<Detection> detections);
 

@@ -20,6 +20,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     //mocap_sub_ = nh_priv_.subscribe("gt", 10, &Node::gtCallback, this);
 
     image_pub_ = it_.advertise("image_tracked", 1);
+    tracks_pub_ = nh.advertise<jpdaf_tracker_msgs::Tracks>("jpdaf_tracks", 1);
 
     track_init = true;
     
@@ -51,9 +52,6 @@ void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
     ROS_INFO("Received new mocap msg");
     gt_odom_buffer_.clear();
 }*/
-
-
-
 
 
 void Node::track()
@@ -130,6 +128,7 @@ void Node::track()
         //------------
         
         draw_tracks_publish_image(last_image);
+        publishTracks();
 
         //-------------
         auto alphas_0 = compute_alphas_0(hypothesis_mats, hypothesis_probs);
@@ -581,6 +580,25 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image
     return;
 }
 
+void Node::publishTracks()
+{
+    jpdaf_tracker_msgs::Tracks trs_msg;
+    for(uint t=0; t<tracks_.size(); t++)
+    {
+        if(tracks_[t].getId() != -1)
+        {
+            jpdaf_tracker_msgs::Track tr_msg;
+            tr_msg.id = tracks_[t].getId();
+            tr_msg.x = (int)(tracks_[t].get_z_update())(0);
+            tr_msg.y = (int)(tracks_[t].get_z_update())(1);
+            
+            trs_msg.tracks.push_back(tr_msg);
+        }
+    }
+    //add timestamp to header!!
+    
+    tracks_pub_.publish(trs_msg);
+}
 
 
 std::vector<Detection> Node::get_detections(const darknet_ros_msgs::BoundingBoxes last_detection)

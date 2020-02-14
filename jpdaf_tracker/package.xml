@@ -22,6 +22,7 @@
   <depend>opencv2</depend>
   <depend>darknet_ros_msgs</depend>
   <depend>image_transport</depend>
+  <depend>jpdaf_tracker_msgs</depend>
   <!--depend>diagnostic_updater</depend-->
 
   <export>
