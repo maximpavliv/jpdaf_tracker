@@ -19,7 +19,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     image_sub_ = nh_priv_.subscribe("image", 10, &Node::imageCallback, this);
     //mocap_sub_ = nh_priv_.subscribe("gt", 10, &Node::gtCallback, this);
 
-    update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), timer_callback); //TODO Watch dog timer!
+    update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), &Node::timer_callback, this);
 
     image_pub_ = it_.advertise("image_tracked", 1);
     tracks_pub_ = nh.advertise<jpdaf_tracker_msgs::Tracks>("jpdaf_tracks", 1);
@@ -36,22 +36,33 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
 
 void Node::timer_callback(const ros::TimerEvent& event)
 {
-    ROS_INFO("timer callback called");
-    return;
+    if(image_buffer_.size() != 0)
+    {
+        ROS_WARN("Calling track without detections");
+        track(false);
+    }
+
 }
 
 void Node::detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes)
 {
     bounding_boxes_msgs_buffer_.push_back(*bounding_boxes);
     if(image_buffer_.size() != 0)
-        track();
+    {
+        update_timer.stop();
+        track(true);
+        update_timer.start();
+    }
 }
 
 void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 {
     image_buffer_.push_back(img_msg);
     if(bounding_boxes_msgs_buffer_.size() != 0)
-        track();
+    {    update_timer.stop();
+        track(true);
+        update_timer.start();
+    }
 }
 
 /*void Node::gtCallback(const nav_msgs::OdometryConstPtr& msg)
@@ -62,11 +73,21 @@ void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 }*/
 
 
-void Node::track()
+void Node::track(bool called_from_detection)
 {
     ROS_INFO("---------------------------------------------");
     auto last_image = image_buffer_.back();
-    auto last_detection = bounding_boxes_msgs_buffer_.back();
+
+    darknet_ros_msgs::BoundingBoxes last_detection;
+    if(called_from_detection)
+    {
+        last_detection = bounding_boxes_msgs_buffer_.back();
+    }
+    else
+    {
+        std::vector<darknet_ros_msgs::BoundingBox> emptyVector;
+        last_detection.bounding_boxes = emptyVector;
+    }
     auto detections = get_detections(last_detection);
 
 
@@ -81,8 +102,15 @@ void Node::track()
     else
     {
         cout << "Currently tracked tracks indexes: " << endl; for(auto tr : tracks_){cout << tr.getId() << " ";} cout << endl;
-
-        double time_step = last_detection.header.stamp.toSec() - last_timestamp;
+        double time_step;
+        if(called_from_detection)
+        {
+            time_step = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec()) - last_timestamp;
+        }
+        else
+        {
+            time_step = params.max_update_time_rate;
+        }
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
         
         //PREDICTION
@@ -105,8 +133,8 @@ void Node::track()
         std::cout << "assoc_mat: " << endl << assoc_mat << endl;
 
         auto hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
+        ROS_INFO("123123");
         auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
-
         ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
         /*cout << "hypothesis matrices and their respective probabilities:" << endl;
@@ -145,8 +173,10 @@ void Node::track()
         manage_new_old_tracks(detections, betas_0_bis, alphas_0);
 
     }
-
-    last_timestamp = last_detection.header.stamp.toSec();
+    if(called_from_detection)
+        last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+    else
+        last_timestamp += params.max_update_time_rate;
     bounding_boxes_msgs_buffer_.clear();
     image_buffer_.clear();
 }
@@ -238,6 +268,16 @@ std::vector<double> Node::compute_betas_0(std::vector<cv::Mat_<int>> hypothesis_
 std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> assoc_mat)
 {
     std::vector<cv::Mat_<int>> hypothesis_matrices;
+
+    if(assoc_mat.rows == 0)
+    {
+        ROS_INFO("1");
+        cv::Mat_<int> hypothesis(cv::Size(assoc_mat.cols, assoc_mat.rows), int(0));
+        ROS_INFO("2");
+        hypothesis_matrices.push_back(hypothesis);
+        ROS_INFO("3");
+        return hypothesis_matrices;
+    }
     
     std::vector<std::vector<int>> non_zero_indexes_per_row;
     for(int i=0; i<assoc_mat.rows; i++)
@@ -300,6 +340,12 @@ std::vector<cv::Mat_<int>> Node::generate_hypothesis_matrices(cv::Mat_<int> asso
 std::vector<double> Node::compute_probabilities_of_hypothesis_matrices(std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<Detection> detections)
 {
     std::vector<double> probabilities;
+    if(hypothesis_matrices[0].rows == 0)
+    {
+        double prob = 1;
+        probabilities.push_back(prob);
+        return probabilities;
+    }
     for(uint h=0; h<hypothesis_matrices.size(); h++)
     {
         auto prob = probability_of_hypothesis_unnormalized(hypothesis_matrices[h], detections);

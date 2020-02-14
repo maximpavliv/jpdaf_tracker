@@ -19,7 +19,7 @@ find_package(Eigen REQUIRED)
 find_package(OpenCV 3.2 REQUIRED)
 
 catkin_package(
-  CATKIN_DEPENDS cv_bridge sensor_msgs darknet_ros_msgs image_transport jpdaf_tracker_msgs
+  CATKIN_DEPENDS cv_bridge sensor_msgs darknet_ros_msgs image_transport jpdaf_tracker_msgs 
   DEPENDS EIGEN3 OpenCV
 )
 

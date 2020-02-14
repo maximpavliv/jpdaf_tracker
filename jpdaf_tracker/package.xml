@@ -15,15 +15,12 @@
   <depend>geometry_msgs</depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
-  <!--depend>galt_common</depend-->
-  <!--depend>message_filters</depend-->
   <depend>eigen_conversions</depend>
   <depend>cv_bridge</depend>
   <depend>opencv2</depend>
   <depend>darknet_ros_msgs</depend>
   <depend>image_transport</depend>
   <depend>jpdaf_tracker_msgs</depend>
-  <!--depend>diagnostic_updater</depend-->
 
   <export>
   </export>

@@ -8,6 +8,7 @@
 #include <sensor_msgs/Image.h>
 #include <nav_msgs/Odometry.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
+#include <darknet_ros_msgs/BoundingBox.h>
 #include <image_transport/image_transport.h>
 
 #include <jpdaf_tracker/tracker_param.h>
@@ -20,7 +21,6 @@
 #include <image_transport/image_transport.h>
 #include <jpdaf_tracker_msgs/Track.h>
 #include <jpdaf_tracker_msgs/Tracks.h>
-#include <std_msgs/Int32.h>
 
 namespace jpdaf {
 
@@ -64,9 +64,11 @@ class Node {
         void detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes);
         void imageCallback(const sensor_msgs::ImageConstPtr& img_msg);
         //void gtCallback(const nav_msgs::OdometryConstPtr& msg);
+        
         void timer_callback(const ros::TimerEvent& event);
+//        void timer_callback(const ros::TimerEvent& event);
 
-        void track();
+        void track(bool called_from_detection);
 
         void publishTracks();
 
