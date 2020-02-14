@@ -31,6 +31,8 @@ namespace jpdaf
         nh_priv_.getParam("nb_drones", nb_drones);
         nh_priv_.getParam("assoc_cost", assoc_cost);
 
+        nh_priv_.getParam("max_update_time_rate", max_update_time_rate);
+
         ROS_INFO("===========================================");
         ROS_INFO("Pd: %f", pd);
         ROS_INFO("Gamma: %f", gamma);
@@ -43,6 +45,7 @@ namespace jpdaf
         ROS_INFO("T: %f, %f", T_vector[0], T_vector[1]);
         ROS_INFO("P_0: %f, %f, %f, %f", P_0_vector[0], P_0_vector[1], P_0_vector[2], P_0_vector[3]);
         ROS_INFO("Number of drones: %d", nb_drones);
+        ROS_INFO("Max update time rate: %f", max_update_time_rate);
     }
 
 }

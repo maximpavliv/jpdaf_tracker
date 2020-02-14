@@ -56,12 +56,15 @@ class Node {
 
         TrackerParam params;
 
+        ros::Timer update_timer;
+
 //----------------------------
 
 
         void detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes);
         void imageCallback(const sensor_msgs::ImageConstPtr& img_msg);
         //void gtCallback(const nav_msgs::OdometryConstPtr& msg);
+        void timer_callback(const ros::TimerEvent& event);
 
         void track();
 

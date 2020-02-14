@@ -26,6 +26,8 @@ namespace jpdaf
       int nb_drones;
       float assoc_cost;
 
+      float max_update_time_rate;
+
       TrackerParam(ros::NodeHandle nh_priv_);
       TrackerParam(){};
 

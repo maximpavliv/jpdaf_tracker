@@ -19,6 +19,8 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     image_sub_ = nh_priv_.subscribe("image", 10, &Node::imageCallback, this);
     //mocap_sub_ = nh_priv_.subscribe("gt", 10, &Node::gtCallback, this);
 
+    update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), timer_callback); //TODO Watch dog timer!
+
     image_pub_ = it_.advertise("image_tracked", 1);
     tracks_pub_ = nh.advertise<jpdaf_tracker_msgs::Tracks>("jpdaf_tracks", 1);
 
@@ -30,6 +32,12 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     }
 
     ROS_INFO("Node initialized successfully");
+}
+
+void Node::timer_callback(const ros::TimerEvent& event)
+{
+    ROS_INFO("timer callback called");
+    return;
 }
 
 void Node::detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes)
