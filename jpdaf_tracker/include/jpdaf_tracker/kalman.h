@@ -28,6 +28,7 @@ namespace jpdaf
       Eigen::Vector2f get_z_update(){return z_update;}
     private:
       Eigen::MatrixXf C;
+      Eigen::MatrixXf B;
       Eigen::Matrix2f R; //Proces measurement Covariance matrix
       Eigen::Matrix2f T; //Proces measurement Covariance matrix
       Eigen::Matrix2f S;

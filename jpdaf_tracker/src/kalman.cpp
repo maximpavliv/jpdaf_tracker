@@ -6,6 +6,14 @@ namespace jpdaf{
 
 Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params)
 {
+
+  //CONTROL INPUT model Matrix
+  B = Eigen::MatrixXf(4, 2);
+  B << 1, 0,
+       0, 0,
+       0, 1,
+       0, 0;
+
   //STATE OBSERVATION MATRIX
   C = Eigen::MatrixXf(2, 4);
   C << 1, 0, 0, 0,
@@ -45,6 +53,10 @@ void Kalman::predict(const float dt) //added by Max
         	0, dt;
   Eigen::Matrix4f Q;
   Q = G * T * G.transpose();
+
+//Need to write input here
+  
+
   
   x_predict = A*x_update;
   //cout << "P_update: " << endl << P_update << endl;
