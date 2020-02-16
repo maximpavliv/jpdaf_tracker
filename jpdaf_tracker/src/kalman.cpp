@@ -55,10 +55,10 @@ void Kalman::predict(const float dt) //added by Max
   Q = G * T * G.transpose();
 
 //Need to write input here
+  Eigen::Vector2f u;
+  u << 0, 0;  //To change here
   
-
-  
-  x_predict = A*x_update;
+  x_predict = A*x_update + B*u;
   //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;
   //cout << "P_predict: " << endl << P_predict << endl;

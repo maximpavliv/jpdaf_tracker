@@ -18,6 +18,8 @@
 
 #include <cv_bridge/cv_bridge.h>
 
+#include <geometry_msgs/PoseStamped.h>
+
 #include <image_transport/image_transport.h>
 #include <jpdaf_tracker_msgs/Track.h>
 #include <jpdaf_tracker_msgs/Tracks.h>
@@ -37,12 +39,14 @@ class Node {
 
         ros::Subscriber detection_sub_;
         ros::Subscriber image_sub_;
+        ros::Subscriber pose_sub_;
         //ros::Subscriber mocap_sub_;
 
         bool track_init;
         std::vector<darknet_ros_msgs::BoundingBoxes> bounding_boxes_msgs_buffer_;
         //std::vector<nav_msgs::Odometry> gt_odom_buffer_;
         std::vector<sensor_msgs::ImageConstPtr> image_buffer_;
+        std::vector<geometry_msgs::PoseStamped> pose_buffer_;
 
         image_transport::Publisher image_pub_;
         ros::Publisher tracks_pub_;
@@ -63,6 +67,8 @@ class Node {
 
         void detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes);
         void imageCallback(const sensor_msgs::ImageConstPtr& img_msg);
+
+        void poseCallback(const geometry_msgs::PoseStamped& pose_msg);
         //void gtCallback(const nav_msgs::OdometryConstPtr& msg);
         
         void timer_callback(const ros::TimerEvent& event);

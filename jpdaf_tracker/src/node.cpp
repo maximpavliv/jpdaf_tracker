@@ -17,6 +17,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
 
     detection_sub_ = nh_priv_.subscribe("detection", 10, &Node::detectionCallback, this);
     image_sub_ = nh_priv_.subscribe("image", 10, &Node::imageCallback, this);
+    pose_sub_ = nh_priv_.subscribe("pose", 10, &Node::poseCallback, this);
     //mocap_sub_ = nh_priv_.subscribe("gt", 10, &Node::gtCallback, this);
 
     update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), &Node::timer_callback, this);
@@ -63,6 +64,12 @@ void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
         track(true);
         update_timer.start();
     }
+}
+
+void Node::poseCallback(const geometry_msgs::PoseStamped& pose_msg)
+{
+    pose_buffer_.push_back(pose_msg);
+    pose_buffer_.clear();
 }
 
 /*void Node::gtCallback(const nav_msgs::OdometryConstPtr& msg)
