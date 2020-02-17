@@ -69,7 +69,6 @@ void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 void Node::poseCallback(const geometry_msgs::PoseStamped& pose_msg)
 {
     pose_buffer_.push_back(pose_msg);
-    pose_buffer_.clear();
 }
 
 /*void Node::gtCallback(const nav_msgs::OdometryConstPtr& msg)
@@ -119,6 +118,8 @@ void Node::track(bool called_from_detection)
             time_step = params.max_update_time_rate;
         }
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
+
+        compute_timescaled_orientation_shift_flush_pose();
         
         //PREDICTION
         for(uint t=0; t<tracks_.size(); t++)
@@ -597,6 +598,38 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
         }
         return new_tracks;
     }
+}
+
+void Node::compute_timescaled_orientation_shift_flush_pose(void)
+{
+    if((int)pose_buffer_.size() == 0)
+    {
+        ROS_ERROR("Pose buffer length is 0. Assuming no orientation shift");
+        return; //TODO return 0 
+    }
+    if((int)pose_buffer_.size() == 1)
+    {
+        ROS_ERROR("Pose buffer length is 1. Assuming no orientation shift");
+        return; //TODO return 0 
+    }
+
+    //TODO check buffer size checks and adapt if too strict!!!
+
+
+    //Find pose with closest and smaller timestamp  to current timestamp
+    //Find previous pose
+
+    //Compute orientation shift rotation
+    
+    //Compute yaw, pitch, roll
+
+    //Scale yaw, pitch and roll to detection timestep
+
+    //flush buffer up to previous pose
+
+    //return scaled yaw, pitch and roll
+
+    pose_buffer_.clear();
 }
 
 void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image)

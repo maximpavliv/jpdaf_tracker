@@ -76,6 +76,8 @@ class Node {
 
         void track(bool called_from_detection);
 
+        void compute_timescaled_orientation_shift_flush_pose(void);
+
         void publishTracks();
 
         cv::Mat_<int> association_matrix(const std::vector<Detection> detections);
