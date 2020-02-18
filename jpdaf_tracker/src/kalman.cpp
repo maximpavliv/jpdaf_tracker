@@ -71,7 +71,7 @@ void Kalman::predict(const float dt) //added by Max
 
   //Error Measurement Covariance Matrix
   S = C * P_predict * C.transpose() + R;
-  cout << "S: " << endl << S << endl;    
+  //cout << "S: " << endl << S << endl;    
 
 
   return;

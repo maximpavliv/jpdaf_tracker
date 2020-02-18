@@ -53,6 +53,8 @@ class Node {
 
         double last_timestamp;
 
+//        double last_timestamp_ros_time_now_debug;
+
         std::vector<Track> tracks_;
         std::vector<int> lost_tracks;
 
@@ -76,36 +78,37 @@ class Node {
 
         void track(bool called_from_detection);
 
-        void compute_timescaled_orientation_shift_flush_pose(void);
+        void compute_timescaled_orientation_change_flush_pose(double detection_time_stamp);
 
         void publishTracks();
 
-        cv::Mat_<int> association_matrix(const std::vector<Detection> detections);
+        Eigen::MatrixXf association_matrix(const std::vector<Detection> detections);
 
-        void manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> betas_0, std::vector<double> alphas_0);
+        void manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> alphas_0, std::vector<double> betas_0);
         std::vector<Track> create_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections);
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
 
-        std::vector<double> compute_beta(int track_nb, std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<double> hypothesis_probabilities);
+        Eigen::MatrixXf compute_betas_matrix(std::vector<Eigen::MatrixXf> hypothesis_mats, std::vector<double> hypothesis_probs);
 
-        std::vector<double> compute_alphas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs);
+        //std::vector<double> compute_beta(int track_nb, std::vector<Eigen::MatrixXf> hypothesis_matrices, std::vector<double> hypothesis_probabilities);
 
-        std::vector<double> compute_betas_0(std::vector<cv::Mat_<int>> hypothesis_mats, std::vector<double> hypothesis_probs);
+        //std::vector<double> compute_alphas_0(std::vector<Eigen::MatrixXf> hypothesis_mats, std::vector<double> hypothesis_probs);
+        //std::vector<double> compute_betas_0(std::vector<Eigen::MatrixXf> hypothesis_mats, std::vector<double> hypothesis_probs);
 
-        std::vector<cv::Mat_<int>> generate_hypothesis_matrices(cv::Mat_<int> assoc_mat);
+        std::vector<Eigen::MatrixXf> generate_hypothesis_matrices(Eigen::MatrixXf assoc_mat);
 
-        std::vector<double> compute_probabilities_of_hypothesis_matrices(std::vector<cv::Mat_<int>> hypothesis_matrices, std::vector<Detection> detections);
+        std::vector<double> compute_probabilities_of_hypothesis_matrices(std::vector<Eigen::MatrixXf> hypothesis_matrices, std::vector<Detection> detections);
 
-        double probability_of_hypothesis_unnormalized(cv::Mat_<int> hypothesis, std::vector<Detection> detections);
+        double probability_of_hypothesis_unnormalized(Eigen::MatrixXf hypothesis, std::vector<Detection> detections);
 
-        cv::Mat_<int> tau(cv::Mat_<int> hypothesis);//THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
-        cv::Mat_<int> delta(cv::Mat_<int> hypothesis);    //THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
+        Eigen::MatrixXf tau(Eigen::MatrixXf hypothesis);//THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
+        Eigen::MatrixXf delta(Eigen::MatrixXf hypothesis);    //THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
 
         void draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image);
 
 
-        std::vector<int> get_nonzero_indexes_row(cv::Mat_<int> mat);
+        std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 
 };
 
