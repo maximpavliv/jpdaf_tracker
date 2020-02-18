@@ -630,7 +630,7 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     //Do not forget that pose_buffer_orientation can == pose_buffer_.size() if it has no advance!
     if(pose_buffer_index != (int)pose_buffer_.size())
     {
-//stopped here!
+//stopped here! //https://stackoverflow.com/questions/22157435/difference-between-the-two-quaternions
     }
     else
     {
