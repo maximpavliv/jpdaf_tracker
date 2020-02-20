@@ -1,0 +1,52 @@
+[0m[ INFO] [1582155195.223572333]: ===========================================[0m
+[0m[ INFO] [1582155195.224565723]: Pd: 0.952663[0m
+[0m[ INFO] [1582155195.224594299]: Gamma: 50.000000[0m
+[0m[ INFO] [1582155195.224619673]: false measurements density: 0.000000030[0m
+[0m[ INFO] [1582155195.224644619]: Alpha_0 threshold: 0.700000[0m
+[0m[ INFO] [1582155195.224666992]: Beta_0 threshold: 0.700000[0m
+[0m[ INFO] [1582155195.224685948]: Max missed rate: 15[0m
+[0m[ INFO] [1582155195.224704005]: Min acceptance rate: 15[0m
+[0m[ INFO] [1582155195.224723441]: R: 2.000000, 2.000000[0m
+[0m[ INFO] [1582155195.224744664]: T: 100000.000000, 100000.000000[0m
+[0m[ INFO] [1582155195.224765974]: P_0: 20.000000, 8.000000, 20.000000, 8.000000[0m
+[0m[ INFO] [1582155195.224784551]: Number of drones: 3[0m
+[0m[ INFO] [1582155195.224803941]: Max update time rate: 0.200000[0m
+[0m[ INFO] [1582155195.334081838]: Node initialized successfully[0m
+... logging to /home/maxim/.ros/log/52e91b96-5134-11ea-8898-3ca9f47784f4/roslaunch-maxim-Latitude-E6430-24807.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/maxim/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/launch/jpdaf_tracker.launch
+[1mstarted roslaunch server http://maxim-Latitude-E6430:42117/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /jpdaf_tracker/P_0: [20, 8, 20, 8]
+ * /jpdaf_tracker/R: [2, 2]
+ * /jpdaf_tracker/T: [100000, 100000]
+ * /jpdaf_tracker/alpha_0_threshold: 0.7
+ * /jpdaf_tracker/assoc_cost: 50
+ * /jpdaf_tracker/beta_0_threshold: 0.7
+ * /jpdaf_tracker/false_measurements_density: 3.034e-08
+ * /jpdaf_tracker/gamma: 50
+ * /jpdaf_tracker/max_missed_rate: 15
+ * /jpdaf_tracker/max_update_time_rate: 0.2
+ * /jpdaf_tracker/min_acceptance_rate: 15
+ * /jpdaf_tracker/nb_drones: 3
+ * /jpdaf_tracker/pd: 0.952662721893
+ * /rosdistro: melodic
+ * /rosversion: 1.14.3
+
+NODES
+  /
+    jpdaf_tracker (jpdaf_tracker/jpdaf_tracker)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/maxim/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/launch/jpdaf_tracker.launch http://localhost:11311
+[1mprocess[jpdaf_tracker-1]: started with pid [24822][0m
+[jpdaf_tracker-1] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m

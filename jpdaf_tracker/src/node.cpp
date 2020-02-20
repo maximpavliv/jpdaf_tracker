@@ -123,12 +123,12 @@ void Node::track(bool called_from_detection)
         //ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
         if(time_step < 0)
         {
-            ROS_ERROR("Negative time step! %f", time_step);
+            ROS_WARN("Negative time step! %f", time_step); // happens sometimes, because the timer is not totally precise. The negative timestep should be negligible,and is then set to 0
             time_step = 0;
         }
 
 //        ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_ros_time_now_debug);
-        compute_timescaled_orientation_change_flush_pose((double)(last_timestamp + time_step));
+        compute_timescaled_orientation_change_flush_pose((double)(last_timestamp + time_step), (double)time_step);
         
         //PREDICTION
         for(uint t=0; t<tracks_.size(); t++)
@@ -581,68 +581,63 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
     }
 }
 
-void Node::compute_timescaled_orientation_change_flush_pose(double detection_time_stamp)
+void Node::compute_timescaled_orientation_change_flush_pose(double detection_time_stamp, double detection_time_step)
 {
     ROS_INFO("Pose buffer length: %d", (int)pose_buffer_.size());
-    if((int)pose_buffer_.size() > 50)
+    ROS_INFO("Detection timestamp, %f, detection timestep: %f", detection_time_stamp, detection_time_step);
+
+    if(!pose_buffer_ok(detection_time_stamp, detection_time_step))
     {
-        ROS_FATAL("pose buffer is too long, there is a problem somewhere");
-        exit(1);
-    }
-    cout << "Detection timestamp: " << detection_time_stamp << endl;
-    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){cout << pose_buffer_[i].header.stamp.toSec() << ", ";} cout << endl;
-    if((int)pose_buffer_.size() == 0)
-    {
-        ROS_ERROR("Pose buffer length is 0. Assuming no orientation change");
-        return; //TODO return 0 
-    }
-    else if((int)pose_buffer_.size() == 1)
-    {
-        ROS_WARN("Pose buffer length is 1. Assuming no orientation change");
-        return; //TODO return 0 
-    }
-    else if(detection_time_stamp - pose_buffer_.back().header.stamp.toSec() >= params.max_update_time_rate)
-    {
-        ROS_WARN("The pose buffer is running too late compaired to the detections. Assuming no orientation change");
-        return; //TODO return 0     
-    }
-    else if(pose_buffer_.front().header.stamp.toSec() - detection_time_stamp >= 0)
-    {
-        ROS_WARN("The pose buffer doesn't contain elements prior to the detections. Assuming no orientation change");
-        return; //TODO return 0     
+        return; //TODO return 0
     }
 
-    int pose_buffer_index = 0;
-    while(pose_buffer_index != (int)pose_buffer_.size())
+    int pose_buffer_index_current_detection_timestamp = 0;
+    while(pose_buffer_index_current_detection_timestamp != (int)pose_buffer_.size()-1)
     {
-        if((double)pose_buffer_[pose_buffer_index].header.stamp.toSec() >= detection_time_stamp)
+        if((double)pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec() >= detection_time_stamp)
         {
             break;
         }
-        pose_buffer_index++;
+        pose_buffer_index_current_detection_timestamp++;
     }
-    if(pose_buffer_index == (int)pose_buffer_.size())
-    {
-        ROS_WARN("Pose buffer is running late compaired to the detections.");
-    }
-    ROS_INFO("Pose buffer index: %d", pose_buffer_index);
-    //Compute orientation shift rotation
-    //Do not forget that pose_buffer_orientation can == pose_buffer_.size() if it has no advance!
-    if(pose_buffer_index != (int)pose_buffer_.size())
-    {
-//stopped here! //https://stackoverflow.com/questions/22157435/difference-between-the-two-quaternions
-    }
-    else
-    {
 
+    int pose_buffer_index_previous_detection_timestamp = 0;
+    while(pose_buffer_index_previous_detection_timestamp != pose_buffer_index_current_detection_timestamp-1)
+    {
+        if((double)pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec() >= detection_time_stamp-detection_time_step)
+        {
+            break;
+        }
+        pose_buffer_index_previous_detection_timestamp++;
     }
-    Eigen::Quaterniond orientation;
+
+    double pose_time_step = pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec() - pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec();
+    ROS_INFO("Selected pose buffer timestamps: %f , %f , pose time step: %f", pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec(), pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec(), pose_time_step);
+    //Compute orientation shift rotation
+
+    Eigen::Quaterniond orientation_previous;
+    Eigen::Quaterniond orientation_current;
+    tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_previous_detection_timestamp].pose.orientation, orientation_previous);
+    tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_current_detection_timestamp].pose.orientation, orientation_current);
+
+    Eigen::Matrix3d R_previous = orientation_previous.normalized().toRotationMatrix();
+    Eigen::Matrix3d R_current = orientation_current.normalized().toRotationMatrix();
+
+    Eigen::Matrix3d diff = R_current*R_previous.inverse();
+    
+    cout << "Rot mat: " << endl << diff << endl;
+
+    auto rpy = diff.eulerAngles(0,1,2); // problem here: sometimes with pi and -pi instead of 0 
+    cout << "rpy: " << endl << rpy << endl;
+
+    auto omega = rpy/pose_time_step;
+    cout << "omega: " << endl << omega << endl;
     //Compute yaw, pitch, roll
 
     //Scale yaw, pitch and roll to detection timestep
 
     std::vector<geometry_msgs::PoseStamped> temp;
-    for(int i=pose_buffer_index; i<(int)pose_buffer_.size(); i++)
+    for(int i=pose_buffer_index_previous_detection_timestamp; i<(int)pose_buffer_.size(); i++)
     {
         temp.push_back(pose_buffer_[i]);
     }
@@ -651,6 +646,45 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     //return scaled yaw, pitch and roll
 
 
+}
+
+bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_step)
+{
+    if((int)pose_buffer_.size() > 100)
+    {
+        ROS_FATAL("pose buffer is too long, there is a problem somewhere");
+        exit(1);
+    }
+//    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
+    if((int)pose_buffer_.size() == 0)
+    {
+        ROS_ERROR("Pose buffer length is 0. Assuming no orientation change");
+        return false;
+    }
+    else if((int)pose_buffer_.size() == 1)
+    {
+        ROS_WARN("Pose buffer length is 1. Assuming no orientation change");
+        return false;
+    }
+    else if(detection_time_stamp - pose_buffer_.back().header.stamp.toSec() > 0) 
+    {
+        ROS_ERROR("The pose buffer is running too late compaired to the detections. Assuming no orientation change");
+        return false;
+    }
+    else if(pose_buffer_.front().header.stamp.toSec() - (detection_time_stamp-detection_time_step) >= 0)
+    {
+        ROS_WARN("The pose buffer doesn't contain elements older than the previous detections. Assuming no orientation change");
+        return false;
+    }
+    else if(detection_time_step == 0)
+    {
+        ROS_WARN("Time step is 0. Assuming no orientation change");
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image)
@@ -742,6 +776,40 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
     }
     return nonzero_elements;
 }
+
+
+
+/*Eigen::Matrix<float, 3,1> Node::rotToYPR(const Eigen::Matrix3f& R)
+{
+    Eigen::Matrix<float, 3,1> n = R.block(0,0,3,1);
+    Eigen::Matrix<float, 3,1> o = R.block(0,1,3,1);
+    Eigen::Matrix<float, 3,1> a = R.block(0,2,3,1);
+
+    // check for singularity of euler angle representation
+    float cy = sqrt(R(0,0)*R(0,0)+R(1,0)*R(1,0));
+    bool singularity = cy< 1e-6;
+    Eigen::Matrix<float, 3,1> ypr;
+    float y, p, r;
+    if(!singularity)
+    {
+        y = atan2(n(1,0), n(0,0));
+        p = atan2(-n(2,0), n(0,0)*cos(y)+n(1,0)*sin(y));
+        r = atan2(a(0,0)*sin(y)-a(1,0)*cos(y), -o(0,0)*sin(y)+o(1,0)*cos(y));
+    }
+    else
+    {
+        y = 0.0f;
+        p = atan2(-R(2,0), cy);
+        r = atan2(-R(1,2), R(1,1));
+        ROS_ERROR("singular");
+    }
+    ypr(0,0) = y;
+    ypr(1,0) = p;
+    ypr(2,0) = r;
+
+    return ypr;
+}*/
+
 
 
 

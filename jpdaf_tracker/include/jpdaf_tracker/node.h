@@ -16,6 +16,8 @@
 #include <jpdaf_tracker/track.h>
 #include <jpdaf_tracker/hungarian_alg.h>
 
+#include <eigen_conversions/eigen_msg.h>
+
 #include <cv_bridge/cv_bridge.h>
 
 #include <geometry_msgs/PoseStamped.h>
@@ -78,7 +80,8 @@ class Node {
 
         void track(bool called_from_detection);
 
-        void compute_timescaled_orientation_change_flush_pose(double detection_time_stamp);
+        void compute_timescaled_orientation_change_flush_pose(double detection_time_stamp, double detection_time_step);
+        bool pose_buffer_ok(double detection_time_stamp, double detection_time_step);
 
         void publishTracks();
 
@@ -109,6 +112,12 @@ class Node {
 
 
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
+
+
+
+
+        //Eigen::Matrix<float, 3,3> yprToRot(const Eigen::Matrix<float,3,1>& ypr);
+
 
 };
 
