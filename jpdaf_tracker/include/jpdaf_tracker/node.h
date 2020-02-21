@@ -1,6 +1,7 @@
 #ifndef JPDAF_NODE_HPP_
 #define JPDAF_NODE_HPP_
 
+
 #include <ros/ros.h>
 
 #include <math.h>
@@ -94,11 +95,6 @@ class Node {
 
         Eigen::MatrixXf compute_betas_matrix(std::vector<Eigen::MatrixXf> hypothesis_mats, std::vector<double> hypothesis_probs);
 
-        //std::vector<double> compute_beta(int track_nb, std::vector<Eigen::MatrixXf> hypothesis_matrices, std::vector<double> hypothesis_probabilities);
-
-        //std::vector<double> compute_alphas_0(std::vector<Eigen::MatrixXf> hypothesis_mats, std::vector<double> hypothesis_probs);
-        //std::vector<double> compute_betas_0(std::vector<Eigen::MatrixXf> hypothesis_mats, std::vector<double> hypothesis_probs);
-
         std::vector<Eigen::MatrixXf> generate_hypothesis_matrices(Eigen::MatrixXf assoc_mat);
 
         std::vector<double> compute_probabilities_of_hypothesis_matrices(std::vector<Eigen::MatrixXf> hypothesis_matrices, std::vector<Detection> detections);
@@ -113,10 +109,10 @@ class Node {
 
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 
+        Eigen::Matrix<double, 3,1> rotToYPR(const Eigen::Matrix3d R);
 
+        Eigen::Quaterniond quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1);
 
-
-        //Eigen::Matrix<float, 3,3> yprToRot(const Eigen::Matrix<float,3,1>& ypr);
 
 
 };

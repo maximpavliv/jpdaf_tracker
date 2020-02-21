@@ -33,6 +33,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     }
 
     ROS_INFO("Node initialized successfully");
+
 }
 
 void Node::timer_callback(const ros::TimerEvent& event)
@@ -65,7 +66,7 @@ void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 void Node::poseCallback(const geometry_msgs::PoseStamped& pose_msg)
 {
     pose_buffer_.push_back(pose_msg);
-    ROS_INFO("Pushed back new pose");
+    //ROS_INFO("Pushed back new pose");
 }
 
 /*void Node::gtCallback(const nav_msgs::OdometryConstPtr& msg)
@@ -183,7 +184,6 @@ void Node::track(bool called_from_detection)
         draw_tracks_publish_image(last_image);
         publishTracks();
 
-        ROS_INFO("Calling manage new old tracks");
         manage_new_old_tracks(detections, alphas_0, betas_0);
 
     }
@@ -425,7 +425,7 @@ Eigen::MatrixXf Node::delta(Eigen::MatrixXf hypothesis)
 
 void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> alphas_0, std::vector<double> betas_0)
 {
-    ROS_INFO("manage new old tracks: alphas_0 length=%d, betas_0 length=%d", (int)alphas_0.size(), (int)betas_0.size());
+    //ROS_INFO("manage new old tracks: alphas_0 length=%d, betas_0 length=%d", (int)alphas_0.size(), (int)betas_0.size());
     for(uint i=0; i<tracks_.size(); i++)
     {
         tracks_[i].increase_lifetime();
@@ -620,21 +620,50 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_previous_detection_timestamp].pose.orientation, orientation_previous);
     tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_current_detection_timestamp].pose.orientation, orientation_current);
 
+    //cout << orientation_current/orientation_previous << endl;
+
     Eigen::Matrix3d R_previous = orientation_previous.normalized().toRotationMatrix();
     Eigen::Matrix3d R_current = orientation_current.normalized().toRotationMatrix();
 
-    Eigen::Matrix3d diff = R_current*R_previous.inverse();
-    
-    cout << "Rot mat: " << endl << diff << endl;
+    Eigen::Matrix3d diff = R_current*R_previous.transpose();
 
-    auto rpy = diff.eulerAngles(0,1,2); // problem here: sometimes with pi and -pi instead of 0 
-    cout << "rpy: " << endl << rpy << endl;
 
-    auto omega = rpy/pose_time_step;
-    cout << "omega: " << endl << omega << endl;
     //Compute yaw, pitch, roll
+    //ypr = diff.eulerAngles(2, 1, 0);//pi values sometimes
+    Eigen::Vector3d ypr_from_mat_diff;
+    ypr_from_mat_diff = rotToYPR(diff);
+    
+    cout << "---------" << endl;
+    auto omega_from_mat_diff = ypr_from_mat_diff/pose_time_step;
+    cout << "ypr_from_mat_diff: " << endl << ypr_from_mat_diff*180/M_PI << endl;
+    cout << "omega_from_diff: " << endl << omega_from_mat_diff << endl; //Gives very weird results
 
-    //Scale yaw, pitch and roll to detection timestep
+    cout << "---------" << endl;
+
+    Eigen::Vector3d current_ypr;
+    current_ypr = rotToYPR(R_current);
+    Eigen::Vector3d previous_ypr;
+    previous_ypr = rotToYPR(R_previous);
+
+    Eigen::Vector3d ypr_from_euler = current_ypr - previous_ypr;
+    auto omega_from_euler = ypr_from_euler/pose_time_step;
+    cout << "ypr_from_euler: " << endl << ypr_from_euler*180/M_PI << endl;
+    cout << "omega_from_euler: " << endl << omega_from_euler << endl; 
+
+    cout << "---------" << endl;
+
+    auto quaternion_diff = quat_diff(orientation_current, orientation_previous);
+//    ROS_INFO("Current quat: %f %f %f %f", orientation_current.w(), orientation_current.x(), orientation_current.y(), orientation_current.z());
+//    ROS_INFO("Previous quat: %f %f %f %f", orientation_previous.w(), orientation_previous.x(), orientation_previous.y(), orientation_previous.z());
+//    ROS_INFO("Difference quat: %f %f %f %f", quaternion_diff.w(), quaternion_diff.x(), quaternion_diff.y(), quaternion_diff.z());
+    auto quat_diff_mat = quaternion_diff.normalized().toRotationMatrix();
+    Eigen::Vector3d ypr_from_quat_diff = rotToYPR(quat_diff_mat);
+    auto omega_from_quat_diff = ypr_from_quat_diff/pose_time_step;
+    cout << "ypr_from_quat: " << endl << ypr_from_quat_diff*180/M_PI << endl;
+    cout << "omega_from_quat: " << endl << omega_from_quat_diff << endl; 
+
+    cout << "---------" << endl;
+
 
     std::vector<geometry_msgs::PoseStamped> temp;
     for(int i=pose_buffer_index_previous_detection_timestamp; i<(int)pose_buffer_.size(); i++)
@@ -643,9 +672,11 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     }
     pose_buffer_.clear();
     pose_buffer_ = temp;
-    //return scaled yaw, pitch and roll
 
+    //return omega? Dont forget to return omega 0 if buffer not ok!
 
+    //But first: write model (how to use omega in kalman)!!
+    //Even before: check how yor is computed!!
 }
 
 bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_step)
@@ -779,21 +810,51 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
 
 
 
-/*Eigen::Matrix<float, 3,1> Node::rotToYPR(const Eigen::Matrix3f& R)
+
+Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
 {
-    Eigen::Matrix<float, 3,1> n = R.block(0,0,3,1);
-    Eigen::Matrix<float, 3,1> o = R.block(0,1,3,1);
-    Eigen::Matrix<float, 3,1> a = R.block(0,2,3,1);
+    Eigen::Matrix<double, 3,1> ypr;
+    double y, p, r;
+
+    y = atan2(R(1,0), R(0,0));
+    p = atan2(-R(2,0), sqrt(R(2,1)*R(2,1)+R(2,2)*R(2,2)));
+    r = atan2(R(2,1), R(2,2));
+
+    ypr(0,0) = y;
+    ypr(1,0) = p;
+    ypr(2,0) = r;
+
+    return ypr;
+}
+
+Eigen::Quaterniond Node::quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1)
+{
+    double q1_norm_square = q1.w()*q1.w() + q1.x()*q1.x() + q1.y()*q1.y() + q1.z()*q1.z();
+    Eigen::Quaterniond q1_inv(q1.w()/q1_norm_square, -q1.x()/q1_norm_square, -q1.y()/q1_norm_square, -q1.z()/q1_norm_square);
+    Eigen::Quaterniond d(q1_inv.w()*q2.w() - q1_inv.x()*q2.x() - q1_inv.y()*q2.y() - q1_inv.z()*q2.z(), 
+                         q1_inv.w()*q2.x() + q1_inv.x()*q2.w() + q1_inv.y()*q2.z() - q1_inv.z()*q2.y(),
+                         q1_inv.w()*q2.y() - q1_inv.x()*q2.z() + q1_inv.y()*q2.w() + q1_inv.z()*q2.x(),
+                         q1_inv.w()*q2.z() + q1_inv.x()*q2.y() - q1_inv.y()*q2.x() + q1_inv.z()*q2.w()); 
+    return d;
+}
+
+
+//Liangzhe's stuff
+/*Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
+{
+    Eigen::Matrix<double, 3,1> n = R.block(0,0,3,1);
+    Eigen::Matrix<double, 3,1> o = R.block(0,1,3,1);
+    Eigen::Matrix<double, 3,1> a = R.block(0,2,3,1);
 
     // check for singularity of euler angle representation
-    float cy = sqrt(R(0,0)*R(0,0)+R(1,0)*R(1,0));
-    bool singularity = cy< 1e-6;
-    Eigen::Matrix<float, 3,1> ypr;
-    float y, p, r;
+    double cy = sqrt(R(0,0)*R(0,0)+R(1,0)*R(1,0));
+    bool singularity = cy < 1e-6;
+    Eigen::Matrix<double, 3,1> ypr;
+    double y, p, r;
     if(!singularity)
     {
         y = atan2(n(1,0), n(0,0));
-        p = atan2(-n(2,0), n(0,0)*cos(y)+n(1,0)*sin(y));
+        p = atan2(-n(2,0), n(0,0)*cos(y)+n(1,0)*sin(y)); //really??
         r = atan2(a(0,0)*sin(y)-a(1,0)*cos(y), -o(0,0)*sin(y)+o(1,0)*cos(y));
     }
     else
