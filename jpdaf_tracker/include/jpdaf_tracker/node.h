@@ -111,7 +111,7 @@ class Node {
 
         Eigen::Matrix<double, 3,1> rotToYPR(const Eigen::Matrix3d R);
 
-        Eigen::Quaterniond quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1);
+        //Eigen::Quaterniond quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1);
 
 
 

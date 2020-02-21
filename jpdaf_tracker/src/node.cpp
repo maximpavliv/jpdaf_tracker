@@ -620,49 +620,50 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_previous_detection_timestamp].pose.orientation, orientation_previous);
     tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_current_detection_timestamp].pose.orientation, orientation_current);
 
-    //cout << orientation_current/orientation_previous << endl;
-
-    Eigen::Matrix3d R_previous = orientation_previous.normalized().toRotationMatrix();
+/*    Eigen::Matrix3d R_previous = orientation_previous.normalized().toRotationMatrix();
     Eigen::Matrix3d R_current = orientation_current.normalized().toRotationMatrix();
-
-    Eigen::Matrix3d diff = R_current*R_previous.transpose();
-
-
     //Compute yaw, pitch, roll
     //ypr = diff.eulerAngles(2, 1, 0);//pi values sometimes
-    Eigen::Vector3d ypr_from_mat_diff;
-    ypr_from_mat_diff = rotToYPR(diff);
-    
     cout << "---------" << endl;
-    auto omega_from_mat_diff = ypr_from_mat_diff/pose_time_step;
-    cout << "ypr_from_mat_diff: " << endl << ypr_from_mat_diff*180/M_PI << endl;
-    cout << "omega_from_diff: " << endl << omega_from_mat_diff << endl; //Gives very weird results
-
+    Eigen::Matrix3d diff1 = R_current*R_previous.transpose();
+    Eigen::Vector3d ypr_from_mat_diff1;
+    ypr_from_mat_diff1 = rotToYPR(diff1);
+    auto omega_from_mat_diff1 = ypr_from_mat_diff1/pose_time_step;
+    cout << "ypr_from_mat_diff 1: " << endl << ypr_from_mat_diff1*180/M_PI << endl;
+    cout << "omega_from_diff 1: " << endl << omega_from_mat_diff1 << endl; //Gives very weird results
     cout << "---------" << endl;
-
+    Eigen::Matrix3d diff2 = R_previous.transpose()*R_current;
+    Eigen::Vector3d ypr_from_mat_diff2;
+    ypr_from_mat_diff2 = rotToYPR(diff2);
+    auto omega_from_mat_diff2 = ypr_from_mat_diff2/pose_time_step;
+    cout << "ypr_from_mat_diff 2: " << endl << ypr_from_mat_diff2*180/M_PI << endl;
+    cout << "omega_from_diff 2: " << endl << omega_from_mat_diff2 << endl; 
+    cout << "---------" << endl;
     Eigen::Vector3d current_ypr;
     current_ypr = rotToYPR(R_current);
     Eigen::Vector3d previous_ypr;
     previous_ypr = rotToYPR(R_previous);
-
     Eigen::Vector3d ypr_from_euler = current_ypr - previous_ypr;
     auto omega_from_euler = ypr_from_euler/pose_time_step;
     cout << "ypr_from_euler: " << endl << ypr_from_euler*180/M_PI << endl;
     cout << "omega_from_euler: " << endl << omega_from_euler << endl; 
-
     cout << "---------" << endl;
+    auto quaternion_diff1 = orientation_current * orientation_previous.inverse();
+    auto quat_diff_mat1 = quaternion_diff1.normalized().toRotationMatrix();
+    Eigen::Vector3d ypr_from_quat_diff1 = rotToYPR(quat_diff_mat1);
+    auto omega_from_quat_diff1 = ypr_from_quat_diff1/pose_time_step;
+    cout << "ypr_from_quat 1: " << endl << ypr_from_quat_diff1*180/M_PI << endl;
+    cout << "omega_from_quat 1: " << endl << omega_from_quat_diff1 << endl; 
+    cout << "---------" << endl;*/
+//ORDER MATTERS (for matric diff and quat diff approach)!!!!!!!!!!!!!! prev.inv() * current is probably the correct one
 
-    auto quaternion_diff = quat_diff(orientation_current, orientation_previous);
-//    ROS_INFO("Current quat: %f %f %f %f", orientation_current.w(), orientation_current.x(), orientation_current.y(), orientation_current.z());
-//    ROS_INFO("Previous quat: %f %f %f %f", orientation_previous.w(), orientation_previous.x(), orientation_previous.y(), orientation_previous.z());
-//    ROS_INFO("Difference quat: %f %f %f %f", quaternion_diff.w(), quaternion_diff.x(), quaternion_diff.y(), quaternion_diff.z());
-    auto quat_diff_mat = quaternion_diff.normalized().toRotationMatrix();
-    Eigen::Vector3d ypr_from_quat_diff = rotToYPR(quat_diff_mat);
-    auto omega_from_quat_diff = ypr_from_quat_diff/pose_time_step;
-    cout << "ypr_from_quat: " << endl << ypr_from_quat_diff*180/M_PI << endl;
-    cout << "omega_from_quat: " << endl << omega_from_quat_diff << endl; 
+    auto quaternion_diff2 = orientation_previous.inverse() * orientation_current;
+    auto quat_diff_mat2 = quaternion_diff2.normalized().toRotationMatrix();
+    Eigen::Vector3d ypr_from_quat_diff2 = rotToYPR(quat_diff_mat2);
+    auto omega_from_quat_diff2 = ypr_from_quat_diff2/pose_time_step;
+    cout << "ypr_from_quat 2: " << endl << ypr_from_quat_diff2*180/M_PI << endl;
+    cout << "omega_from_quat 2: " << endl << omega_from_quat_diff2 << endl; 
 
-    cout << "---------" << endl;
 
 
     std::vector<geometry_msgs::PoseStamped> temp;
@@ -827,16 +828,17 @@ Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
     return ypr;
 }
 
-Eigen::Quaterniond Node::quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1)
+/*Eigen::Quaterniond Node::quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1)
 {
-    double q1_norm_square = q1.w()*q1.w() + q1.x()*q1.x() + q1.y()*q1.y() + q1.z()*q1.z();
-    Eigen::Quaterniond q1_inv(q1.w()/q1_norm_square, -q1.x()/q1_norm_square, -q1.y()/q1_norm_square, -q1.z()/q1_norm_square);
-    Eigen::Quaterniond d(q1_inv.w()*q2.w() - q1_inv.x()*q2.x() - q1_inv.y()*q2.y() - q1_inv.z()*q2.z(), 
-                         q1_inv.w()*q2.x() + q1_inv.x()*q2.w() + q1_inv.y()*q2.z() - q1_inv.z()*q2.y(),
-                         q1_inv.w()*q2.y() - q1_inv.x()*q2.z() + q1_inv.y()*q2.w() + q1_inv.z()*q2.x(),
-                         q1_inv.w()*q2.z() + q1_inv.x()*q2.y() - q1_inv.y()*q2.x() + q1_inv.z()*q2.w()); 
+    //double q1_norm_square = q1.w()*q1.w() + q1.x()*q1.x() + q1.y()*q1.y() + q1.z()*q1.z();
+    //Eigen::Quaterniond q1_inv(q1.w()/q1_norm_square, -q1.x()/q1_norm_square, -q1.y()/q1_norm_square, -q1.z()/q1_norm_square);
+    //Eigen::Quaterniond d(q1_inv.w()*q2.w() - q1_inv.x()*q2.x() - q1_inv.y()*q2.y() - q1_inv.z()*q2.z(), 
+    //                     q1_inv.w()*q2.x() + q1_inv.x()*q2.w() + q1_inv.y()*q2.z() - q1_inv.z()*q2.y(),
+    //                     q1_inv.w()*q2.y() - q1_inv.x()*q2.z() + q1_inv.y()*q2.w() + q1_inv.z()*q2.x(),
+    //                     q1_inv.w()*q2.z() + q1_inv.x()*q2.y() - q1_inv.y()*q2.x() + q1_inv.z()*q2.w());
+    Eigen::Quaterniond d = q1.inverse() * q2;
     return d;
-}
+}*/
 
 
 //Liangzhe's stuff
