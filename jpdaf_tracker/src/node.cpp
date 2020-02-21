@@ -657,13 +657,30 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     cout << "---------" << endl;*/
 //ORDER MATTERS (for matric diff and quat diff approach)!!!!!!!!!!!!!! prev.inv() * current is probably the correct one
 
-    auto quaternion_diff2 = orientation_previous.inverse() * orientation_current;
+/*    auto quaternion_diff2 = orientation_previous.inverse() * orientation_current;
     auto quat_diff_mat2 = quaternion_diff2.normalized().toRotationMatrix();
     Eigen::Vector3d ypr_from_quat_diff2 = rotToYPR(quat_diff_mat2);
     auto omega_from_quat_diff2 = ypr_from_quat_diff2/pose_time_step;
     cout << "ypr_from_quat 2: " << endl << ypr_from_quat_diff2*180/M_PI << endl;
-    cout << "omega_from_quat 2: " << endl << omega_from_quat_diff2 << endl; 
+    cout << "omega_from_quat 2: " << endl << omega_from_quat_diff2 << endl; */
 
+    Eigen::Matrix3d R_previous = orientation_previous.normalized().toRotationMatrix();
+    Eigen::Matrix3d R_current = orientation_current.normalized().toRotationMatrix();
+    
+    /*Eigen::Matrix3d dA_over_dt = (R_current-R_previous)/pose_time_step;
+    Eigen::Matrix3d W = dA_over_dt*R_previous.transpose();
+    cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
+    Eigen::Vector3d omega_from_W(W(2,1), W(0,2), W(1,0));
+    cout << "omega_from_W: " << endl << omega_from_W << endl;*/
+
+    //Method from https://math.stackexchange.com/questions/668866/how-do-you-find-angular-velocity-given-a-pair-of-3x3-rotation-matrices
+//    Eigen::Matrix3d A = R_current * R_previous.transpose(); //MIGHT BE THE OTHER WAY AROUND!
+    Eigen::Matrix3d A = R_previous.transpose() * R_current; //MIGHT BE THE OTHER WAY AROUND!
+    double theta = acos((A.trace()-1)/2);
+    Eigen::Matrix3d W = (theta*(A-A.transpose())) / (2*(pose_time_step)*sin(theta));
+    cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
+    Eigen::Vector3d omega_from_W(W(2,1), W(0,2), W(1,0));
+    cout << "omega_from_W: " << endl << omega_from_W << endl;
 
 
     std::vector<geometry_msgs::PoseStamped> temp;
