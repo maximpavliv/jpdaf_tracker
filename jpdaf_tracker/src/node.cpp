@@ -673,9 +673,9 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     Eigen::Vector3d omega_from_W(W(2,1), W(0,2), W(1,0));
     cout << "omega_from_W: " << endl << omega_from_W << endl;*/
 
-    //Method from https://math.stackexchange.com/questions/668866/how-do-you-find-angular-velocity-given-a-pair-of-3x3-rotation-matrices
+    //Method from https://math.stackexchange.com/questions/668866/how-do-you-find-angular-velocity-given-a-pair-of-3x3-rotation-matrices CHECK HOW AND WHY
 //    Eigen::Matrix3d A = R_current * R_previous.transpose(); //MIGHT BE THE OTHER WAY AROUND!
-    Eigen::Matrix3d A = R_previous.transpose() * R_current; //MIGHT BE THE OTHER WAY AROUND!
+    Eigen::Matrix3d A = R_previous.transpose() * R_current; //seems correct more or less
     double theta = acos((A.trace()-1)/2);
     Eigen::Matrix3d W = (theta*(A-A.transpose())) / (2*(pose_time_step)*sin(theta));
     cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
@@ -829,7 +829,7 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
 
 
 
-Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
+/*Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
 {
     Eigen::Matrix<double, 3,1> ypr;
     double y, p, r;
@@ -843,53 +843,7 @@ Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
     ypr(2,0) = r;
 
     return ypr;
-}
-
-/*Eigen::Quaterniond Node::quat_diff(Eigen::Quaterniond q2, Eigen::Quaterniond q1)
-{
-    //double q1_norm_square = q1.w()*q1.w() + q1.x()*q1.x() + q1.y()*q1.y() + q1.z()*q1.z();
-    //Eigen::Quaterniond q1_inv(q1.w()/q1_norm_square, -q1.x()/q1_norm_square, -q1.y()/q1_norm_square, -q1.z()/q1_norm_square);
-    //Eigen::Quaterniond d(q1_inv.w()*q2.w() - q1_inv.x()*q2.x() - q1_inv.y()*q2.y() - q1_inv.z()*q2.z(), 
-    //                     q1_inv.w()*q2.x() + q1_inv.x()*q2.w() + q1_inv.y()*q2.z() - q1_inv.z()*q2.y(),
-    //                     q1_inv.w()*q2.y() - q1_inv.x()*q2.z() + q1_inv.y()*q2.w() + q1_inv.z()*q2.x(),
-    //                     q1_inv.w()*q2.z() + q1_inv.x()*q2.y() - q1_inv.y()*q2.x() + q1_inv.z()*q2.w());
-    Eigen::Quaterniond d = q1.inverse() * q2;
-    return d;
 }*/
-
-
-//Liangzhe's stuff
-/*Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
-{
-    Eigen::Matrix<double, 3,1> n = R.block(0,0,3,1);
-    Eigen::Matrix<double, 3,1> o = R.block(0,1,3,1);
-    Eigen::Matrix<double, 3,1> a = R.block(0,2,3,1);
-
-    // check for singularity of euler angle representation
-    double cy = sqrt(R(0,0)*R(0,0)+R(1,0)*R(1,0));
-    bool singularity = cy < 1e-6;
-    Eigen::Matrix<double, 3,1> ypr;
-    double y, p, r;
-    if(!singularity)
-    {
-        y = atan2(n(1,0), n(0,0));
-        p = atan2(-n(2,0), n(0,0)*cos(y)+n(1,0)*sin(y)); //really??
-        r = atan2(a(0,0)*sin(y)-a(1,0)*cos(y), -o(0,0)*sin(y)+o(1,0)*cos(y));
-    }
-    else
-    {
-        y = 0.0f;
-        p = atan2(-R(2,0), cy);
-        r = atan2(-R(1,2), R(1,1));
-        ROS_ERROR("singular");
-    }
-    ypr(0,0) = y;
-    ypr(1,0) = p;
-    ypr(2,0) = r;
-
-    return ypr;
-}*/
-
 
 
 
