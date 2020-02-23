@@ -53,6 +53,10 @@ namespace jpdaf
         ROS_INFO("P_0: %f, %f, %f, %f", P_0_vector[0], P_0_vector[1], P_0_vector[2], P_0_vector[3]);
         ROS_INFO("Number of drones: %d", nb_drones);
         ROS_INFO("Max update time rate: %f", max_update_time_rate);
+        ROS_INFO("Focal length: %f", focal_length);
+        ROS_INFO("Alpha camera: %f", alpha_cam);
+        ROS_INFO("Principal point: %f %f", principal_point(0), principal_point(1));
+
     }
 
 }

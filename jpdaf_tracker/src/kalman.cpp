@@ -68,7 +68,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   B(2,1) = -((z_update(0)-c(0))*(z_update(1)-c(1)))/(alpha*f);
   B(2,2) = -(z_update(0)-c(0))/alpha;
 
-  cout << "B*u: " << endl << B*u;
+  cout << "B*u: " << endl << B*u << endl;
 
 
   x_predict = A*x_update + B*u;

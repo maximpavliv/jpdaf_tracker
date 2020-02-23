@@ -121,7 +121,7 @@ void Node::track(bool called_from_detection)
             }    
             else
             {
-                last_timestamp = pose_buffer_.back().header.stamp.toSec() - 2;//2 seconds of buffer just in case
+                last_timestamp = pose_buffer_.back().header.stamp.toSec() - 1;//2 seconds of buffer just in case
             }
         }
 
