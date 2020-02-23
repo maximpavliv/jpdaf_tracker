@@ -34,6 +34,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
 
     ROS_INFO("Node initialized successfully");
 
+
 }
 
 void Node::timer_callback(const ros::TimerEvent& event)
@@ -112,6 +113,25 @@ void Node::track(bool called_from_detection)
         if(called_from_detection)
         {
             last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+
+            Track tr1(480, 270, 0, 0, params);//ttt
+            tracks_.push_back(tr1);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr2(240, 270, 0, 0, params);//ttt
+            tracks_.push_back(tr2);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr3(720, 270, 0, 0, params);//ttt
+            tracks_.push_back(tr3);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr4(480, 135, 0, 0, params);//ttt
+            tracks_.push_back(tr4);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr5(240, 135, 0, 0, params);//ttt
+            tracks_.push_back(tr5);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr6(720, 135, 0, 0, params);//ttt
+            tracks_.push_back(tr6);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr7(480, 405, 0, 0, params);//ttt
+            tracks_.push_back(tr7);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr8(240, 405, 0, 0, params);//ttt
+            tracks_.push_back(tr8);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+            Track tr9(720, 405, 0, 0, params);//ttt
+            tracks_.push_back(tr9);//ttt //NO TRACK CREATED, OR DISAPPEARS?
         }
         else
         {
@@ -121,7 +141,9 @@ void Node::track(bool called_from_detection)
             }    
             else
             {
-                last_timestamp = pose_buffer_.back().header.stamp.toSec() - 1;//2 seconds of buffer just in case
+                last_timestamp = pose_buffer_.back().header.stamp.toSec() - 1; 
+                    Track tr(0, 0, 0, 0, params);//ttt
+                    tracks_.push_back(tr);//ttt //NO TRACK CREATED, OR DISAPPEARS?
             }
         }
 
@@ -202,7 +224,7 @@ void Node::track(bool called_from_detection)
         draw_tracks_publish_image(last_image);
         publishTracks();
 
-        manage_new_old_tracks(detections, alphas_0, betas_0);
+        //tttmanage_new_old_tracks(detections, alphas_0, betas_0);
 
         if(called_from_detection)
             last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());

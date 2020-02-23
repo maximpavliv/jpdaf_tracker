@@ -25,7 +25,7 @@
       <param name="nb_drones" value="3"/>
       <param name="assoc_cost" value="50"/>
 
-      <param name="max_update_time_rate" value="0.2"/>
+      <param name="max_update_time_rate" value="0.1"/>
 
       <param name="focal_length" value="564.26"/>
       <param name="alpha_cam" value="1.0"/>
