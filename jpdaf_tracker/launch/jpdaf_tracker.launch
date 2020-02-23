@@ -27,6 +27,10 @@
 
       <param name="max_update_time_rate" value="0.2"/>
 
+      <param name="focal_length" value="564.26"/>
+      <param name="alpha_cam" value="1.0"/>
+      <rosparam param="principal_point"> [489.72, 267.87]</rosparam>
+
 
   </node>
   

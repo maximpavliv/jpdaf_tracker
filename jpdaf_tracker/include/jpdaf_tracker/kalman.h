@@ -13,7 +13,7 @@ namespace jpdaf
   {
     public:
       Kalman(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params);
-      void predict(const float dt); 
+      void predict(const float dt, const Eigen::Vector3f omega); 
       void gainUpdate();
       void update(const std::vector< Detection> detections, const std::vector<double> beta, double beta_0); //Added by Max
       inline const Eigen::Matrix2f getS() const
@@ -39,6 +39,10 @@ namespace jpdaf
       Eigen::Vector4f x_update;
       Eigen::Vector2f z_predict;
       Eigen::Vector2f z_update;
+
+      float f;
+      float alpha;
+      Eigen::Vector2f c; //principal point
   };
 }
 

@@ -13,10 +13,10 @@ Track::Track(const float& x, const float& y, const float& vx, const float& vy, T
 }
 
 
-void Track::predict(float dt)
+void Track::predict(float dt, Eigen::Vector3f omega)
 {
     //ROS_INFO("Predicting track %d", id);
-    KF->predict(dt);  
+    KF->predict(dt, omega);  
 }
 
 

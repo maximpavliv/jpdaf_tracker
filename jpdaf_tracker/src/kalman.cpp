@@ -8,11 +8,11 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
 {
 
   //CONTROL INPUT model Matrix
-  B = Eigen::MatrixXf(4, 2);
-  B << 1, 0,
-       0, 0,
-       0, 1,
-       0, 0;
+  B = Eigen::MatrixXf(4, 3);
+  B << 0, 0, 0,
+       0, 0, 0,
+       0, 0, 0,
+       0, 0, 0;
 
   //STATE OBSERVATION MATRIX
   C = Eigen::MatrixXf(2, 4);
@@ -28,6 +28,10 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
 
   T = params.T;
 
+  f = params.focal_length;
+  alpha = params.alpha_cam;
+  c = params.principal_point;
+
   x_update << x, vx, y, vy;
   P_update = params.P_0;
 
@@ -38,7 +42,7 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
 }
 
 
-void Kalman::predict(const float dt) //added by Max
+void Kalman::predict(const float dt, const Eigen::Vector3f omega) 
 {
   Eigen::Matrix4f A;
   A << 1, dt, 0, 0,
@@ -55,9 +59,18 @@ void Kalman::predict(const float dt) //added by Max
   Q = G * T * G.transpose();
 
 //Need to write input here
-  Eigen::Vector2f u;
-  u << 0, 0;  //To change here
+  Eigen::Vector3f u = omega*dt;
+  B(0,0) = ((z_update(0)-c(0))*(z_update(1)-c(1)))/f;
+  B(0,1) = -(f*alpha + (z_update(0)-c(0))*(z_update(0)-c(0))/(f*alpha));
+  B(0,2) = alpha*(z_update(1)-c(1));
   
+  B(2,0) = (f + (z_update(1)-c(1))*(z_update(1)-c(1))/f); 
+  B(2,1) = -((z_update(0)-c(0))*(z_update(1)-c(1)))/(alpha*f);
+  B(2,2) = -(z_update(0)-c(0))/alpha;
+
+  cout << "B*u: " << endl << B*u;
+
+
   x_predict = A*x_update + B*u;
   //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;

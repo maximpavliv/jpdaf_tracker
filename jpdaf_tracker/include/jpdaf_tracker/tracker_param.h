@@ -28,6 +28,10 @@ namespace jpdaf
 
       float max_update_time_rate;
 
+      float focal_length;
+      float alpha_cam; //pixel size ratio
+      Eigen::Vector2f principal_point;
+
       TrackerParam(ros::NodeHandle nh_priv_);
       TrackerParam(){};
 

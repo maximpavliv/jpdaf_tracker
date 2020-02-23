@@ -33,6 +33,13 @@ namespace jpdaf
 
         nh_priv_.getParam("max_update_time_rate", max_update_time_rate);
 
+        nh_priv_.getParam("focal_length", focal_length);
+        nh_priv_.getParam("alpha_cam", alpha_cam);
+        std::vector<float> principal_point_vector;
+        nh_priv_.getParam("principal_point", principal_point_vector);
+        principal_point << principal_point_vector[0], principal_point_vector[1];
+
+
         ROS_INFO("===========================================");
         ROS_INFO("Pd: %f", pd);
         ROS_INFO("Gamma: %f", gamma);

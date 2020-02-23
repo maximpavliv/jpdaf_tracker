@@ -16,7 +16,7 @@ namespace jpdaf
   {
     public:
       Track(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params);
-      void predict(float dt);
+      void predict(float dt, Eigen::Vector3f omega);
       void setId(const int _id)
       {
 	    id = _id;

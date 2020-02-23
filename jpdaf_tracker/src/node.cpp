@@ -147,12 +147,12 @@ void Node::track(bool called_from_detection)
         }
 
 //        ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_ros_time_now_debug);
-        compute_timescaled_orientation_change_flush_pose((double)(last_timestamp + time_step), (double)time_step);
+        auto omega = compute_angular_velocity((double)(last_timestamp + time_step), (double)time_step);
         
         //PREDICTION
         for(uint t=0; t<tracks_.size(); t++)
         {
-            tracks_[t].predict(time_step);
+            tracks_[t].predict(time_step, omega);
         }
         //------------
 
@@ -594,16 +594,17 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
     }
 }
 
-void Node::compute_timescaled_orientation_change_flush_pose(double detection_time_stamp, double detection_time_step)
+Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, double detection_time_step)
 {
     ROS_INFO("Pose buffer length: %d", (int)pose_buffer_.size());
-    ROS_INFO("Detection timestamp, %f, detection timestep: %f", detection_time_stamp, detection_time_step);
+    //ROS_INFO("Detection timestamp, %f, detection timestep: %f", detection_time_stamp, detection_time_step);
 
 //    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
 
     if(!pose_buffer_ok(detection_time_stamp, detection_time_step))
     {
-        return; //TODO return 0
+        Eigen::Vector3f omega_from_W(0, 0, 0);
+        return omega_from_W;
     }
 
     int pose_buffer_index_current_detection_timestamp = 0;
@@ -627,7 +628,7 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     }
 
     double pose_time_step = pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec() - pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec();
-    ROS_INFO("Selected pose buffer timestamps: %f , %f , pose time step: %f", pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec(), pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec(), pose_time_step);
+    //ROS_INFO("Selected pose buffer timestamps: %f , %f , pose time step: %f", pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec(), pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec(), pose_time_step);
     //Compute orientation shift rotation
 
     Eigen::Quaterniond orientation_previous;
@@ -693,9 +694,9 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     Eigen::Matrix3d A = R_previous.transpose() * R_current; //seems correct more or less
     double theta = acos((A.trace()-1)/2);
     Eigen::Matrix3d W = (theta*(A-A.transpose())) / (2*(pose_time_step)*sin(theta));
-    cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
-    Eigen::Vector3d omega_from_W(W(2,1), W(0,2), W(1,0));
-    cout << "omega_from_W: " << endl << omega_from_W << endl;
+    //cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
+    Eigen::Vector3f omega_from_W((float)W(2,1), (float)W(0,2), (float)W(1,0));
+    //cout << "omega_from_W: " << endl << omega_from_W << endl;
 
 
     std::vector<geometry_msgs::PoseStamped> temp;
@@ -706,10 +707,7 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     pose_buffer_.clear();
     pose_buffer_ = temp;
 
-    //return omega? Dont forget to return omega 0 if buffer not ok!
-
-    //But first: write model (how to use omega in kalman)!!
-    //Even before: check how yor is computed!!
+    return omega_from_W;
 }
 
 bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_step)

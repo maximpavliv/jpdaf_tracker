@@ -81,7 +81,7 @@ class Node {
 
         void track(bool called_from_detection);
 
-        void compute_timescaled_orientation_change_flush_pose(double detection_time_stamp, double detection_time_step);
+        Eigen::Vector3f compute_angular_velocity(double detection_time_stamp, double detection_time_step);
         bool pose_buffer_ok(double detection_time_stamp, double detection_time_step);
 
         void publishTracks();
