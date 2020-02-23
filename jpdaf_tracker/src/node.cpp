@@ -108,6 +108,24 @@ void Node::track(bool called_from_detection)
             prev_unassoc_detections.push_back(detections[d]);
         }
         track_init = false;
+
+        if(called_from_detection)
+        {
+            last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+        }
+        else
+        {
+            if(pose_buffer_.empty())
+            {
+                track_init = true;
+            }    
+            else
+            {
+                last_timestamp = pose_buffer_.back().header.stamp.toSec() - 2;//2 seconds of buffer just in case
+            }
+        }
+
+
     }
     else
     {
@@ -186,16 +204,11 @@ void Node::track(bool called_from_detection)
 
         manage_new_old_tracks(detections, alphas_0, betas_0);
 
+        if(called_from_detection)
+            last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+        else
+            last_timestamp += params.max_update_time_rate;
     }
-    if(called_from_detection)
-    {
-        last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
-    }
-    else
-    {
-        last_timestamp += params.max_update_time_rate;
-    }
-//    last_timestamp_ros_time_now_debug = ros::Time::now().toSec();
 
     bounding_boxes_msgs_buffer_.clear();
     image_buffer_.clear();
@@ -704,7 +717,7 @@ bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_ste
         ROS_FATAL("pose buffer is too long, there is a problem somewhere");
         exit(1);
     }
-//    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
+    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
     if((int)pose_buffer_.size() == 0)
     {
         ROS_ERROR("Pose buffer length is 0. Assuming no orientation change");
