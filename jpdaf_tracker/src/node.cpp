@@ -599,6 +599,8 @@ void Node::compute_timescaled_orientation_change_flush_pose(double detection_tim
     ROS_INFO("Pose buffer length: %d", (int)pose_buffer_.size());
     ROS_INFO("Detection timestamp, %f, detection timestep: %f", detection_time_stamp, detection_time_step);
 
+//    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
+
     if(!pose_buffer_ok(detection_time_stamp, detection_time_step))
     {
         return; //TODO return 0
@@ -717,7 +719,6 @@ bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_ste
         ROS_FATAL("pose buffer is too long, there is a problem somewhere");
         exit(1);
     }
-    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
     if((int)pose_buffer_.size() == 0)
     {
         ROS_ERROR("Pose buffer length is 0. Assuming no orientation change");
