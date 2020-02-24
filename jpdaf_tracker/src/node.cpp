@@ -114,24 +114,25 @@ void Node::track(bool called_from_detection)
         {
             last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
 
-            Track tr1(480, 270, 0, 0, params);//ttt
-            tracks_.push_back(tr1);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr2(240, 270, 0, 0, params);//ttt
-            tracks_.push_back(tr2);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr3(720, 270, 0, 0, params);//ttt
-            tracks_.push_back(tr3);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr4(480, 135, 0, 0, params);//ttt
-            tracks_.push_back(tr4);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr5(240, 135, 0, 0, params);//ttt
-            tracks_.push_back(tr5);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr6(720, 135, 0, 0, params);//ttt
-            tracks_.push_back(tr6);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr7(480, 405, 0, 0, params);//ttt
-            tracks_.push_back(tr7);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr8(240, 405, 0, 0, params);//ttt
-            tracks_.push_back(tr8);//ttt //NO TRACK CREATED, OR DISAPPEARS?
-            Track tr9(720, 405, 0, 0, params);//ttt
-            tracks_.push_back(tr9);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+/*            Track tr1(480, 270, 0, 0, params);
+            tracks_.push_back(tr1);
+            Track tr2(240, 270, 0, 0, params);
+            tracks_.push_back(tr2);
+            Track tr3(720, 270, 0, 0, params);
+            tracks_.push_back(tr3);
+            Track tr4(480, 135, 0, 0, params);
+            tracks_.push_back(tr4);
+            Track tr5(240, 135, 0, 0, params);
+            tracks_.push_back(tr5);
+            Track tr6(720, 135, 0, 0, params);
+            tracks_.push_back(tr6);
+            Track tr7(480, 405, 0, 0, params);
+            tracks_.push_back(tr7);
+            Track tr8(240, 405, 0, 0, params);
+            tracks_.push_back(tr8);
+            Track tr9(720, 405, 0, 0, params);
+            tracks_.push_back(tr9);*/
+            last_timestamp_measured = ros::Time::now().toSec();
         }
         else
         {
@@ -142,8 +143,25 @@ void Node::track(bool called_from_detection)
             else
             {
                 last_timestamp = pose_buffer_.back().header.stamp.toSec() - 1; 
-                    Track tr(0, 0, 0, 0, params);//ttt
-                    tracks_.push_back(tr);//ttt //NO TRACK CREATED, OR DISAPPEARS?
+/*            Track tr1(480, 270, 0, 0, params);
+            tracks_.push_back(tr1);
+            Track tr2(240, 270, 0, 0, params);
+            tracks_.push_back(tr2);
+            Track tr3(720, 270, 0, 0, params);
+            tracks_.push_back(tr3);
+            Track tr4(480, 135, 0, 0, params);
+            tracks_.push_back(tr4);
+            Track tr5(240, 135, 0, 0, params);
+            tracks_.push_back(tr5);
+            Track tr6(720, 135, 0, 0, params);
+            tracks_.push_back(tr6);
+            Track tr7(480, 405, 0, 0, params);
+            tracks_.push_back(tr7);
+            Track tr8(240, 405, 0, 0, params);
+            tracks_.push_back(tr8);
+            Track tr9(720, 405, 0, 0, params);
+            tracks_.push_back(tr9);*/
+            last_timestamp_measured = ros::Time::now().toSec();
             }
         }
 
@@ -159,16 +177,17 @@ void Node::track(bool called_from_detection)
         }
         else
         {
-            time_step = params.max_update_time_rate;
+            //time_step = params.max_update_time_rate;
+            time_step = ros::Time::now().toSec() - last_timestamp_measured;
         }
         //ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
         if(time_step < 0)
         {
             ROS_WARN("Negative time step! %f", time_step); // happens sometimes, because the timer is not totally precise. The negative timestep should be negligible,and is then set to 0
-            time_step = 0;
+            time_step = 0;//TODO Check if still happens! Changed the algorithm a bit, so it may be solved
         }
 
-//        ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_ros_time_now_debug);
+        //ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_measured);
         auto omega = compute_angular_velocity((double)(last_timestamp + time_step), (double)time_step);
         
         //PREDICTION
@@ -224,12 +243,18 @@ void Node::track(bool called_from_detection)
         draw_tracks_publish_image(last_image);
         publishTracks();
 
-        //tttmanage_new_old_tracks(detections, alphas_0, betas_0);
+        manage_new_old_tracks(detections, alphas_0, betas_0); //ttt
 
         if(called_from_detection)
+        {
             last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+        }
         else
-            last_timestamp += params.max_update_time_rate;
+        {
+            //last_timestamp += params.max_update_time_rate;
+            last_timestamp += ros::Time::now().toSec() - last_timestamp_measured;
+        }
+        last_timestamp_measured = ros::Time::now().toSec();
     }
 
     bounding_boxes_msgs_buffer_.clear();
@@ -246,7 +271,6 @@ Eigen::MatrixXf Node::association_matrix(const std::vector<Detection> detections
 
     //Eigen::MatrixXf evaluation_mat(detections.size(), tracks_.size());
     //evaluation_mat.setZero();
-
 
     for(uint i=0; i<detections.size(); i++) {q(i,0)=1;} // Setting first column to 1
     
@@ -651,8 +675,8 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
 
     double pose_time_step = pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec() - pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec();
     //ROS_INFO("Selected pose buffer timestamps: %f , %f , pose time step: %f", pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec(), pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec(), pose_time_step);
-    //Compute orientation shift rotation
-
+    
+    //Compute omega
     Eigen::Quaterniond orientation_previous;
     Eigen::Quaterniond orientation_current;
     tf::quaternionMsgToEigen(pose_buffer_[pose_buffer_index_previous_detection_timestamp].pose.orientation, orientation_previous);
@@ -718,8 +742,17 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
     Eigen::Matrix3d W = (theta*(A-A.transpose())) / (2*(pose_time_step)*sin(theta));
     //cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
     Eigen::Vector3f omega_from_W((float)W(2,1), (float)W(0,2), (float)W(1,0));
-    //cout << "omega_from_W: " << endl << omega_from_W << endl;
+    
+    cout << "omega_from_W: " << endl << omega_from_W << endl;
 
+    Eigen::Matrix3f R_rot;
+    R_rot << 0, -1, 0,
+             0, 0, -1,
+             1, 0, 0;
+
+    Eigen::Vector3f omega_rotated = R_rot * omega_from_W;
+
+    cout << "omega rotated: " << endl << omega_rotated << endl;
 
     std::vector<geometry_msgs::PoseStamped> temp;
     for(int i=pose_buffer_index_previous_detection_timestamp; i<(int)pose_buffer_.size(); i++)
@@ -729,7 +762,7 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
     pose_buffer_.clear();
     pose_buffer_ = temp;
 
-    return omega_from_W;
+    return omega_rotated;
 }
 
 bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_step)
@@ -821,7 +854,7 @@ void Node::publishTracks()
             trs_msg.tracks.push_back(tr_msg);
         }
     }
-    //add timestamp to header!!
+    //TODO add timestamp to header!!
     
     tracks_pub_.publish(trs_msg);
 }
@@ -859,25 +892,6 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
     }
     return nonzero_elements;
 }
-
-
-
-
-/*Eigen::Matrix<double, 3,1> Node::rotToYPR(const Eigen::Matrix3d R)
-{
-    Eigen::Matrix<double, 3,1> ypr;
-    double y, p, r;
-
-    y = atan2(R(1,0), R(0,0));
-    p = atan2(-R(2,0), sqrt(R(2,1)*R(2,1)+R(2,2)*R(2,2)));
-    r = atan2(R(2,1), R(2,2));
-
-    ypr(0,0) = y;
-    ypr(1,0) = p;
-    ypr(2,0) = r;
-
-    return ypr;
-}*/
 
 
 

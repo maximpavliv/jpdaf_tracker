@@ -37,7 +37,6 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
 
   //cout << "x_update" << endl << x_update << endl;
   //cout << "P_update" << endl << P_update << endl;
-
   
 }
 
@@ -58,7 +57,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   Eigen::Matrix4f Q;
   Q = G * T * G.transpose();
 
-//Need to write input here
+  //Need to write input here
   Eigen::Vector3f u = omega*dt;
   B(0,0) = ((z_update(0)-c(0))*(z_update(1)-c(1)))/f;
   B(0,1) = -(f*alpha + (z_update(0)-c(0))*(z_update(0)-c(0))/(f*alpha));
@@ -68,8 +67,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   B(2,1) = -((z_update(0)-c(0))*(z_update(1)-c(1)))/(alpha*f);
   B(2,2) = -(z_update(0)-c(0))/alpha;
 
-  cout << "B*u: " << endl << B*u << endl;
-
+  //cout << "B*u: " << endl << B*u << endl;
 
   x_predict = A*x_update + B*u;
   //cout << "P_update: " << endl << P_update << endl;
@@ -98,7 +96,7 @@ void Kalman::gainUpdate()
 
 void Kalman::update(const std::vector<Detection> detections, const std::vector<double> beta, double beta_0)
 {
-/*  std::vector<Eigen::Vector2f> nus;
+  std::vector<Eigen::Vector2f> nus;
   for(uint i=0; i<detections.size(); i++)
   {
       nus.push_back(detections[i].getVect() - z_predict);
@@ -109,14 +107,13 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   for(uint i=0; i<detections.size(); i++)
   {
       nu += beta[i] * nus[i];
-  }*/
+  }
     
-  x_update = x_predict;
-//  x_update = x_predict + K * nu;
+  x_update = x_predict + K * nu;
 
   //cout << "x_update" << endl << x_update << endl;
 
-/*  Eigen::Matrix4f P_c;
+  Eigen::Matrix4f P_c;
   P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
 
   Eigen::Matrix4f P_tild;
@@ -135,7 +132,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   if(P_update.determinant() < 0)
   {
     ROS_ERROR("Update covariance determinant is negative! %f", P_update.determinant());
-  }*/
+  }
   //cout << "P_update" << endl << P_update << endl;
 
   z_update = C * x_update;

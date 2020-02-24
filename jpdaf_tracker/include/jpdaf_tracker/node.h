@@ -56,7 +56,7 @@ class Node {
 
         double last_timestamp;
 
-//        double last_timestamp_ros_time_now_debug;
+        double last_timestamp_measured;
 
         std::vector<Track> tracks_;
         std::vector<int> lost_tracks;
@@ -77,7 +77,6 @@ class Node {
         //void gtCallback(const nav_msgs::OdometryConstPtr& msg);
         
         void timer_callback(const ros::TimerEvent& event);
-//        void timer_callback(const ros::TimerEvent& event);
 
         void track(bool called_from_detection);
 
@@ -109,7 +108,6 @@ class Node {
 
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 
-//        Eigen::Matrix<double, 3,1> rotToYPR(const Eigen::Matrix3d R);
 
 
 
