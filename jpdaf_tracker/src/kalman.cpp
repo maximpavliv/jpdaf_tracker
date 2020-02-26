@@ -65,24 +65,40 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   
   B(2,0) = (f + (z_update(1)-c(1))*(z_update(1)-c(1))/f); 
   B(2,1) = -((z_update(0)-c(0))*(z_update(1)-c(1)))/(alpha*f);
-  B(2,2) = -(z_update(0)-c(0))/alpha;
+  
 
   //cout << "B*u: " << endl << B*u << endl;
 
   x_predict = A*x_update + B*u;
   //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;
-  //cout << "P_predict: " << endl << P_predict << endl;
+  cout << "P_predict: " << endl << P_predict << endl;
   if(P_predict.determinant() < 0)
   {
-    ROS_ERROR("Predicted covariance determinant is negative! %f", P_predict.determinant());
+    ROS_FATAL("Predicted covariance determinant is negative! %f", P_predict.determinant());
+    exit(0); //added to find bugs
+  }
+  if((isnan(P_predict.array())).any()) //not sure if this is the way
+  {
+    ROS_FATAL("P_predict contains NaNs");
+    exit(0);//added to find bugs
   }
 
   z_predict = C * x_predict;
 
   //Error Measurement Covariance Matrix
   S = C * P_predict * C.transpose() + R;
-  //cout << "S: " << endl << S << endl;    
+  if(S.determinant() < 0)
+  {
+    ROS_FATAL("S determinant is negative! %f", P_predict.determinant());
+    exit(0);//added to find bugs
+  }
+  if((isnan(S.array())).any()) //not sure if this is the way
+  {
+    ROS_FATAL("S contains NaNs");
+    exit(0);//added to find bugs
+  }
+  cout << "S: " << endl << S << endl;    
 
 
   return;
@@ -131,9 +147,16 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;
   if(P_update.determinant() < 0)
   {
-    ROS_ERROR("Update covariance determinant is negative! %f", P_update.determinant());
+    ROS_FATAL("Update covariance determinant is negative! %f", P_update.determinant());
+    exit(0);//added to find bugs
   }
-  //cout << "P_update" << endl << P_update << endl;
+  if((isnan(P_update.array())).any()) //not sure if this is the way
+  {
+    ROS_FATAL("P_update contains NaNs"); //TODO DEBUG HERE!!!!!!!!!!!!!!
+    exit(0);//added to find bugs
+  }
+
+  cout << "P_update" << endl << P_update << endl;
 
   z_update = C * x_update;
 

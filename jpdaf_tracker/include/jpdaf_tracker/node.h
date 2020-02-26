@@ -54,9 +54,9 @@ class Node {
         image_transport::Publisher image_pub_;
         ros::Publisher tracks_pub_;
 
-        double last_timestamp;
-
-        double last_timestamp_measured;
+        double last_timestamp_synchronized;
+        double last_timestamp_from_rostime;
+        bool last_track_from_detection;
 
         std::vector<Track> tracks_;
         std::vector<int> lost_tracks;

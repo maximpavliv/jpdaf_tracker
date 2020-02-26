@@ -112,7 +112,7 @@ void Node::track(bool called_from_detection)
 
         if(called_from_detection)
         {
-            last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+            last_timestamp_synchronized = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
 
 /*            Track tr1(480, 270, 0, 0, params);
             tracks_.push_back(tr1);
@@ -132,7 +132,8 @@ void Node::track(bool called_from_detection)
             tracks_.push_back(tr8);
             Track tr9(720, 405, 0, 0, params);
             tracks_.push_back(tr9);*/
-            last_timestamp_measured = ros::Time::now().toSec();
+            last_timestamp_from_rostime = ros::Time::now().toSec();
+            last_track_from_detection = true;
         }
         else
         {
@@ -142,26 +143,27 @@ void Node::track(bool called_from_detection)
             }    
             else
             {
-                last_timestamp = pose_buffer_.back().header.stamp.toSec() - 1; 
-/*            Track tr1(480, 270, 0, 0, params);
-            tracks_.push_back(tr1);
-            Track tr2(240, 270, 0, 0, params);
-            tracks_.push_back(tr2);
-            Track tr3(720, 270, 0, 0, params);
-            tracks_.push_back(tr3);
-            Track tr4(480, 135, 0, 0, params);
-            tracks_.push_back(tr4);
-            Track tr5(240, 135, 0, 0, params);
-            tracks_.push_back(tr5);
-            Track tr6(720, 135, 0, 0, params);
-            tracks_.push_back(tr6);
-            Track tr7(480, 405, 0, 0, params);
-            tracks_.push_back(tr7);
-            Track tr8(240, 405, 0, 0, params);
-            tracks_.push_back(tr8);
-            Track tr9(720, 405, 0, 0, params);
-            tracks_.push_back(tr9);*/
-            last_timestamp_measured = ros::Time::now().toSec();
+                last_timestamp_synchronized = pose_buffer_.back().header.stamp.toSec() - 1; 
+/*              Track tr1(480, 270, 0, 0, params);
+                tracks_.push_back(tr1);
+                Track tr2(240, 270, 0, 0, params);
+                tracks_.push_back(tr2);
+                Track tr3(720, 270, 0, 0, params);
+                tracks_.push_back(tr3);
+                Track tr4(480, 135, 0, 0, params);
+                tracks_.push_back(tr4);
+                Track tr5(240, 135, 0, 0, params);
+                tracks_.push_back(tr5);
+                Track tr6(720, 135, 0, 0, params);
+                tracks_.push_back(tr6);
+                Track tr7(480, 405, 0, 0, params);
+                tracks_.push_back(tr7);
+                Track tr8(240, 405, 0, 0, params);
+                tracks_.push_back(tr8);
+                Track tr9(720, 405, 0, 0, params);
+                tracks_.push_back(tr9);*/
+                last_timestamp_from_rostime = ros::Time::now().toSec();
+                last_track_from_detection = false;
             }
         }
 
@@ -171,24 +173,27 @@ void Node::track(bool called_from_detection)
     {
         cout << "Currently tracked tracks indexes: " << endl; for(auto tr : tracks_){cout << tr.getId() << " ";} cout << endl;
         double time_step;
-        if(called_from_detection)
+        
+        if(called_from_detection && last_track_from_detection)
         {
-            time_step = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec()) - last_timestamp;
+            time_step = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec()) - last_timestamp_synchronized;
         }
         else
         {
-            //time_step = params.max_update_time_rate;
-            time_step = ros::Time::now().toSec() - last_timestamp_measured;
+            time_step = ros::Time::now().toSec() - last_timestamp_from_rostime;
         }
-        //ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
+        
+        ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
         if(time_step < 0)
         {
-            ROS_WARN("Negative time step! %f", time_step); // happens sometimes, because the timer is not totally precise. The negative timestep should be negligible,and is then set to 0
-            time_step = 0;//TODO Check if still happens! Changed the algorithm a bit, so it may be solved
+//            ROS_WARN("Negative time step! %f", time_step); // happens sometimes, because the timer is not totally precise. The negative timestep should be negligible,and is then set to 0
+//            time_step = 0;//TODO Check if still happens! Changed the algorithm a bit, so it may be solved
+            ROS_FATAL("Negative time step! %f", time_step);//TODO DEBUG HERE!!!!!!!!!!!!!!
+            exit(0);    
         }
 
-        //ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_measured);
-        auto omega = compute_angular_velocity((double)(last_timestamp + time_step), (double)time_step);
+        //ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_from_rostime);
+        auto omega = compute_angular_velocity((double)(last_timestamp_synchronized + time_step), (double)time_step);
         
         //PREDICTION
         for(uint t=0; t<tracks_.size(); t++)
@@ -214,7 +219,7 @@ void Node::track(bool called_from_detection)
         auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
         ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
-        /*cout << "hypothesis matrices and their respective probabilities:" << endl;
+/*        cout << "hypothesis matrices and their respective probabilities:" << endl;
         for(uint h=0; h<hypothesis_mats.size(); h++)
         {
             cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
@@ -245,16 +250,18 @@ void Node::track(bool called_from_detection)
 
         manage_new_old_tracks(detections, alphas_0, betas_0); //ttt
 
+        //Update of variables for next call
         if(called_from_detection)
         {
-            last_timestamp = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+            last_timestamp_synchronized = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
+            last_track_from_detection = true;
         }
         else
         {
-            //last_timestamp += params.max_update_time_rate;
-            last_timestamp += ros::Time::now().toSec() - last_timestamp_measured;
+            last_timestamp_synchronized += ros::Time::now().toSec() - last_timestamp_from_rostime;
+            last_track_from_detection = false;
         }
-        last_timestamp_measured = ros::Time::now().toSec();
+        last_timestamp_from_rostime = ros::Time::now().toSec();
     }
 
     bounding_boxes_msgs_buffer_.clear();
@@ -435,6 +442,7 @@ double Node::probability_of_hypothesis_unnormalized(Eigen::MatrixXf hypothesis, 
                 ROS_ERROR("hypothesis matrix uncorrect, multiple sources for same measure! If this happens there is an error in the code");
             track_index = track_indexes[0] - 1;
             y_tilds.push_back(detections[measurement_index].getVect() - tracks_[track_index].get_z_predict());
+            cout << "y_tild: " << endl << detections[measurement_index].getVect() - tracks_[track_index].get_z_predict() << endl;
             Ss.push_back(tracks_[track_index].S());
         }
 
@@ -743,7 +751,7 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
     //cout << "W: (check if is skew symetric)" << endl << W << endl; // not really
     Eigen::Vector3f omega_from_W((float)W(2,1), (float)W(0,2), (float)W(1,0));
     
-    cout << "omega_from_W: " << endl << omega_from_W << endl;
+    //cout << "omega_from_W: " << endl << omega_from_W << endl;
 
     Eigen::Matrix3f R_rot;
     R_rot << 0, -1, 0,
@@ -752,7 +760,7 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
 
     Eigen::Vector3f omega_rotated = R_rot * omega_from_W;
 
-    cout << "omega rotated: " << endl << omega_rotated << endl;
+    //cout << "omega rotated: " << endl << omega_rotated << endl;
 
     std::vector<geometry_msgs::PoseStamped> temp;
     for(int i=pose_buffer_index_previous_detection_timestamp; i<(int)pose_buffer_.size(); i++)
@@ -784,8 +792,10 @@ bool Node::pose_buffer_ok(double detection_time_stamp, double detection_time_ste
     }
     else if(detection_time_stamp - pose_buffer_.back().header.stamp.toSec() > 0) 
     {
-        ROS_ERROR("The pose buffer is running too late compaired to the detections. Assuming no orientation change");
-        return false;
+//        ROS_ERROR("The pose buffer is running too late compaired to the detections. Assuming no orientation change");
+//        return false;
+        ROS_FATAL("The pose buffer is running too late compaired to the detections. Assuming no orientation change");
+        exit(0);
     }
     else if(pose_buffer_.front().header.stamp.toSec() - (detection_time_stamp-detection_time_step) >= 0)
     {
