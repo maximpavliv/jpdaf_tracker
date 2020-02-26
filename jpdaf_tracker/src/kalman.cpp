@@ -70,14 +70,14 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   B(2,1) = -((z_update(0)-c(0))*(z_update(1)-c(1)))/(alpha*f);
   B(2,2) = -(z_update(0)-c(0))/alpha;
   
-  //cout << "B*u: " << endl << B*u << endl;
+  cout << "B*u: " << endl << B*u << endl;
 
   x_predict = A*x_update + B*u;
 
-  cout << "x_predict: " << endl << x_predict << endl;
+//  cout << "x_predict: " << endl << x_predict << endl;
   //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;
-  cout << "P_predict: " << endl << P_predict << endl;
+//  cout << "P_predict: " << endl << P_predict << endl;
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
   if(P_predict.determinant() < 0)
@@ -97,11 +97,10 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   }
 
   z_predict = C * x_predict;
-  cout << "z_predict: " << endl << z_predict << endl;
 
   //Error Measurement Covariance Matrix
   S = C * P_predict * C.transpose() + R;
-  cout << "S: " << endl << S << endl; 
+  //cout << "S: " << endl << S << endl; 
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
@@ -122,7 +121,7 @@ void Kalman::gainUpdate()
 
 void Kalman::update(const std::vector<Detection> detections, const std::vector<double> beta, double beta_0)
 {
-  std::vector<Eigen::Vector2f> nus;
+/*  std::vector<Eigen::Vector2f> nus;
   for(uint i=0; i<detections.size(); i++)
   {
       nus.push_back(detections[i].getVect()-z_predict);
@@ -135,19 +134,19 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
       nu += beta[i] * nus[i];
   }
     
-  x_update = x_predict + K * nu;
+  x_update = x_predict + K * nu;*/
   x_update = x_predict;//ttt
 
   //cout << "x_update" << endl << x_update << endl;
 
-  Eigen::Matrix4f P_c;
+/*  Eigen::Matrix4f P_c;
   P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
 
   Eigen::Matrix4f P_tild;
   Eigen::Matrix2f temp_sum;
-  temp_sum << 0, 0, 0, 0;
+  temp_sum << 0, 0, 0, 0;*/
 
-  for(uint i=0; i<detections.size(); i++)
+/*  for(uint i=0; i<detections.size(); i++)
   {
       temp_sum += beta[i]*nus[i]*nus[i].transpose();
   }
@@ -156,18 +155,18 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   P_tild = K * temp_sum * K.transpose();
 
                 
-  P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;
-  cout << "P_update" << endl << P_update << endl;
+  P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;*/
+  //cout << "P_update" << endl << P_update << endl;
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
-  if(P_update.determinant() < 0)
+/*  if(P_update.determinant() < 0)
   {
     ROS_FATAL("Update covariance determinant is negative! %f", P_update.determinant());
     exit(0);
   }
 
-  z_update = C * x_update;
+  z_update = C * x_update;*/
 
 }
 

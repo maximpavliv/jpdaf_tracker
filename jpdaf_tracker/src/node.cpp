@@ -114,24 +114,8 @@ void Node::track(bool called_from_detection)
         {
             last_timestamp_synchronized = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
 
-            /*Track tr1(480, 270, 0, 0, params);
-            tracks_.push_back(tr1);
-            Track tr2(240, 270, 0, 0, params);
-            tracks_.push_back(tr2);
-            Track tr3(720, 270, 0, 0, params);
-            tracks_.push_back(tr3);
-            Track tr4(480, 135, 0, 0, params);
-            tracks_.push_back(tr4);
-            Track tr5(240, 135, 0, 0, params);
-            tracks_.push_back(tr5);
-            Track tr6(720, 135, 0, 0, params);
-            tracks_.push_back(tr6);
-            Track tr7(480, 405, 0, 0, params);
-            tracks_.push_back(tr7);
-            Track tr8(240, 405, 0, 0, params);
-            tracks_.push_back(tr8);
-            Track tr9(720, 405, 0, 0, params);
-            tracks_.push_back(tr9);*///ttt
+            create_tracks_test_input();//ttt
+            
             last_timestamp_from_rostime = ros::Time::now().toSec();
             last_track_from_detection = true;
         }
@@ -144,24 +128,8 @@ void Node::track(bool called_from_detection)
             else
             {
                 last_timestamp_synchronized = pose_buffer_.back().header.stamp.toSec() - 1; 
-                /*Track tr1(480, 270, 0, 0, params);
-                tracks_.push_back(tr1);
-                Track tr2(240, 270, 0, 0, params);
-                tracks_.push_back(tr2);
-                Track tr3(720, 270, 0, 0, params);
-                tracks_.push_back(tr3);
-                Track tr4(480, 135, 0, 0, params);
-                tracks_.push_back(tr4);
-                Track tr5(240, 135, 0, 0, params);
-                tracks_.push_back(tr5);
-                Track tr6(720, 135, 0, 0, params);
-                tracks_.push_back(tr6);
-                Track tr7(480, 405, 0, 0, params);
-                tracks_.push_back(tr7);
-                Track tr8(240, 405, 0, 0, params);
-                tracks_.push_back(tr8);
-                Track tr9(720, 405, 0, 0, params);
-                tracks_.push_back(tr9);*///ttt
+                create_tracks_test_input();//ttt
+
                 last_timestamp_from_rostime = ros::Time::now().toSec();
                 last_track_from_detection = false;
             }
@@ -246,7 +214,7 @@ void Node::track(bool called_from_detection)
         draw_tracks_publish_image(last_image);
         publishTracks();
 
-        manage_new_old_tracks(detections, alphas_0, betas_0); //ttt
+        //manage_new_old_tracks(detections, alphas_0, betas_0); //ttt
 
         //Update of variables for next call
         if(called_from_detection)
@@ -440,7 +408,7 @@ double Node::probability_of_hypothesis_unnormalized(Eigen::MatrixXf hypothesis, 
                 ROS_ERROR("hypothesis matrix uncorrect, multiple sources for same measure! If this happens there is an error in the code");
             track_index = track_indexes[0] - 1;
             y_tilds.push_back(detections[measurement_index].getVect() - tracks_[track_index].get_z_predict());
-            cout << "y_tild: " << endl << detections[measurement_index].getVect() - tracks_[track_index].get_z_predict() << endl;
+            //cout << "y_tild: " << endl << detections[measurement_index].getVect() - tracks_[track_index].get_z_predict() << endl;
             Ss.push_back(tracks_[track_index].S());
         }
 
@@ -901,6 +869,63 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
     return nonzero_elements;
 }
 
+void Node::create_tracks_test_input()
+{
+                Track tr1(0, 0, 0, 0, params);
+                tracks_.push_back(tr1);
+                Track tr2(240, 0, 0, 0, params);
+                tracks_.push_back(tr2);
+                Track tr3(480, 0, 0, 0, params);
+                tracks_.push_back(tr3);
+                Track tr4(720, 0, 0, 0, params);
+                tracks_.push_back(tr4);
+                Track tr5(960, 0, 0, 0, params);
+                tracks_.push_back(tr5);
+                Track tr6(0, 135, 0, 0, params);
+                tracks_.push_back(tr6);
+                Track tr7(240, 135, 0, 0, params);
+                tracks_.push_back(tr7);
+                Track tr8(480, 135, 0, 0, params);
+                tracks_.push_back(tr8);
+                Track tr9(720, 135, 0, 0, params);
+                tracks_.push_back(tr9);
+                Track tr10(960, 135, 0, 0, params);
+                tracks_.push_back(tr10);
+                Track tr11(0, 270, 0, 0, params);
+                tracks_.push_back(tr11);
+                Track tr12(240, 270, 0, 0, params);
+                tracks_.push_back(tr12);
+                Track tr13(480, 270, 0, 0, params);
+                tracks_.push_back(tr13);
+                Track tr14(720, 270, 0, 0, params);
+                tracks_.push_back(tr14);
+                Track tr15(960, 270, 0, 0, params);
+                tracks_.push_back(tr15);
+                Track tr16(0, 405, 0, 0, params);
+                tracks_.push_back(tr16);
+                Track tr17(240, 405, 0, 0, params);
+                tracks_.push_back(tr17);
+                Track tr18(480, 405, 0, 0, params);
+                tracks_.push_back(tr18);
+                Track tr19(720, 405, 0, 0, params);
+                tracks_.push_back(tr19);
+                Track tr20(960, 405, 0, 0, params);
+                tracks_.push_back(tr20);
+                Track tr21(0, 540, 0, 0, params);
+                tracks_.push_back(tr21);
+                Track tr22(240, 540, 0, 0, params);
+                tracks_.push_back(tr22);
+                Track tr23(480, 540, 0, 0, params);
+                tracks_.push_back(tr23);
+                Track tr24(720, 540, 0, 0, params);
+                tracks_.push_back(tr24);
+                Track tr25(960, 540, 0, 0, params);
+                tracks_.push_back(tr25);
+
+
+
+
+}
 
 
 }

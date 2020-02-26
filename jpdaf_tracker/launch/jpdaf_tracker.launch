@@ -15,7 +15,7 @@
       <param name="gamma" value="50"/>
       <!-- param name="false_measurements_density" value="3.03404259668e-08"/-->
       <param name="false_measurements_density" value="0.00000003034"/>
-      <param name="beta_0_threshold" value="0.95"/>
+      <param name="beta_0_threshold" value="0.5"/>
       <param name="alpha_0_threshold" value="0.95"/>
       <param name="max_missed_rate" value="10"/>
       <param name="min_acceptance_rate" value="10"/>

@@ -109,7 +109,7 @@ class Node {
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 
 
-
+        void create_tracks_test_input();
 
 
 };
