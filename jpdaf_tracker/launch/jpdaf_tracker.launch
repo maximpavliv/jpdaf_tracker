@@ -17,10 +17,10 @@
       <param name="false_measurements_density" value="0.00000003034"/>
       <param name="beta_0_threshold" value="0.95"/>
       <param name="alpha_0_threshold" value="0.95"/>
-      <param name="max_missed_rate" value="15"/>
-      <param name="min_acceptance_rate" value="15"/>
+      <param name="max_missed_rate" value="10"/>
+      <param name="min_acceptance_rate" value="10"/>
       <rosparam param="R"> [2, 2]</rosparam>
-      <rosparam param="T"> [500000, 500000]</rosparam>
+      <rosparam param="T"> [100000, 100000]</rosparam>
       <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
       <param name="nb_drones" value="2"/>
       <param name="assoc_cost" value="50"/>

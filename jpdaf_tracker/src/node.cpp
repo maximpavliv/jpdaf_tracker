@@ -114,7 +114,7 @@ void Node::track(bool called_from_detection)
         {
             last_timestamp_synchronized = max(last_detection.header.stamp.toSec(), last_image->header.stamp.toSec());
 
-/*            Track tr1(480, 270, 0, 0, params);
+            /*Track tr1(480, 270, 0, 0, params);
             tracks_.push_back(tr1);
             Track tr2(240, 270, 0, 0, params);
             tracks_.push_back(tr2);
@@ -131,7 +131,7 @@ void Node::track(bool called_from_detection)
             Track tr8(240, 405, 0, 0, params);
             tracks_.push_back(tr8);
             Track tr9(720, 405, 0, 0, params);
-            tracks_.push_back(tr9);*/
+            tracks_.push_back(tr9);*///ttt
             last_timestamp_from_rostime = ros::Time::now().toSec();
             last_track_from_detection = true;
         }
@@ -144,7 +144,7 @@ void Node::track(bool called_from_detection)
             else
             {
                 last_timestamp_synchronized = pose_buffer_.back().header.stamp.toSec() - 1; 
-/*              Track tr1(480, 270, 0, 0, params);
+                /*Track tr1(480, 270, 0, 0, params);
                 tracks_.push_back(tr1);
                 Track tr2(240, 270, 0, 0, params);
                 tracks_.push_back(tr2);
@@ -161,7 +161,7 @@ void Node::track(bool called_from_detection)
                 Track tr8(240, 405, 0, 0, params);
                 tracks_.push_back(tr8);
                 Track tr9(720, 405, 0, 0, params);
-                tracks_.push_back(tr9);*/
+                tracks_.push_back(tr9);*///ttt
                 last_timestamp_from_rostime = ros::Time::now().toSec();
                 last_track_from_detection = false;
             }
@@ -186,9 +186,7 @@ void Node::track(bool called_from_detection)
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
         if(time_step < 0)
         {
-//            ROS_WARN("Negative time step! %f", time_step); // happens sometimes, because the timer is not totally precise. The negative timestep should be negligible,and is then set to 0
-//            time_step = 0;//TODO Check if still happens! Changed the algorithm a bit, so it may be solved
-            ROS_FATAL("Negative time step! %f", time_step);//TODO DEBUG HERE!!!!!!!!!!!!!!
+            ROS_FATAL("Negative time step! %f", time_step);// Should not happen anymore
             exit(0);    
         }
 
