@@ -126,18 +126,10 @@ void Node::track(bool called_from_detection)
         }
         else
         {
-            if(pose_buffer_.empty())
-            {
-                track_init = true;
-            }    
-            else
-            {
                 last_timestamp_synchronized = latest_image->header.stamp.toSec(); //
                 //create_tracks_test_input();//ttt
-
                 last_timestamp_from_rostime = ros::Time::now().toSec();
                 last_track_from_detection = false;
-            }
         }
 
 
