@@ -1,573 +1,0 @@
----------------------------------------------------------
-Profile:                     default
-Extending:          [cached] /opt/ros/melodic
-Workspace:                   /home/arpl/catkin_ws
----------------------------------------------------------
-Build Space:        [exists] /home/arpl/catkin_ws/build
-Devel Space:        [exists] /home/arpl/catkin_ws/devel
-Install Space:      [unused] /home/arpl/catkin_ws/install
-Log Space:          [exists] /home/arpl/catkin_ws/logs
-Source Space:       [exists] /home/arpl/catkin_ws/src
-DESTDIR:            [unused] None
----------------------------------------------------------
-Devel Space Layout:          linked
-Install Space Layout:        None
----------------------------------------------------------
-Additional CMake Args:       None
-Additional Make Args:        None
-Additional catkin Make Args: None
-Internal Make Job Server:    True
-Cache Job Environments:      False
----------------------------------------------------------
-Whitelisted Packages:        None
-Blacklisted Packages:        None
----------------------------------------------------------
-Workspace configuration appears valid.
----------------------------------------------------------
-[build] Found '46' packages in 0.0 seconds.                                                                         
-[build] Package table is up to date.                                                                                
-Starting >>> asio_serial_device                                                                                     
-Starting >>> benchmark_publisher                                                                                    
-Starting >>> camera_model                                                                                           
-Starting >>> darknet_ros_msgs                                                                                       
-Starting >>> jpdaf_tracker_msgs                                                                                     
-Starting >>> kr_attitude_eskf                                                                                       
-Starting >>> mesh_visualization                                                                                     
-Starting >>> mocap_base                                                                                             
-[build 0.2 s] [0/45 complete] [8/8 jobs] [13 queued] [kr_attitude_eskf:make - 0.1] [benchmark_publisher:loadenv ... Finished <<< benchmark_publisher                  [ 0.1 seconds ]                                                   
-[build 0.3 s] [1/45 complete] [8/8 jobs] [11 queued] [kr_attitude_eskf:make (50%) - 0.2] [mesh_visualization:loa... Finished <<< camera_model                         [ 0.2 seconds ]                                                   
-[build 0.5 s] [2/45 complete] [8/8 jobs] [13 queued] [kr_attitude_eskf:make (50%) - 0.3] [mocap_base:loadenv - 0... [build 0.6 s] [2/45 complete] [8/8 jobs] [11 queued] [mesh_visualization:make (0%) - 0.2] [kr_attitude_eskf:make... Finished <<< asio_serial_device                   [ 0.2 seconds ]                                                   
-[build 0.7 s] [3/45 complete] [8/8 jobs] [10 queued] [jpdaf_tracker_msgs:loadenv - 0.0] [mesh_visualization:make... Finished <<< kr_attitude_eskf                     [ 0.6 seconds ]                                                   
-[build 0.8 s] [4/45 complete] [8/8 jobs] [10 queued] [jpdaf_tracker_msgs:make - 0.1] [mesh_visualization:make (0... [build 0.9 s] [4/45 complete] [8/8 jobs] [10 queued] [jpdaf_tracker_msgs:make (0%) - 0.2] [mesh_visualization:ma... Finished <<< mocap_base                           [ 0.5 seconds ]                                                   
-[build 1.0 s] [5/45 complete] [8/8 jobs] [12 queued] [jpdaf_tracker_msgs:make (100%) - 0.3] [mesh_visualization:... Finished <<< jpdaf_tracker_msgs                   [ 0.4 seconds ]                                                   
-[build 1.1 s] [6/45 complete] [8/8 jobs] [12 queued] [mesh_visualization:make (100%) - 0.7] [darknet_ros_msgs:ma... Finished <<< mesh_visualization                   [ 0.7 seconds ]                                                   
-Starting >>> multimaster_msgs_fkie                                                                                  
-Finished <<< darknet_ros_msgs                     [ 0.6 seconds ]                                                   
-Starting >>> quadrotor_msgs                                                                                         
-Starting >>> quaternion2euler                                                                                       
-Starting >>> random_numbers                                                                                         
-Starting >>> system_launch                                                                                          
-Starting >>> tobii_msgs                                                                                             
-Starting >>> vins_estimator                                                                                         
-Starting >>> ar_demo                                                                                                
-[build 1.2 s] [8/45 complete] [8/8 jobs] [13 queued] [multimaster_msgs_fkie:make - 0.1] [tobii_msgs:loadenv - 0.0]  [build 1.3 s] [8/45 complete] [8/8 jobs] [11 queued] [multimaster_msgs_fkie:make (0%) - 0.2] [quadrotor_msgs:loa... [build 1.4 s] [8/45 complete] [8/8 jobs] [10 queued] [multimaster_msgs_fkie:make (0%) - 0.3] [ar_demo:loadenv - ... Finished <<< vins_estimator                       [ 0.2 seconds ]                                                   
-[build 1.5 s] [9/45 complete] [8/8 jobs] [9 queued] [multimaster_msgs_fkie:make (0%) - 0.4] [ar_demo:make - 0.1]... Finished <<< ar_demo                              [ 0.2 seconds ]                                                   
-[build 1.6 s] [10/45 complete] [8/8 jobs] [8 queued] [multimaster_msgs_fkie:make (0%) - 0.5] [quadrotor_msgs:mak... Finished <<< quaternion2euler                     [ 0.2 seconds ]                                                   
-Finished <<< system_launch                        [ 0.2 seconds ]                                                   
-Starting >>> feature_tracker                                                                                        
-[build 1.7 s] [12/45 complete] [8/8 jobs] [6 queued] [multimaster_msgs_fkie:make (0%) - 0.6] [quadrotor_msgs:mak... Finished <<< random_numbers                       [ 0.2 seconds ]                                                   
-Starting >>> pose_graph                                                                                             
-[build 1.8 s] [13/45 complete] [8/8 jobs] [7 queued] [pose_graph:loadenv - 0.0] [multimaster_msgs_fkie:make (0%)... Finished <<< tobii_msgs                           [ 0.6 seconds ]                                                   
-Finished <<< feature_tracker                      [ 0.2 seconds ]                                                   
-Starting >>> mocap_qualisys                                                                                         
-Starting >>> mocap_vicon                                                                                            
-Starting >>> bounding_boxes_saver                                                                                   
-Starting >>> darknet_ros                                                                                            
-[build 1.9 s] [15/45 complete] [8/8 jobs] [7 queued] [pose_graph:check - 0.1] [multimaster_msgs_fkie:make (100%)... Finished <<< quadrotor_msgs                       [ 0.6 seconds ]                                                   
-Starting >>> jpdaf_tracker                                                                                          
-Starting >>> image_processor                                                                                        
-Finished <<< multimaster_msgs_fkie                [ 0.8 seconds ]                                                   
-Starting >>> tobii_visual_odom                                                                                      
-Finished <<< pose_graph                           [ 0.2 seconds ]                                                   
-Starting >>> tobii_driver                                                                                           
-[build 2.0 s] [18/45 complete] [8/8 jobs] [19 queued] [darknet_ros:loadenv - 0.0] [mocap_qualisys:make - 0.1]       [build 2.1 s] [18/45 complete] [8/8 jobs] [17 queued] [bounding_boxes_saver:make - 0.1] [darknet_ros:make (0%) -... Finished <<< bounding_boxes_saver                 [ 0.1 seconds ]                                                   
-[build 2.2 s] [19/45 complete] [8/8 jobs] [15 queued] [image_processor:mkdir - 0.1] [jpdaf_tracker:loadenv - 0.0... Finished <<< darknet_ros                          [ 0.3 seconds ]                                                   
-[build 2.3 s] [20/45 complete] [8/8 jobs] [15 queued] [image_processor:make (100%) - 0.2] [tobii_visual_odom:loa... Finished <<< image_processor                      [ 0.2 seconds ]                                                   
-[build 2.4 s] [21/45 complete] [8/8 jobs] [13 queued] [tobii_driver:loadenv - 0.0] [jpdaf_tracker:make (0%) - 0.... [build 2.5 s] [21/45 complete] [8/8 jobs] [13 queued] [tobii_driver:make - 0.1] [jpdaf_tracker:make (0%) - 0.3] ... Finished <<< tobii_driver                         [ 0.2 seconds ]                                                   
-[build 2.6 s] [22/45 complete] [8/8 jobs] [13 queued] [jpdaf_tracker:make (0%) - 0.4] [tobii_visual_odom:make (0... [build 2.7 s] [22/45 complete] [8/8 jobs] [13 queued] [jpdaf_tracker:make (0%) - 0.5] [tobii_visual_odom:make (0... [build 2.8 s] [22/45 complete] [8/8 jobs] [13 queued] [jpdaf_tracker:make (0%) - 0.6] [tobii_visual_odom:make (0... Finished <<< mocap_qualisys                       [ 1.0 seconds ]                                                   
-[build 2.9 s] [23/45 complete] [8/8 jobs] [13 queued] [jpdaf_tracker:make (0%) - 0.7] [tobii_visual_odom:make (0... Starting >>> crazyflie_interface                                                                                    
-Starting >>> kquad_interface                                                                                        
-Starting >>> mavros_interface                                                                                       
-Starting >>> pid_control                                                                                            
-Starting >>> quad_decode_msg                                                                                        
-Finished <<< mocap_vicon                          [ 0.9 seconds ]                                                   
-Starting >>> quad_encode_msg                                                                                        
-[build 3.0 s] [24/45 complete] [8/8 jobs] [12 queued] [crazyflie_interface:loadenv - 0.0] [jpdaf_tracker:make (1... Finished <<< tobii_visual_odom                    [ 0.7 seconds ]                                                   
-Starting >>> quad_serial_comm                                                                                       
-[build 3.1 s] [25/45 complete] [8/8 jobs] [10 queued] [crazyflie_interface:make (0%) - 0.1] [jpdaf_tracker:make ... Finished <<< mavros_interface                     [ 0.1 seconds ]                                                   
-[build 3.2 s] [26/45 complete] [8/8 jobs] [9 queued] [crazyflie_interface:make (0%) - 0.2] [kquad_interface:load... [build 3.3 s] [26/45 complete] [8/8 jobs] [8 queued] [crazyflie_interface:make (0%) - 0.3] [kquad_interface:make... Finished <<< kquad_interface                      [ 0.2 seconds ]                                                   
-[build 3.4 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 0.4] [jpdaf_tracker:make (... [build 3.5 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 0.5] [jpdaf_tracker:make (... [build 3.6 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 0.6] [jpdaf_tracker:make (... [build 3.7 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 0.7] [jpdaf_tracker:make (... [build 3.8 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 0.8] [jpdaf_tracker:make (... [build 3.9 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 0.9] [jpdaf_tracker:make (... [build 4.0 s] [27/45 complete] [8/8 jobs] [6 queued] [crazyflie_interface:make (0%) - 1.0] [jpdaf_tracker:make (... Finished <<< crazyflie_interface                  [ 1.1 seconds ]                                                   
-[build 4.1 s] [28/45 complete] [8/8 jobs] [6 queued] [jpdaf_tracker:make (14%) - 1.9] [quad_decode_msg:make (0%)... [build 4.2 s] [28/45 complete] [8/8 jobs] [6 queued] [jpdaf_tracker:make (14%) - 2.0] [quad_decode_msg:make (0%)... [build 4.3 s] [28/45 complete] [8/8 jobs] [6 queued] [jpdaf_tracker:make (14%) - 2.1] [quad_decode_msg:make (0%)... Finished <<< quad_encode_msg                      [ 1.0 seconds ]                                                   
-Finished <<< quad_serial_comm                     [ 1.0 seconds ]                                                   
-[build 4.4 s] [30/45 complete] [8/8 jobs] [6 queued] [jpdaf_tracker:make (14%) - 2.2] [quad_decode_msg:make (0%)... Finished <<< quad_decode_msg                      [ 1.3 seconds ]                                                   
-Starting >>> quadrotor_simulator                                                                                    
-Starting >>> qualcomm_interface                                                                                     
-Starting >>> so3_control                                                                                            
-Starting >>> trackers_manager                                                                                       
-Starting >>> default_cfg_fkie                                                                                       
-Starting >>> master_discovery_fkie                                                                                  
-Finished <<< pid_control                          [ 1.4 seconds ]                                                   
-[build 4.5 s] [32/45 complete] [7/8 jobs] [5 queued] [jpdaf_tracker:make (14%) - 2.3] [so3_control:loadenv - 0.0]   [build 4.6 s] [32/45 complete] [8/8 jobs] [4 queued] [jpdaf_tracker:make (14%) - 2.4] [so3_control:make - 0.1] [... Finished <<< master_discovery_fkie                [ 0.1 seconds ]                                                   
-[build 4.7 s] [33/45 complete] [8/8 jobs] [3 queued] [jpdaf_tracker:make (14%) - 2.5] [so3_control:make (0%) - 0... [build 4.8 s] [33/45 complete] [8/8 jobs] [2 queued] [jpdaf_tracker:make (14%) - 2.6] [so3_control:make (0%) - 0... [build 4.9 s] [33/45 complete] [8/8 jobs] [1 queued] [qualcomm_interface:loadenv - 0.0] [jpdaf_tracker:make (14%... Finished <<< default_cfg_fkie                     [ 0.2 seconds ]                                                   
-[build 5.0 s] [34/45 complete] [8/8 jobs] [1 queued] [qualcomm_interface:make - 0.1] [jpdaf_tracker:make (14%) -... Finished <<< qualcomm_interface                   [ 0.2 seconds ]                                                   
-[build 5.1 s] [35/45 complete] [8/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 2.9] [so3_control:make (0%) - 0... [build 5.2 s] [35/45 complete] [8/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 3.0] [so3_control:make (0%) - 0... [build 5.3 s] [35/45 complete] [8/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 3.1] [so3_control:make (33%) - ... [build 5.4 s] [35/45 complete] [8/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 3.2] [so3_control:make (33%) - ... Finished <<< so3_control                          [ 1.0 seconds ]                                                   
-[build 5.5 s] [36/45 complete] [8/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 3.3] [trackers_manager:make (0%... [build 5.6 s] [36/45 complete] [3/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 3.4] [trackers_manager:make (10... Finished <<< quadrotor_simulator                  [ 1.0 seconds ]                                                   
-Starting >>> master_sync_fkie                                                                                       
-Finished <<< trackers_manager                     [ 0.9 seconds ]                                                   
-Starting >>> std_trackers                                                                                           
-[build 5.7 s] [38/45 complete] [3/8 jobs] [0 queued] [master_sync_fkie:make - 0.1] [std_trackers:loadenv - 0.0] ... Finished <<< master_sync_fkie                     [ 0.1 seconds ]                                                   
-Starting >>> node_manager_fkie                                                                                      
-[build 5.8 s] [39/45 complete] [8/8 jobs] [0 queued] [std_trackers:make - 0.1] [jpdaf_tracker:make (14%) - 3.6] ... Finished <<< node_manager_fkie                    [ 0.1 seconds ]                                                   
-[build 5.9 s] [40/45 complete] [8/8 jobs] [0 queued] [std_trackers:make (0%) - 0.2] [jpdaf_tracker:make (14%) - ... [build 6.0 s] [40/45 complete] [8/8 jobs] [0 queued] [std_trackers:make (0%) - 0.3] [jpdaf_tracker:make (14%) - ... [build 6.1 s] [40/45 complete] [8/8 jobs] [0 queued] [std_trackers:make (0%) - 0.4] [jpdaf_tracker:make (14%) - ... [build 6.2 s] [40/45 complete] [8/8 jobs] [0 queued] [std_trackers:make (0%) - 0.5] [jpdaf_tracker:make (14%) - ... [build 6.3 s] [40/45 complete] [8/8 jobs] [0 queued] [std_trackers:make (0%) - 0.6] [jpdaf_tracker:make (14%) - ... [build 6.4 s] [40/45 complete] [8/8 jobs] [0 queued] [std_trackers:make (0%) - 0.7] [jpdaf_tracker:make (14%) - ... [build 6.5 s] [40/45 complete] [3/8 jobs] [0 queued] [std_trackers:make (98%) - 0.8] [jpdaf_tracker:make (14%) -... Finished <<< std_trackers                         [ 0.9 seconds ]                                                   
-Starting >>> mav_manager                                                                                            
-[build 6.6 s] [41/45 complete] [2/8 jobs] [0 queued] [mav_manager:loadenv - 0.0] [jpdaf_tracker:make (14%) - 4.4]   [build 6.7 s] [41/45 complete] [8/8 jobs] [0 queued] [mav_manager:make (0%) - 0.1] [jpdaf_tracker:make (14%) - 4.5] [build 6.8 s] [41/45 complete] [8/8 jobs] [0 queued] [mav_manager:make (0%) - 0.2] [jpdaf_tracker:make (14%) - 4.6] [build 6.9 s] [41/45 complete] [8/8 jobs] [0 queued] [mav_manager:make (0%) - 0.3] [jpdaf_tracker:make (14%) - 4.7] [build 7.0 s] [41/45 complete] [8/8 jobs] [0 queued] [mav_manager:make (0%) - 0.4] [jpdaf_tracker:make (14%) - 4.8] [build 7.1 s] [41/45 complete] [3/8 jobs] [0 queued] [mav_manager:make (80%) - 0.5] [jpdaf_tracker:make (14%) - ... Finished <<< mav_manager                          [ 0.6 seconds ]                                                   
-Starting >>> mav_joy                                                                                                
-Starting >>> rqt_mav_manager                                                                                        
-[build 7.2 s] [42/45 complete] [3/8 jobs] [1 queued] [jpdaf_tracker:make (14%) - 5.0] [mav_joy:loadenv - 0.0]       Finished <<< mav_joy                              [ 0.1 seconds ]                                                   
-[build 7.3 s] [43/45 complete] [2/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.1] [rqt_mav_manager:check - 0.1] Finished <<< rqt_mav_manager                      [ 0.1 seconds ]                                                   
-[build 7.4 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.2]                               [build 7.5 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.3]                               [build 7.6 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.4]                               [build 7.7 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.5]                               [build 7.8 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.6]                               [build 7.9 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.7]                               [build 8.0 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.8]                               [build 8.1 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 5.9]                               [build 8.2 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.0]                               [build 8.3 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.1]                               [build 8.4 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.2]                               [build 8.5 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.3]                               [build 8.6 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.4]                               [build 8.7 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.5]                               [build 8.8 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.6]                               [build 8.9 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.7]                               [build 9.0 s] [44/45 complete] [1/8 jobs] [0 queued] [jpdaf_tracker:make (14%) - 6.8]                               ____________________________________________________________________________________________________________________
-Errors << jpdaf_tracker:make /home/arpl/catkin_ws/logs/jpdaf_tracker/build.make.111.log                             
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:[m[K In member function ?[01m[Kvoid jpdaf::Node::compute_timescaled_orientation_change_flush_pose(double, double)[m[K?:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:655:68:[m[K [01;31m[Kerror: [m[Kno match for call to ?[01m[K(Eigen::Matrix3d {aka Eigen::Matrix<double, 3, 3>}) (Eigen::Quaterniond&, Eigen::Quaterniond&)[m[K?
-     auto quat_diff = diff(orientation_current, orientation_previous[01;31m[K)[m[K;
-                                                                    [01;31m[K^[m[K
-In file included from [01m[K/usr/include/eigen3/Eigen/Core:414:0[m[K,
-                 from [01m[K/usr/include/eigen3/Eigen/Dense:1[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/tracker_param.h:6[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:15[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:115:41:[m[K [01;36m[Knote: [m[Kcandidate: Eigen::DenseCoeffsBase<Derived, 0>::CoeffReturnType Eigen::DenseCoeffsBase<Derived, 0>::operator()(Eigen::Index, Eigen::Index) const [with Derived = Eigen::Matrix<double, 3, 3>; Eigen::DenseCoeffsBase<Derived, 0>::CoeffReturnType = const double&; Eigen::Index = long int]
-     EIGEN_STRONG_INLINE CoeffReturnType [01;36m[Koperator[m[K()(Index row, Index col) const
-                                         [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:115:41:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[KEigen::Index {aka long int}[m[K?
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:178:5:[m[K [01;36m[Knote: [m[Kcandidate: Eigen::DenseCoeffsBase<Derived, 0>::CoeffReturnType Eigen::DenseCoeffsBase<Derived, 0>::operator()(Eigen::Index) const [with Derived = Eigen::Matrix<double, 3, 3>; Eigen::DenseCoeffsBase<Derived, 0>::CoeffReturnType = const double&; Eigen::Index = long int]
-     [01;36m[Koperator[m[K()(Index index) const
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:178:5:[m[K [01;36m[Knote: [m[K  candidate expects 1 argument, 2 provided
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:423:5:[m[K [01;36m[Knote: [m[Kcandidate: Eigen::DenseCoeffsBase<Derived, 1>::Scalar& Eigen::DenseCoeffsBase<Derived, 1>::operator()(Eigen::Index) [with Derived = Eigen::Matrix<double, 3, 3>; Eigen::DenseCoeffsBase<Derived, 1>::Scalar = double; Eigen::Index = long int]
-     [01;36m[Koperator[m[K()(Index index)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:423:5:[m[K [01;36m[Knote: [m[K  candidate expects 1 argument, 2 provided
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:362:5:[m[K [01;36m[Knote: [m[Kcandidate: Eigen::DenseCoeffsBase<Derived, 1>::Scalar& Eigen::DenseCoeffsBase<Derived, 1>::operator()(Eigen::Index, Eigen::Index) [with Derived = Eigen::Matrix<double, 3, 3>; Eigen::DenseCoeffsBase<Derived, 1>::Scalar = double; Eigen::Index = long int]
-     [01;36m[Koperator[m[K()(Index row, Index col)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h:362:5:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[KEigen::Index {aka long int}[m[K?
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:[m[K In member function ?[01m[KEigen::Quaterniond jpdaf::Node::diff(Eigen::Quaterniond, Eigen::Quaterniond)[m[K?:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:22:[m[K [01;31m[Kerror: [m[Kno match for ?[01m[Koperator<<[m[K? (operand types are ?[01m[Kstd::basic_ostream<char>[m[K? and ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?)
-     [01;31m[Kcout << "diff: " << diff[m[K << endl;
-     [01;31m[K~~~~~~~~~~~~~~~~~^~~~~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:108:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__ostream_type& (*)(std::basic_ostream<_CharT, _Traits>::__ostream_type&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(__ostream_type& (*__pf)(__ostream_type&))
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:108:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kstd::basic_ostream<char>::__ostream_type& (*)(std::basic_ostream<char>::__ostream_type&) {aka std::basic_ostream<char>& (*)(std::basic_ostream<char>&)}[m[K?
-[01m[K/usr/include/c++/7/ostream:117:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__ios_type& (*)(std::basic_ostream<_CharT, _Traits>::__ios_type&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>; std::basic_ostream<_CharT, _Traits>::__ios_type = std::basic_ios<char>]
-       [01;36m[Koperator[m[K<<(__ios_type& (*__pf)(__ios_type&))
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:117:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kstd::basic_ostream<char>::__ios_type& (*)(std::basic_ostream<char>::__ios_type&) {aka std::basic_ios<char>& (*)(std::basic_ios<char>&)}[m[K?
-[01m[K/usr/include/c++/7/ostream:127:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(std::ios_base& (*)(std::ios_base&)) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(ios_base& (*__pf) (ios_base&))
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:127:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kstd::ios_base& (*)(std::ios_base&)[m[K?
-[01m[K/usr/include/c++/7/ostream:166:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(long __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:166:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Klong int[m[K?
-[01m[K/usr/include/c++/7/ostream:170:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(unsigned long __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:170:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Klong unsigned int[m[K?
-[01m[K/usr/include/c++/7/ostream:174:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(bool) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(bool __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:174:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kbool[m[K?
-In file included from [01m[K/usr/include/c++/7/ostream:693:0[m[K,
-                 from [01m[K/usr/include/c++/7/iostream:39[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/bits/ostream.tcc:91:5:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(short int) [with _CharT = char; _Traits = std::char_traits<char>]
-     [01;36m[Kbasic_ostream<_CharT, _Traits>[m[K::
-     [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
-[01m[K/usr/include/c++/7/bits/ostream.tcc:91:5:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kshort int[m[K?
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:181:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(short unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(unsigned short __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:181:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kshort unsigned int[m[K?
-In file included from [01m[K/usr/include/c++/7/ostream:693:0[m[K,
-                 from [01m[K/usr/include/c++/7/iostream:39[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/bits/ostream.tcc:105:5:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char; _Traits = std::char_traits<char>]
-     [01;36m[Kbasic_ostream<_CharT, _Traits>[m[K::
-     [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
-[01m[K/usr/include/c++/7/bits/ostream.tcc:105:5:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kint[m[K?
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:192:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(unsigned int __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:192:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kunsigned int[m[K?
-[01m[K/usr/include/c++/7/ostream:201:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long long int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(long long __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:201:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Klong long int[m[K?
-[01m[K/usr/include/c++/7/ostream:205:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long long unsigned int) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(unsigned long long __n)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:205:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Klong long unsigned int[m[K?
-[01m[K/usr/include/c++/7/ostream:220:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(double) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(double __f)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:220:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kdouble[m[K?
-[01m[K/usr/include/c++/7/ostream:224:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(float) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(float __f)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:224:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kfloat[m[K?
-[01m[K/usr/include/c++/7/ostream:232:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(long double) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(long double __f)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:232:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Klong double[m[K?
-[01m[K/usr/include/c++/7/ostream:245:7:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>::__ostream_type& std::basic_ostream<_CharT, _Traits>::operator<<(const void*) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__ostream_type = std::basic_ostream<char>]
-       [01;36m[Koperator[m[K<<(const void* __p)
-       [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:245:7:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kconst void*[m[K?
-In file included from [01m[K/usr/include/c++/7/ostream:693:0[m[K,
-                 from [01m[K/usr/include/c++/7/iostream:39[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/bits/ostream.tcc:119:5:[m[K [01;36m[Knote: [m[Kcandidate: std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(std::basic_ostream<_CharT, _Traits>::__streambuf_type*) [with _CharT = char; _Traits = std::char_traits<char>; std::basic_ostream<_CharT, _Traits>::__streambuf_type = std::basic_streambuf<char>]
-     [01;36m[Kbasic_ostream<_CharT, _Traits>[m[K::
-     [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
-[01m[K/usr/include/c++/7/bits/ostream.tcc:119:5:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kstd::basic_ostream<char>::__streambuf_type* {aka std::basic_streambuf<char>*}[m[K?
-In file included from [01m[K/opt/ros/melodic/include/ros/node_handle.h:52:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:45[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h:192:15:[m[K [01;36m[Knote: [m[Kcandidate: std::ostream& operator<<(std::ostream&, const XmlRpc::XmlRpcValue&)
- std::ostream& [01;36m[Koperator[m[K<<(std::ostream& os, const XmlRpc::XmlRpcValue& v);
-               [01;36m[K^~~~~~~~[m[K
-[01m[K/opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h:192:15:[m[K [01;36m[Knote: [m[K  no known conversion for argument 2 from ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? to ?[01m[Kconst XmlRpc::XmlRpcValue&[m[K?
-In file included from [01m[K/usr/include/c++/7/memory:81:0[m[K,
-                 from [01m[K/usr/include/boost/config/no_tr1/memory.hpp:21[m[K,
-                 from [01m[K/usr/include/boost/smart_ptr/shared_ptr.hpp:23[m[K,
-                 from [01m[K/usr/include/boost/shared_ptr.hpp:17[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/forwards.h:37[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/common.h:37[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:43[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/bits/shared_ptr.h:66:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Ch, class _Tr, class _Tp, __gnu_cxx::_Lock_policy _Lp> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__shared_ptr<_Tp, _Lp>&)
-     [01;36m[Koperator[m[K<<(std::basic_ostream<_Ch, _Tr>& __os,
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/bits/shared_ptr.h:66:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? is not derived from ?[01m[Kconst std::__shared_ptr<_Tp, _Lp>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/config/no_tr1/complex.hpp:21:0[m[K,
-                 from [01m[K/usr/include/boost/math/policies/error_handling.hpp:17[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/complex:528:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Tp, class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::complex<_Tp>&)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, const complex<_Tp>& __x)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/complex:528:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? is not derived from ?[01m[Kconst std::complex<_Tp>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:363:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Put_time<_CharT>)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Put_time<_CharT> __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:363:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaternion<double>[m[K? is not derived from ?[01m[Kstd::_Put_time<_CharT>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:311:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits, class _MoneyT> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Put_money<_MoneyT>)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Put_money<_MoneyT> __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:311:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaternion<double>[m[K? is not derived from ?[01m[Kstd::_Put_money<_MoneyT>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:238:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setw)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Setw __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:238:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kstd::_Setw[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:208:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setprecision)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Setprecision __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:208:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kstd::_Setprecision[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:178:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setfill<_CharT>)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Setfill<_CharT> __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:178:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaternion<double>[m[K? is not derived from ?[01m[Kstd::_Setfill<_CharT>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:143:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setbase)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Setbase __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:143:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kstd::_Setbase[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:109:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Setiosflags)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Setiosflags __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:109:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kstd::_Setiosflags[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/boost/math/policies/error_handling.hpp:12:0[m[K,
-                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:58[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/iomanip:79:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, std::_Resetiosflags)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, _Resetiosflags __f)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/iomanip:79:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kstd::_Resetiosflags[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:682:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Ostream, class _Tp> typename std::enable_if<std::__and_<std::__not_<std::is_lvalue_reference<_Tp> >, std::__is_convertible_to_basic_ostream<_Ostream>, std::__is_insertable<typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type, const _Tp&, void> >::value, typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type>::type std::operator<<(_Ostream&&, const _Tp&)
-     [01;36m[Koperator[m[K<<(_Ostream&& __os, const _Tp& __x)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:682:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-/usr/include/c++/7/ostream: In substitution of ?[01m[Ktemplate<class _Ostream, class _Tp> typename std::enable_if<std::__and_<std::__not_<std::is_lvalue_reference<_Tp> >, std::__is_convertible_to_basic_ostream<_Ostream>, std::__is_insertable<typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type, const _Tp&, void> >::value, typename std::__is_convertible_to_basic_ostream<_Tp>::__ostream_type>::type std::operator<<(_Ostream&&, const _Tp&) [with _Ostream = std::basic_ostream<char>&; _Tp = Eigen::Quaternion<double>][m[K?:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K   required from here
-[01m[K/usr/include/c++/7/ostream:682:5:[m[K [01;31m[Kerror: [m[Kno type named ?[01m[Ktype[m[K? in ?[01m[Kstruct std::enable_if<false, std::basic_ostream<char>&>[m[K?
-[01m[K/usr/include/c++/7/ostream:574:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const unsigned char*)
-     [01;36m[Koperator[m[K<<(basic_ostream<char, _Traits>& __out, const unsigned char* __s)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:574:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kconst unsigned char*[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:569:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const signed char*)
-     [01;36m[Koperator[m[K<<(basic_ostream<char, _Traits>& __out, const signed char* __s)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:569:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kconst signed char*[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:556:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, const char*)
-     [01;36m[Koperator[m[K<<(basic_ostream<char, _Traits>& __out, const char* __s)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:556:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kconst char*[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/ostream:693:0[m[K,
-                 from [01m[K/usr/include/c++/7/iostream:39[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/bits/ostream.tcc:321:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const char*)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __out, const char* __s)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/bits/ostream.tcc:321:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kconst char*[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:539:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const _CharT*)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __out, const _CharT* __s)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:539:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  mismatched types ?[01m[Kconst _CharT*[m[K? and ?[01m[KEigen::Quaternion<double>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:519:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, unsigned char)
-     [01;36m[Koperator[m[K<<(basic_ostream<char, _Traits>& __out, unsigned char __c)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:519:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kunsigned char[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:514:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, signed char)
-     [01;36m[Koperator[m[K<<(basic_ostream<char, _Traits>& __out, signed char __c)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:514:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Ksigned char[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:508:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _Traits> std::basic_ostream<char, _Traits>& std::operator<<(std::basic_ostream<char, _Traits>&, char)
-     [01;36m[Koperator[m[K<<(basic_ostream<char, _Traits>& __out, char __c)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:508:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kchar[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:502:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, char)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __out, char __c)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:502:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kchar[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/iostream:39:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/ostream:497:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, _CharT)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __out, _CharT __c)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/ostream:497:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  deduced conflicting types for parameter ?[01m[K_CharT[m[K? (?[01m[Kchar[m[K? and ?[01m[KEigen::Quaternion<double>[m[K?)
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/bits/ios_base.h:46:0[m[K,
-                 from [01m[K/usr/include/c++/7/ios:42[m[K,
-                 from [01m[K/usr/include/c++/7/ostream:38[m[K,
-                 from [01m[K/usr/include/c++/7/iostream:39[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:54[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/system_error:217:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::error_code&)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os, const error_code& __e)
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/system_error:217:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  cannot convert ?[01m[Kdiff[m[K? (type ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K?) to type ?[01m[Kconst std::error_code&[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/c++/7/string:52:0[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/platform.h:38[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/time.h:53[m[K,
-                 from [01m[K/opt/ros/melodic/include/ros/ros.h:38[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:5[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/c++/7/bits/basic_string.h:6284:5:[m[K [01;36m[Knote: [m[Kcandidate: template<class _CharT, class _Traits, class _Alloc> std::basic_ostream<_CharT, _Traits>& std::operator<<(std::basic_ostream<_CharT, _Traits>&, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
-     [01;36m[Koperator[m[K<<(basic_ostream<_CharT, _Traits>& __os,
-     [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/c++/7/bits/basic_string.h:6284:5:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? is not derived from ?[01m[Kconst std::__cxx11::basic_string<_CharT, _Traits, _Alloc>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-In file included from [01m[K/usr/include/eigen3/Eigen/Core:413:0[m[K,
-                 from [01m[K/usr/include/eigen3/Eigen/Dense:1[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/tracker_param.h:6[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/include/jpdaf_tracker/node.h:15[m[K,
-                 from [01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:1[m[K:
-[01m[K/usr/include/eigen3/Eigen/src/Core/IO.h:216:16:[m[K [01;36m[Knote: [m[Kcandidate: template<class Derived> std::ostream& Eigen::operator<<(std::ostream&, const Eigen::DenseBase<Derived>&)
- std::ostream & [01;36m[Koperator[m[K <<
-                [01;36m[K^~~~~~~~[m[K
-[01m[K/usr/include/eigen3/Eigen/src/Core/IO.h:216:16:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
-[01m[K/home/arpl/catkin_ws/src/jpdaf_tracker/jpdaf_tracker/src/node.cpp:822:25:[m[K [01;36m[Knote: [m[K  ?[01m[KEigen::Quaterniond {aka Eigen::Quaternion<double>}[m[K? is not derived from ?[01m[Kconst Eigen::DenseBase<Derived>[m[K?
-     cout << "diff: " << [01;36m[Kdiff[m[K << endl;
-                         [01;36m[K^~~~[m[K
-make[2]: *** [CMakeFiles/jpdaf_tracker.dir/src/node.cpp.o] Error 1
-make[1]: *** [CMakeFiles/jpdaf_tracker.dir/all] Error 2
-make: *** [all] Error 2
-cd /home/arpl/catkin_ws/build/jpdaf_tracker; catkin build --get-env jpdaf_tracker | catkin env -si  /usr/bin/make --jobserver-fds=6,7 -j; cd -
-WARNING: Could not encode unicode characters. Please set the PYTHONIOENCODING environment variable to see complete output. (i.e. PYTHONIOENCODING=UTF-8)
-....................................................................................................................
-Failed << jpdaf_tracker:make                    [ Exited with code 2 ]                                              
-Failed <<< jpdaf_tracker                        [ 6.8 seconds ]                                                     
-[build] Summary: 44 of 45 packages succeeded.                                                                       
-[build] Ignored: 1 packages were skipped or are blacklisted.                                                        
-[build] Warnings: None.                                                                                             
-[build] Abandoned: No packages were abandoned.                                                                      
-[build] Failed: 1 packages failed.                                                                                  
-[build] Runtime: 9.0 seconds total.                                                                                 

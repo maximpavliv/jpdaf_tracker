@@ -101,6 +101,12 @@ void Node::track(bool called_from_detection)
     }
     auto detections = get_detections(latest_detection);
 
+    ROS_INFO("Detections:");
+    for(int d=0; d<(int)detections.size(); d++)
+    {
+        cout << detections[d].getVect() << endl;
+    }
+
 
     if(track_init)
     {
@@ -618,7 +624,7 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
 Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, double detection_time_step)
 {
     ROS_INFO("Pose buffer length: %d", (int)pose_buffer_.size());
-    //ROS_INFO("Detection timestamp, %f, detection timestep: %f", detection_time_stamp, detection_time_step);
+    ROS_INFO("Detection timestamp, %f, detection timestep: %f", detection_time_stamp, detection_time_step);
 
 //    cout << "Pose buffer timestamps: " ; for(int i=0; i<(int)pose_buffer_.size(); i++){ROS_INFO("%f", pose_buffer_[i].header.stamp.toSec());}
 
@@ -649,7 +655,7 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
     }
 
     double pose_time_step = pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec() - pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec();
-    //ROS_INFO("Selected pose buffer timestamps: %f , %f , pose time step: %f", pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec(), pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec(), pose_time_step);
+    ROS_INFO("Selected pose buffer timestamps: %f , %f , pose time step: %f", pose_buffer_[pose_buffer_index_previous_detection_timestamp].header.stamp.toSec(), pose_buffer_[pose_buffer_index_current_detection_timestamp].header.stamp.toSec(), pose_time_step);
     
     //Compute omega
     Eigen::Quaterniond orientation_previous;
@@ -727,7 +733,7 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp, doub
 
     Eigen::Vector3f omega_rotated = R_rot * omega_from_W;
 
-    //cout << "omega rotated: " << endl << omega_rotated << endl;
+    cout << "omega rotated: " << endl << omega_rotated << endl;
 
     std::vector<geometry_msgs::PoseStamped> temp;
     for(int i=pose_buffer_index_previous_detection_timestamp; i<(int)pose_buffer_.size(); i++)
@@ -808,7 +814,7 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
     cv_bridge::CvImage processed_image_bridge;
     processed_image_bridge.header.stamp = latest_image->header.stamp;
     processed_image_bridge.image = im;
-    processed_image_bridge.encoding = sensor_msgs::image_encodings::BGR8;
+    processed_image_bridge.encoding = sensor_msgs::image_encodings::RGB8;
     sensor_msgs::ImagePtr im_msg = processed_image_bridge.toImageMsg();
     image_pub_.publish(im_msg);
 
