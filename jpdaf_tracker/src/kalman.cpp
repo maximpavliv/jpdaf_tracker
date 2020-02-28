@@ -76,7 +76,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
 
   x_predict = A*x_update + B*u;
 
-  cout << "x_predict: " << endl << x_predict << endl;
+  //cout << "x_predict: " << endl << x_predict << endl;
   //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;
 //  cout << "P_predict: " << endl << P_predict << endl;
@@ -139,7 +139,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   x_update = x_predict + K * nu;
   //x_update = x_predict;//ttt
 
-  cout << "x_update" << endl << x_update << endl;
+  //cout << "x_update" << endl << x_update << endl;
 
   Eigen::Matrix4f P_c;
   P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +

@@ -132,7 +132,6 @@ void Node::track(bool called_from_detection)
                 last_track_from_detection = false;
         }
 
-
     }
     else
     {
@@ -150,6 +149,7 @@ void Node::track(bool called_from_detection)
         }
         
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
+
         if(time_step < 0)
         {
             ROS_FATAL("Negative time step! %f", time_step);// Should not happen anymore
