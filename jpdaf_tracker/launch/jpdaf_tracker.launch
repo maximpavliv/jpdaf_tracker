@@ -24,7 +24,7 @@
       <!-- TRY TO MAKE SMALLER -->
       <rosparam param="T"> [100000, 100000]</rosparam>
       <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
-      <param name="nb_drones" value="2"/>
+      <param name="nb_drones" value="1"/>
       <param name="assoc_cost" value="50"/>
 
       <param name="max_update_time_rate" value="0.1"/>

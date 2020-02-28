@@ -793,6 +793,10 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
             cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
             cv::circle(im, tr_pos, 4, cv::Scalar(0, 255, 0), 2); 
             putText(im, to_string(tracks_[t].getId()), id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(0, 255, 0), 1, CV_AA);
+
+            //ellipse for 95% confidence
+            cv::RotatedRect ellipse = tracks_[t].get_error_ellipse(2.4477);
+            cv::ellipse(im, ellipse, cv::Scalar(150, 255, 150), 1);
         }
         else
         {
@@ -800,14 +804,18 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
             cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
             cv::circle(im, tr_pos, 4, cv::Scalar(255, 150, 0), 2);
             putText(im, "-", id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(255, 150, 0), 1, CV_AA);
+
+            //ellipse for 95% confidence
+            cv::RotatedRect ellipse = tracks_[t].get_error_ellipse(2.4477);
+            cv::ellipse(im, ellipse, cv::Scalar(255, 250, 150), 1);
         }
     }
+
     for(uint d=0; d<detections.size(); d++)
     {
-        cv::Point2f det_pos((int)detections[d].x(), (int)detections[d].y());
-        cv::circle(im, det_pos, 2, cv::Scalar(255, 20, 150), 2); 
+        cv::circle(im, detections[d](), 2, cv::Scalar(255, 20, 150), 2); 
     }
-    
+
     cv_bridge::CvImage processed_image_bridge;
     processed_image_bridge.header.stamp = latest_image->header.stamp;
     processed_image_bridge.image = im;
@@ -873,7 +881,7 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
     return nonzero_elements;
 }
 
-void Node::create_tracks_test_input()
+void Node::create_tracks_test_input()//TODO CHANGE: spherical view 
 {
     Track tr1(0, 0, 0, 0, params);
     tracks_.push_back(tr1);

@@ -1,6 +1,7 @@
 #include "track.h"
 
 using namespace jpdaf;
+using namespace std;
 
 Track::Track(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params)
 {
@@ -30,4 +31,39 @@ void Track::update(const std::vector<Detection> detections, std::vector<double> 
 {
     //ROS_INFO("Updating track %d", id);
     KF->update(detections, beta, beta_0);
+}
+
+
+cv::RotatedRect Track::get_error_ellipse(double chisquare_val){
+    
+    //Get the eigenvalues and eigenvectors
+    cv::Mat eigenvalues, eigenvectors;
+
+    cv::Mat S_cv;
+    
+    eigen2cv(S(), S_cv);
+
+    cv::eigen(S_cv, eigenvalues, eigenvectors);
+
+    //Calculate the angle between the largest eigenvector and the x-axis
+    double angle = atan2(-eigenvectors.at<float>(0,1), eigenvectors.at<float>(0,0)); // - minus sign because y axis is inverted
+
+    //Shift the angle to the [0, 2pi] interval instead of [-pi, pi]
+    if(angle < 0)
+        angle += 2*M_PI;
+
+    //Conver to degrees instead of radians
+    angle = 180*angle/M_PI;
+
+    //Calculate the size of the minor and major axes
+    float halfmajoraxissize=chisquare_val*sqrt(eigenvalues.at<float>(0));
+    float halfminoraxissize=chisquare_val*sqrt(eigenvalues.at<float>(1));
+
+    //Return the oriented ellipse
+    //The -angle is used because OpenCV defines the angle clockwise instead of anti-clockwise
+    cv::Point2f mean((int)(get_z_predict())(0), (int)(get_z_predict())(1));
+    return cv::RotatedRect(mean, cv::Size2f(halfmajoraxissize, halfminoraxissize), -angle);
+
+    
+
 }
