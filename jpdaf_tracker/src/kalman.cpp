@@ -37,7 +37,7 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
   P_update = params.P_0;
 
   //cout << "x_update" << endl << x_update << endl;
-  //cout << "P_update" << endl << P_update << endl;
+  cout << "P_update" << endl << P_update << endl;
   
 }
 
@@ -51,12 +51,22 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
        0, 0, 0, 1;
   Eigen::MatrixXf G;
   G = Eigen::MatrixXf(4, 2);
-  G << std::pow(dt, 2) / 2, 0,
+  /*G << std::pow(dt, 2) / 2, 0,
         	dt, 0,
         	0, std::pow(dt, 2) / 2,
         	0, dt;
   Eigen::Matrix4f Q;
-  Q = G * T * G.transpose();
+  Q = G * T * G.transpose();*/
+
+  //Lets try an other way:
+  Eigen::Matrix4f Q;
+  Q << std::pow(dt, 2)*T(0)/2, 0, 0, 0, 
+       0, dt*T(0), 0, 0, 
+       0, 0, std::pow(dt, 2)*T(1)/2, 0, 
+       0, 0, 0, dt*T(1);
+
+
+  cout << "Q: " << endl << Q << endl;//Maybe problem here? Q has very low position variances and very high speed variances
 
   //Need to write input here
   Eigen::Vector3f u = omega*dt;
@@ -79,7 +89,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   //cout << "x_predict: " << endl << x_predict << endl;
   //cout << "P_update: " << endl << P_update << endl;
   P_predict = A * P_update * A.transpose() + Q;
-//  cout << "P_predict: " << endl << P_predict << endl;
+  cout << "P_predict: " << endl << P_predict << endl;
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
   if(P_predict.determinant() < 0)
@@ -102,7 +112,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
 
   //Error Measurement Covariance Matrix
   S = C * P_predict * C.transpose() + R;
-  //cout << "S: " << endl << S << endl; 
+  cout << "S: " << endl << S << endl; 
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
@@ -158,7 +168,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
 
                 
   P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;
-  //cout << "P_update" << endl << P_update << endl;
+  cout << "P_update" << endl << P_update << endl;
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists

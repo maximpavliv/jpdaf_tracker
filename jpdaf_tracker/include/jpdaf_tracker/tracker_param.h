@@ -21,7 +21,8 @@ namespace jpdaf
       int max_missed_rate;
       int min_acceptance_rate;
       Eigen::Matrix2f R;
-      Eigen::Matrix2f T;
+      //Eigen::Matrix2f T;
+      Eigen::Vector2f T;
       Eigen::Matrix4f P_0;
       int nb_drones;
       float assoc_cost;
