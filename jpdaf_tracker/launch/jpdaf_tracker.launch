@@ -21,8 +21,6 @@
       <param name="min_acceptance_rate" value="15"/>
       <rosparam param="R"> [2, 2]</rosparam>
 
-      <!-- TRY TO MAKE SMALLER -->
-      <!--rosparam param="T"> [100000, 100000]</rosparam-->
       <rosparam param="T"> [50000, 50000]</rosparam>
       <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
       <param name="nb_drones" value="2"/>
