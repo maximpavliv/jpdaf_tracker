@@ -12,17 +12,16 @@ namespace jpdaf
   class Kalman
   {
     public:
-      Kalman(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params);
-      void predict(const float dt, const Eigen::Vector3f omega); 
-      void gainUpdate();
+      Kalman(const float& px, const float& py, const float& vx, const float& vy, TrackerParam params);
+      void predict(const float dt, const Eigen::Vector3f omega);
       void update(const std::vector< Detection> detections, const std::vector<double> beta, double beta_0); //Added by Max
       inline const Eigen::Matrix2f getS() const
       {
-    	return S;
+    	    return S;
       }
       const Eigen::Vector4f getUpdate()
       {
-    	return x_update;
+    	    return x_update;
       }
       Eigen::Vector2f get_z_predict(){return z_predict;}
       Eigen::Vector2f get_z_update(){return z_update;}

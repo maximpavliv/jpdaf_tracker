@@ -174,13 +174,6 @@ void Node::track(bool called_from_detection)
         }
         //------------
 
-        //COMPUTE GAIN
-        for(uint t=0; t<tracks_.size(); t++)
-        {
-            tracks_[t].gainUpdate();
-        }
-        //------------
-
 
         //UPDATE
 

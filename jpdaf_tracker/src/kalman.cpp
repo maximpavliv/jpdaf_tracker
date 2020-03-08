@@ -4,7 +4,7 @@ using namespace std;
 
 namespace jpdaf{
 
-Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy, TrackerParam params)
+Kalman::Kalman(const float& px, const float& py, const float& vx, const float& vy, TrackerParam params)
 {
 
   //CONTROL INPUT model Matrix
@@ -32,7 +32,7 @@ Kalman::Kalman(const float& x, const float& y, const float& vx, const float& vy,
   alpha = params.alpha_cam;
   c = params.principal_point;
 
-  x_update << x, vx, y, vy;
+  x_update << px, vx, py, vy;
   z_update = C * x_update;
   P_update = params.P_0;
 
@@ -108,8 +108,6 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
     exit(0);
   }
 
-  z_predict = C * x_predict;
-
   //Error Measurement Covariance Matrix
   S = C * P_predict * C.transpose() + R;
   cout << "S: " << endl << S << endl; 
@@ -122,17 +120,19 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
     exit(0);
   }
 
+  z_predict = C * x_predict;
+
   return;
 }
 
-void Kalman::gainUpdate()
-{
-  K = P_predict * C.transpose() * S.inverse();
-}
 
 
 void Kalman::update(const std::vector<Detection> detections, const std::vector<double> beta, double beta_0)
 {
+
+  K = P_predict * C.transpose() * S.inverse();
+
+
   std::vector<Eigen::Vector2f> nus;
   for(uint i=0; i<detections.size(); i++)
   {

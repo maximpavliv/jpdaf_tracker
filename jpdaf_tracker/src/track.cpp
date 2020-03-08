@@ -21,12 +21,6 @@ void Track::predict(float dt, Eigen::Vector3f omega)
 }
 
 
-void Track::gainUpdate()
-{
-    //ROS_INFO("Gaining track %d", id);
-    KF->gainUpdate();
-}
-
 void Track::update(const std::vector<Detection> detections, std::vector<double> beta, double beta_0)
 {
     //ROS_INFO("Updating track %d", id);

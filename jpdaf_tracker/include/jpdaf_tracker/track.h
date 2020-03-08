@@ -33,8 +33,6 @@ namespace jpdaf
     	  return KF->getS();
       }
       
-      void gainUpdate();
-      
       void update(const std::vector<Detection> detections, std::vector<double> beta, double beta_0);
       
       void increase_lifetime()
