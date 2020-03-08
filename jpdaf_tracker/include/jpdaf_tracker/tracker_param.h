@@ -7,6 +7,7 @@
 #include <opencv2/opencv.hpp>
 #include <ros/ros.h>
 
+using namespace std;
 
 namespace jpdaf
 {
@@ -32,6 +33,10 @@ namespace jpdaf
       float focal_length;
       float alpha_cam; //pixel size ratio
       Eigen::Vector2f principal_point;
+
+      string gt_topic_name;
+      string source_odom_name;
+      std::vector<string> target_odom_names;
 
       TrackerParam(ros::NodeHandle nh_priv_);
       TrackerParam(){};

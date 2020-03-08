@@ -39,6 +39,9 @@ namespace jpdaf
         std::vector<float> principal_point_vector;
         nh_priv_.getParam("principal_point", principal_point_vector);
         principal_point << principal_point_vector[0], principal_point_vector[1];
+        nh_priv_.getParam("gt_topic_name", gt_topic_name);
+        nh_priv_.getParam("source_odom_name", source_odom_name);
+        nh_priv_.getParam("target_odom_names", target_odom_names);
 
 
         ROS_INFO("===========================================");
@@ -57,6 +60,13 @@ namespace jpdaf
         ROS_INFO("Focal length: %f", focal_length);
         ROS_INFO("Alpha camera: %f", alpha_cam);
         ROS_INFO("Principal point: %f %f", principal_point(0), principal_point(1));
+        ROS_INFO("Groundtruth source topic name:");
+        cout << gt_topic_name << source_odom_name << endl;
+        ROS_INFO("Groundtruth target topic names:");
+        for(uint n=0; n<target_odom_names.size(); n++)
+        {
+            cout << gt_topic_name << target_odom_names[n] << endl;
+        }
 
     }
 

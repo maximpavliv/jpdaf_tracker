@@ -18,7 +18,11 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     detection_sub_ = nh_priv_.subscribe("detection", 10, &Node::detectionCallback, this);
     image_sub_ = nh_priv_.subscribe("image", 10, &Node::imageCallback, this);
     pose_sub_ = nh_priv_.subscribe("pose", 10, &Node::poseCallback, this);
-    //mocap_sub_ = nh_priv_.subscribe("gt", 10, &Node::gtCallback, this);
+    source_odom_sub_ = nh_priv_.subscribe(params.gt_topic_name+params.source_odom_name, 10, &Node::GTSourceCallback, this);
+    for(uint t=0; t<params.target_odom_names.size(); t++)
+    {
+        target_odom_subs_.push_back(nh_priv_.subscribe(params.gt_topic_name+params.target_odom_names[t], 10, &Node::GTTargetCallback, this));
+    }
 
     update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), &Node::timer_callback, this);
 
@@ -70,12 +74,16 @@ void Node::poseCallback(const geometry_msgs::PoseStamped& pose_msg)
     //ROS_INFO("Pushed back new pose");
 }
 
-/*void Node::gtCallback(const nav_msgs::OdometryConstPtr& msg)
+void Node::GTSourceCallback(const nav_msgs::OdometryConstPtr& msg)
 {
-    gt_odom_buffer_.push_back(*msg);
-    ROS_INFO("Received new mocap msg");
-    gt_odom_buffer_.clear();
-}*/
+//    ROS_INFO("New source GT msg");
+}
+
+void Node::GTTargetCallback(const nav_msgs::OdometryConstPtr& msg)
+{
+//    ROS_INFO("New target GT msg");
+}
+
 
 
 void Node::track(bool called_from_detection)
@@ -210,7 +218,7 @@ void Node::track(bool called_from_detection)
         //------------
         
         draw_tracks_publish_image(latest_image, detections);
-        publishTracks();
+        publishTracks((double)(last_timestamp_synchronized + time_step));
 
         manage_new_old_tracks(detections, alphas_0, betas_0); //ttt
 
@@ -827,8 +835,9 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
     return;
 }
 
-void Node::publishTracks()
+void Node::publishTracks(double detection_time_stamp)
 {
+
     jpdaf_tracker_msgs::Tracks trs_msg;
     for(uint t=0; t<tracks_.size(); t++)
     {
@@ -842,7 +851,8 @@ void Node::publishTracks()
             trs_msg.tracks.push_back(tr_msg);
         }
     }
-    //TODO add timestamp to header!!
+    ros::Time timestamp(detection_time_stamp);
+    trs_msg.header.stamp = timestamp;
     
     tracks_pub_.publish(trs_msg);
 }
@@ -933,6 +943,47 @@ void Node::create_tracks_test_input()//TODO CHANGE: spherical view
     tracks_.push_back(tr24);
     Track tr25(960, 540, 0, 0, params);
     tracks_.push_back(tr25);
+}
+
+
+Eigen::Matrix<double, 3,3> Node::yprToRot(const Eigen::Matrix<double,3,1>& ypr)
+{
+    double c, s;
+    Eigen::Matrix<double,3,3> Rz;
+    Rz.setZero();
+    double y = ypr(0,0);
+    c = cos(y);
+    s = sin(y);
+    Rz(0,0) =  c;
+    Rz(1,0) =  s;
+    Rz(0,1) = -s;
+    Rz(1,1) =  c;
+    Rz(2,2) =  1;
+
+    Eigen::Matrix<double,3,3> Ry;
+    Ry.setZero();
+    double p = ypr(1,0);
+    c = cos(p);
+    s = sin(p);
+    Ry(0,0) =  c;
+    Ry(2,0) = -s;
+    Ry(0,2) =  s;
+    Ry(2,2) =  c;
+    Ry(1,1) =  1;
+
+    Eigen::Matrix<double, 3,3> Rx;
+    Rx.setZero();
+    double r = ypr(2,0);
+    c = cos(r);
+    s = sin(r);
+    Rx(1,1) =  c;
+    Rx(2,1) =  s;
+    Rx(1,2) = -s;
+    Rx(2,2) =  c;
+    Rx(0,0) =  1;
+
+    Eigen::Matrix<double, 3,3> R = Rz*Ry*Rx;
+    return R;
 }
 
 

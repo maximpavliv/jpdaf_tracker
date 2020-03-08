@@ -32,6 +32,9 @@
       <param name="alpha_cam" value="1.0"/>
       <rosparam param="principal_point"> [489.72, 267.87]</rosparam>
 
+      <param name="gt_topic_name" value="/vicon"/>
+      <param name="source_odom_name" value="/Tobii_Glasses/odom"/>
+      <rosparam param="target_odom_names"> ["/Dragon_Fly1/odom", "/Dragon_Fly5/odom"]</rosparam>
 
   </node>
   

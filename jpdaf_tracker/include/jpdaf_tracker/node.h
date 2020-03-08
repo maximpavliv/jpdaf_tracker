@@ -43,11 +43,11 @@ class Node {
         ros::Subscriber detection_sub_;
         ros::Subscriber image_sub_;
         ros::Subscriber pose_sub_;
-        //ros::Subscriber mocap_sub_;
+        ros::Subscriber source_odom_sub_;
+        std::vector<ros::Subscriber> target_odom_subs_;
 
         bool track_init;
         std::vector<darknet_ros_msgs::BoundingBoxes> bounding_boxes_msgs_buffer_;
-        //std::vector<nav_msgs::Odometry> gt_odom_buffer_;
         std::vector<sensor_msgs::ImageConstPtr> image_buffer_;
         std::vector<geometry_msgs::PoseStamped> pose_buffer_;
 
@@ -75,7 +75,10 @@ class Node {
         void imageCallback(const sensor_msgs::ImageConstPtr& img_msg);
 
         void poseCallback(const geometry_msgs::PoseStamped& pose_msg);
-        //void gtCallback(const nav_msgs::OdometryConstPtr& msg);
+        
+        void GTSourceCallback(const nav_msgs::OdometryConstPtr& msg);
+
+        void GTTargetCallback(const nav_msgs::OdometryConstPtr& msg);
         
         void timer_callback(const ros::TimerEvent& event);
 
@@ -84,7 +87,7 @@ class Node {
         Eigen::Vector3f compute_angular_velocity(double detection_time_stamp, double detection_time_step);
         bool pose_buffer_ok(double detection_time_stamp, double detection_time_step);
 
-        void publishTracks();
+        void publishTracks(double detection_time_stamp);
 
         Eigen::MatrixXf association_matrix(const std::vector<Detection> detections);
 
@@ -110,7 +113,10 @@ class Node {
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 
 
+        Eigen::Matrix<double, 3,3> yprToRot(const Eigen::Matrix<double,3,1>& ypr);
+
         void create_tracks_test_input();
+
 
 
 };
