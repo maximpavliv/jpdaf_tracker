@@ -252,7 +252,7 @@ Eigen::MatrixXf Node::association_matrix(const std::vector<Detection> detections
         for (uint j=0; j<tracks_.size(); j++)
         {
             Eigen::Vector2f measure = detections[i].getVect();
-            Eigen::Vector2f prediction = tracks_[j].get_z_predict();
+            Eigen::Vector2f prediction = tracks_[j].get_z();
             if((measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction) <= pow(params.gamma, 2))
             {
                 q(i, j+1)=1;
@@ -407,7 +407,7 @@ double Node::probability_of_hypothesis_unnormalized(Eigen::MatrixXf hypothesis, 
             if(track_indexes.size() != 1)
                 ROS_ERROR("hypothesis matrix uncorrect, multiple sources for same measure! If this happens there is an error in the code");
             track_index = track_indexes[0] - 1;
-            y_tilds.push_back(detections[measurement_index].getVect() - tracks_[track_index].get_z_predict());
+            y_tilds.push_back(detections[measurement_index].getVect() - tracks_[track_index].get_z());
             //cout << "y_tild: " << endl << detections[measurement_index].getVect() - tracks_[track_index].get_z_predict() << endl;
             Ss.push_back(tracks_[track_index].S());
         }
@@ -790,7 +790,7 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
     {
         if(tracks_[t].getId() != -1)
         {
-            cv::Point2f tr_pos((int)(tracks_[t].get_z_update())(0), (int)(tracks_[t].get_z_update())(1));
+            cv::Point2f tr_pos((int)(tracks_[t].get_z())(0), (int)(tracks_[t].get_z())(1));
             cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
             cv::circle(im, tr_pos, 4, cv::Scalar(0, 255, 0), 2); 
             putText(im, to_string(tracks_[t].getId()), id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(0, 255, 0), 1, CV_AA);
@@ -801,7 +801,7 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
         }
         else
         {
-            cv::Point2f tr_pos((int)(tracks_[t].get_z_update())(0), (int)(tracks_[t].get_z_update())(1));
+            cv::Point2f tr_pos((int)(tracks_[t].get_z())(0), (int)(tracks_[t].get_z())(1));
             cv::Point2f id_pos(tr_pos.x, tr_pos.y+30);
             cv::circle(im, tr_pos, 4, cv::Scalar(255, 150, 0), 2);
             putText(im, "-", id_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.5, cvScalar(255, 150, 0), 1, CV_AA);
@@ -838,8 +838,8 @@ void Node::publishTracks(double detection_time_stamp)
         {
             jpdaf_tracker_msgs::Track tr_msg;
             tr_msg.id = tracks_[t].getId();
-            tr_msg.x = (int)(tracks_[t].get_z_update())(0);
-            tr_msg.y = (int)(tracks_[t].get_z_update())(1);
+            tr_msg.x = (int)(tracks_[t].get_z())(0);
+            tr_msg.y = (int)(tracks_[t].get_z())(1);
             
             trs_msg.tracks.push_back(tr_msg);
         }

@@ -32,12 +32,12 @@ Kalman::Kalman(const float& px, const float& py, const float& vx, const float& v
   alpha = params.alpha_cam;
   c = params.principal_point;
 
-  x_update << px, vx, py, vy;
-  z_update = C * x_update;
-  P_update = params.P_0;
+  x << px, vx, py, vy;
+  z = C * x;
+  P = params.P_0;
 
   //cout << "x_update" << endl << x_update << endl;
-  cout << "P_update" << endl << P_update << endl;
+  cout << "P" << endl << P << endl;
   
 }
 
@@ -72,55 +72,55 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   Eigen::Vector3f u = omega*dt;
 
 
-  B(0,0) = ((z_update(0)-c(0))*(z_update(1)-c(1)))/f;
-  B(0,1) = -(f*alpha + (z_update(0)-c(0))*(z_update(0)-c(0))/(f*alpha));
-  B(0,2) = alpha*(z_update(1)-c(1));
+  B(0,0) = ((z(0)-c(0))*(z(1)-c(1)))/f;
+  B(0,1) = -(f*alpha + (z(0)-c(0))*(z(0)-c(0))/(f*alpha));
+  B(0,2) = alpha*(z(1)-c(1));
   
-  B(2,0) = (f + (z_update(1)-c(1))*(z_update(1)-c(1))/f); 
-  B(2,1) = -((z_update(0)-c(0))*(z_update(1)-c(1)))/(alpha*f);
-  B(2,2) = -(z_update(0)-c(0))/alpha;
+  B(2,0) = (f + (z(1)-c(1))*(z(1)-c(1))/f); 
+  B(2,1) = -((z(0)-c(0))*(z(1)-c(1)))/(alpha*f);
+  B(2,2) = -(z(0)-c(0))/alpha;
 
 
   
   //cout << "B*u: " << endl << B*u << endl;
 
-  x_predict = A*x_update + B*u;
+  x = A*x + B*u;
 
   //cout << "x_predict: " << endl << x_predict << endl;
   //cout << "P_update: " << endl << P_update << endl;
-  P_predict = A * P_update * A.transpose() + Q;
-  cout << "P_predict: " << endl << P_predict << endl;
+  P = A * P * A.transpose() + Q;
+  cout << "P: " << endl << P << endl;
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
-  if(P_predict.determinant() < 0)
+  if(P.determinant() < 0)
   {
-    ROS_FATAL("Predicted covariance determinant is negative! %f", P_predict.determinant());
+    ROS_FATAL("Predicted covariance determinant is negative! %f", P.determinant());
     exit(0);
   }
-  if((isnan(P_predict.array())).any())
+  if((isnan(P.array())).any())
   {
-    ROS_FATAL("P_predict contains NaNs");
+    ROS_FATAL("P contains NaNs");
     exit(0);
   }
-  if((isinf(P_predict.array())).any())
+  if((isinf(P.array())).any())
   {
-    ROS_FATAL("P_predict contains infs");
+    ROS_FATAL("P contains infs");
     exit(0);
   }
 
   //Error Measurement Covariance Matrix
-  S = C * P_predict * C.transpose() + R;
+  S = C * P * C.transpose() + R;
   cout << "S: " << endl << S << endl; 
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
   if(S.determinant() < 0)
   {
-    ROS_FATAL("S determinant is negative! %f", P_predict.determinant());
+    ROS_FATAL("S determinant is negative! %f", S.determinant());
     exit(0);
   }
 
-  z_predict = C * x_predict;
+  z = C * x;
 
   return;
 }
@@ -130,13 +130,13 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
 void Kalman::update(const std::vector<Detection> detections, const std::vector<double> beta, double beta_0)
 {
 
-  K = P_predict * C.transpose() * S.inverse();
+  K = P * C.transpose() * S.inverse();
 
 
   std::vector<Eigen::Vector2f> nus;
   for(uint i=0; i<detections.size(); i++)
   {
-      nus.push_back(detections[i].getVect()-z_predict);
+      nus.push_back(detections[i].getVect()-z);
   }
 
   Eigen::Vector2f nu;
@@ -146,13 +146,13 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
       nu += beta[i] * nus[i];
   }
     
-  x_update = x_predict + K * nu;
+  x = x + K * nu;
   //x_update = x_predict;//ttt
 
   //cout << "x_update" << endl << x_update << endl;
 
   Eigen::Matrix4f P_c;
-  P_c = P_predict - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
+  P_c = P - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
 
   Eigen::Matrix4f P_tild;
   Eigen::Matrix2f temp_sum;
@@ -167,18 +167,18 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   P_tild = K * temp_sum * K.transpose();
 
                 
-  P_update = beta_0*P_predict + (1-beta_0)*P_c + P_tild;
-  cout << "P_update" << endl << P_update << endl;
+  P = beta_0*P + (1-beta_0)*P_c + P_tild;
+  cout << "P" << endl << P << endl;
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
-  if(P_update.determinant() < 0)
+  if(P.determinant() < 0)
   {
-    ROS_FATAL("Update covariance determinant is negative! %f", P_update.determinant());
+    ROS_FATAL("Update covariance determinant is negative! %f", P.determinant());
     exit(0);
   }
 
-  z_update = C * x_update; //ttt
+  z = C * x; //ttt
 
 }
 

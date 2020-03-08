@@ -19,12 +19,7 @@ namespace jpdaf
       {
     	    return S;
       }
-      const Eigen::Vector4f getUpdate()
-      {
-    	    return x_update;
-      }
-      Eigen::Vector2f get_z_predict(){return z_predict;}
-      Eigen::Vector2f get_z_update(){return z_update;}
+      Eigen::Vector2f get_z(){return z;}
     private:
       Eigen::MatrixXf C;
       Eigen::MatrixXf B;
@@ -33,12 +28,9 @@ namespace jpdaf
       Eigen::Vector2f T; //Proces measurement Covariance vector (accelerations)
       Eigen::Matrix2f S;
       Eigen::MatrixXf K; //Gain
-      Eigen::Matrix4f P_predict; //Covariance Matrix predicted error
-      Eigen::Vector4f x_predict;
-      Eigen::Matrix4f P_update; //Covariance Matrix
-      Eigen::Vector4f x_update;
-      Eigen::Vector2f z_predict;
-      Eigen::Vector2f z_update;
+      Eigen::Matrix4f P; //Covariance Matrix predicted error
+      Eigen::Vector4f x;
+      Eigen::Vector2f z;
 
       float f;
       float alpha;

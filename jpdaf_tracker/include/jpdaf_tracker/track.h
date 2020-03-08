@@ -62,9 +62,7 @@ namespace jpdaf
     	  return life_time >= minAcceptanceRate;
       }
 
-      Eigen::Vector2f get_z_predict(){return KF->get_z_predict();}
-
-      Eigen::Vector2f get_z_update(){return KF->get_z_update();}
+      Eigen::Vector2f get_z(){return KF->get_z();}
 
       cv::RotatedRect get_error_ellipse(double chisquare_val);
     private:

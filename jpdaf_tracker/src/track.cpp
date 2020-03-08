@@ -55,7 +55,7 @@ cv::RotatedRect Track::get_error_ellipse(double chisquare_val){
 
     //Return the oriented ellipse
     //The -angle is used because OpenCV defines the angle clockwise instead of anti-clockwise
-    cv::Point2f mean((int)(get_z_predict())(0), (int)(get_z_predict())(1));
+    cv::Point2f mean((int)(get_z())(0), (int)(get_z())(1));
     return cv::RotatedRect(mean, cv::Size2f(halfmajoraxissize, halfminoraxissize), -angle);
 
     
