@@ -88,7 +88,9 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
 
   //cout << "x_predict: " << endl << x_predict << endl;
   //cout << "P_update: " << endl << P_update << endl;
-  P = A * P * A.transpose() + Q;
+  
+  P = A * P * A.transpose() + Q;  //ttt
+  
   cout << "P: " << endl << P << endl;
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists

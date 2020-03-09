@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/Imu.h>
 #include <nav_msgs/Odometry.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <darknet_ros_msgs/BoundingBox.h>
@@ -21,7 +22,7 @@
 
 #include <cv_bridge/cv_bridge.h>
 
-#include <geometry_msgs/PoseStamped.h>
+//#include <geometry_msgs/PoseStamped.h>
 
 #include <image_transport/image_transport.h>
 #include <jpdaf_tracker_msgs/Track.h>
@@ -42,14 +43,14 @@ class Node {
 
         ros::Subscriber detection_sub_;
         ros::Subscriber image_sub_;
-        ros::Subscriber pose_sub_;
+        ros::Subscriber imu_sub_;
         ros::Subscriber source_odom_sub_;
         std::vector<ros::Subscriber> target_odom_subs_;
 
         bool track_init;
         std::vector<darknet_ros_msgs::BoundingBoxes> bounding_boxes_msgs_buffer_;
         std::vector<sensor_msgs::ImageConstPtr> image_buffer_;
-        std::vector<geometry_msgs::PoseStamped> pose_buffer_;
+        std::vector<sensor_msgs::Imu> imu_buffer_;
 
         image_transport::Publisher image_pub_;
         ros::Publisher tracks_pub_;
@@ -67,6 +68,8 @@ class Node {
 
         ros::Timer update_timer;
 
+        Eigen::Matrix3f R_cam_imu;
+
 
 //----------------------------
 
@@ -74,7 +77,7 @@ class Node {
         void detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes);
         void imageCallback(const sensor_msgs::ImageConstPtr& img_msg);
 
-        void poseCallback(const geometry_msgs::PoseStamped& pose_msg);
+        void imuCallback(const sensor_msgs::Imu& imu_msg);
         
         void GTSourceCallback(const nav_msgs::OdometryConstPtr& msg);
 
@@ -84,8 +87,8 @@ class Node {
 
         void track(bool called_from_detection);
 
-        Eigen::Vector3f compute_angular_velocity(double detection_time_stamp, double detection_time_step);
-        bool pose_buffer_ok(double detection_time_stamp, double detection_time_step);
+        Eigen::Vector3f compute_angular_velocity(double detection_time_stamp);
+        bool imu_buffer_ok(double detection_time_stamp);
 
         void publishTracks(double detection_time_stamp);
 

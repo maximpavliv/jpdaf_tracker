@@ -2,13 +2,14 @@
 
   <arg name="detection_topic" default="/darknet_ros/bounding_boxes"/>
   <arg name="image_topic" default="/darknet_ros/detection_image"/>
-  <arg name="pose_topic" default="/tobii_vio/odom"/>
+  <!--arg name="image_topic" default="/gaze/image_resized"/-->
+  <arg name="imu_topic" default="/gaze/imu"/>
   <!--arg name="gt_topic" default="/"/-->
 
   <node pkg="jpdaf_tracker" type="jpdaf_tracker" name="jpdaf_tracker" output="screen">
       <remap from="~detection" to="$(arg detection_topic)"/>
       <remap from="~image" to="$(arg image_topic)"/>
-      <remap from="~pose" to="$(arg pose_topic)"/>
+      <remap from="~imu" to="$(arg imu_topic)"/>
       <!--remap from="~gt" to="$(arg gt_topic)"/-->
 
       <param name="pd" value="0.952662721893"/>
