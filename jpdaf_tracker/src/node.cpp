@@ -215,7 +215,7 @@ void Node::track(bool called_from_detection)
         draw_tracks_publish_image(latest_image, detections);
         publishTracks((double)(last_timestamp_synchronized + time_step));
 
-        manage_new_old_tracks(detections, alphas_0, betas_0); //ttt
+        manage_new_old_tracks(detections, alphas_0, betas_0, omega, time_step); //ttt
 
         //Update of variables for next call
         if(called_from_detection)
@@ -457,7 +457,7 @@ Eigen::MatrixXf Node::delta(Eigen::MatrixXf hypothesis)
     return delta;
 }
 
-void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> alphas_0, std::vector<double> betas_0)
+void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> alphas_0, std::vector<double> betas_0, Eigen::Vector3f omega, double time_step)
 {
     //ROS_INFO("manage new old tracks: alphas_0 length=%d, betas_0 length=%d", (int)alphas_0.size(), (int)betas_0.size());
     for(uint i=0; i<tracks_.size(); i++)
@@ -475,7 +475,7 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
         }
     }
 
-    auto new_tracks = create_new_tracks(detections, unassoc_detections_idx);
+    auto new_tracks = create_new_tracks(detections, unassoc_detections_idx, omega, time_step);
 
     for(uint j=0; j<betas_0.size(); j++)
     {
@@ -527,7 +527,7 @@ void Node::manage_new_old_tracks(std::vector<Detection> detections, std::vector<
     }
 }
 
-std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections_idx)
+std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections_idx, Eigen::Vector3f omega, double time_step)
 {
     std::vector<Track> new_tracks;
 
@@ -587,8 +587,23 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
             {
                 if(assigmentsBin(i, j))
                 {
-                    const float& vx = unassoc_detections.at(j).x() - prev_unassoc_detections.at(i).x();
-                    const float& vy = unassoc_detections.at(j).y() - prev_unassoc_detections.at(i).y();
+                    Eigen::MatrixXf B;
+                    B = Eigen::MatrixXf(2, 3);
+                    B << 0, 0, 0,
+                         0, 0, 0;
+
+                    B(0,0) = ((unassoc_detections.at(j).x()-params.principal_point(0))*(unassoc_detections.at(j).y()-params.principal_point(1)))/params.focal_length;
+                    B(0,1) = -(params.focal_length*params.alpha_cam + (unassoc_detections.at(j).x()-params.principal_point(0))*(unassoc_detections.at(j).x()-params.principal_point(0))/(params.focal_length*params.alpha_cam));
+                    B(0,2) = params.alpha_cam*(unassoc_detections.at(j).y()-params.principal_point(1));
+                    
+                    B(1,0) = (params.focal_length + (unassoc_detections.at(j).y()-params.principal_point(1))*(unassoc_detections.at(j).y()-params.principal_point(1))/params.focal_length); 
+                    B(1,1) = -((unassoc_detections.at(j).x()-params.principal_point(0))*(unassoc_detections.at(j).y()-params.principal_point(1)))/(params.alpha_cam*params.focal_length);
+                    B(1,2) = -(unassoc_detections.at(j).x()-params.principal_point(0))/params.alpha_cam;
+
+                    auto speed_offset = B*omega;
+
+                    const float& vx = (unassoc_detections.at(j).x()-prev_unassoc_detections.at(i).x())/time_step + speed_offset(0); 
+                    const float& vy = (unassoc_detections.at(j).y()-prev_unassoc_detections.at(i).y())/time_step + speed_offset(1);
                     Track tr(unassoc_detections.at(j).x(), unassoc_detections.at(j).y(), vx, vy, params);
                     new_tracks.push_back(tr);
                     ROS_INFO("created new track!");
@@ -790,7 +805,7 @@ std::vector<int> Node::get_nonzero_indexes_row(Eigen::MatrixXf mat)
     return nonzero_elements;
 }
 
-void Node::create_tracks_test_input()//TODO CHANGE: spherical view 
+void Node::create_tracks_test_input()
 {
     Track tr1(0, 0, 0, 0, params);
     tracks_.push_back(tr1);

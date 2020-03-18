@@ -37,7 +37,7 @@ Kalman::Kalman(const float& px, const float& py, const float& vx, const float& v
   P = params.P_0;
 
   //cout << "x_update" << endl << x_update << endl;
-  cout << "P" << endl << P << endl;
+  //cout << "P" << endl << P << endl;
   
 }
 
@@ -66,7 +66,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
        0, 0, 0, dt*T(1);
 
 
-  cout << "Q: " << endl << Q << endl;//Maybe problem here? Q has very low position variances and very high speed variances
+  //cout << "Q: " << endl << Q << endl;//Q has very low position variances and very high speed variances
 
   //Need to write input here
   Eigen::Vector3f u = omega*dt;
@@ -85,13 +85,10 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   //cout << "B*u: " << endl << B*u << endl;
 
   x = A*x + B*u;
-
-  //cout << "x_predict: " << endl << x_predict << endl;
-  //cout << "P_update: " << endl << P_update << endl;
   
   P = A * P * A.transpose() + Q;  //ttt
   
-  cout << "P: " << endl << P << endl;
+  //cout << "P: " << endl << P << endl;
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
   if(P.determinant() < 0)
@@ -112,7 +109,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
 
   //Error Measurement Covariance Matrix
   S = C * P * C.transpose() + R;
-  cout << "S: " << endl << S << endl; 
+  //cout << "S: " << endl << S << endl; 
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
@@ -170,7 +167,7 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
 
                 
   P = beta_0*P + (1-beta_0)*P_c + P_tild;
-  cout << "P" << endl << P << endl;
+  //cout << "P" << endl << P << endl;
 
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists

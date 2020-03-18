@@ -94,8 +94,8 @@ class Node {
 
         Eigen::MatrixXf association_matrix(const std::vector<Detection> detections);
 
-        void manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> alphas_0, std::vector<double> betas_0);
-        std::vector<Track> create_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections);
+        void manage_new_old_tracks(std::vector<Detection> detections, std::vector<double> alphas_0, std::vector<double> betas_0, Eigen::Vector3f omega, double time_step);
+        std::vector<Track> create_new_tracks(std::vector<Detection> detections, std::vector<int> unassoc_detections, Eigen::Vector3f omega, double time_step);
 
         std::vector<Detection> get_detections(const darknet_ros_msgs::BoundingBoxes last_detection);
 
