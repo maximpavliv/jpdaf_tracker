@@ -24,7 +24,6 @@ namespace jpdaf
       Eigen::MatrixXf C;
       Eigen::MatrixXf B;
       Eigen::Matrix2f R; //Proces measurement Covariance matrix
-      //Eigen::Matrix2f T; //Proces measurement Covariance matrix
       Eigen::Vector2f T; //Proces measurement Covariance vector (accelerations)
       Eigen::Matrix2f S;
       Eigen::MatrixXf K; //Gain

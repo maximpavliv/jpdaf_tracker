@@ -22,8 +22,6 @@
 
 #include <cv_bridge/cv_bridge.h>
 
-//#include <geometry_msgs/PoseStamped.h>
-
 #include <image_transport/image_transport.h>
 #include <jpdaf_tracker_msgs/Track.h>
 #include <jpdaf_tracker_msgs/Tracks.h>
@@ -44,8 +42,8 @@ class Node {
         ros::Subscriber detection_sub_;
         ros::Subscriber image_sub_;
         ros::Subscriber imu_sub_;
-        ros::Subscriber source_odom_sub_;
-        std::vector<ros::Subscriber> target_odom_subs_;
+        //ros::Subscriber source_odom_sub_;
+        //std::vector<ros::Subscriber> target_odom_subs_;
 
         bool track_init;
         std::vector<darknet_ros_msgs::BoundingBoxes> bounding_boxes_msgs_buffer_;
@@ -70,6 +68,7 @@ class Node {
 
         Eigen::Matrix3f R_cam_imu;
 
+        int debug_track_counter;
 
 //----------------------------
 
@@ -79,18 +78,19 @@ class Node {
 
         void imuCallback(const sensor_msgs::Imu& imu_msg);
         
-        void GTSourceCallback(const nav_msgs::OdometryConstPtr& msg);
-
-        void GTTargetCallback(const nav_msgs::OdometryConstPtr& msg);
+//        void GTSourceCallback(const nav_msgs::OdometryConstPtr& msg);
+//        void GTTargetCallback(const nav_msgs::OdometryConstPtr& msg);
         
         void timer_callback(const ros::TimerEvent& event);
 
         void track(bool called_from_detection);
 
-        Eigen::Vector3f compute_angular_velocity(double detection_time_stamp);
-        bool imu_buffer_ok(double detection_time_stamp);
+        Eigen::Vector3f compute_angular_velocity(double detection_timestamp);
+        bool imu_buffer_ok(double detection_timestamp);
 
-        void publishTracks(double detection_time_stamp);
+        bool image_buffer_ok(double detection_timestamp);
+
+        void publishTracks(double detection_timestamp);
 
         Eigen::MatrixXf association_matrix(const std::vector<Detection> detections);
 
@@ -110,8 +110,7 @@ class Node {
         Eigen::MatrixXf tau(Eigen::MatrixXf hypothesis);//THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
         Eigen::MatrixXf delta(Eigen::MatrixXf hypothesis);    //THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
 
-        void draw_tracks_publish_image(const sensor_msgs::ImageConstPtr last_image, std::vector<Detection> detections);
-
+        void draw_tracks_publish_image(std::vector<Detection> detections, double detection_time_stamp);
 
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 

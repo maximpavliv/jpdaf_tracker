@@ -18,11 +18,11 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     detection_sub_ = nh_priv_.subscribe("detection", 10, &Node::detectionCallback, this);
     image_sub_ = nh_priv_.subscribe("image", 10, &Node::imageCallback, this);
     imu_sub_ = nh_priv_.subscribe("imu", 10, &Node::imuCallback, this);
-    source_odom_sub_ = nh_priv_.subscribe(params.gt_topic_name+params.source_odom_name, 10, &Node::GTSourceCallback, this);
+/*    source_odom_sub_ = nh_priv_.subscribe(params.gt_topic_name+params.source_odom_name, 10, &Node::GTSourceCallback, this);
     for(uint t=0; t<params.target_odom_names.size(); t++)
     {
         target_odom_subs_.push_back(nh_priv_.subscribe(params.gt_topic_name+params.target_odom_names[t], 10, &Node::GTTargetCallback, this));
-    }
+    }*/
 
     update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), &Node::timer_callback, this);
 
@@ -40,6 +40,8 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
                 0.003454872095575218, -0.9361296277702554, -0.351638143365486,
                 0.03389901393594679, -0.3513285012331849, 0.9356383601987547;
 
+    debug_track_counter = 0;
+
     ROS_INFO("Node initialized successfully");
 
 
@@ -47,46 +49,32 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
 
 void Node::timer_callback(const ros::TimerEvent& event)
 {
-    if(image_buffer_.size() != 0)
-    {
         track(false);
-    }
-
 }
 
 void Node::detectionCallback(const darknet_ros_msgs::BoundingBoxesPtr& bounding_boxes)
 {
     bounding_boxes_msgs_buffer_.push_back(*bounding_boxes);
-    if(image_buffer_.size() != 0)
-    {
-        track(true);
-    }
+    track(true);
 }
 
 void Node::imageCallback(const sensor_msgs::ImageConstPtr& img_msg)
 {
     image_buffer_.push_back(img_msg);
-    if(bounding_boxes_msgs_buffer_.size() != 0)
-    {
-        track(true);
-    }
 }
 
 void Node::imuCallback(const sensor_msgs::Imu& imu_msg)
 {
     imu_buffer_.push_back(imu_msg);
-    //ROS_INFO("Pushed back new pose");
 }
 
-void Node::GTSourceCallback(const nav_msgs::OdometryConstPtr& msg)
+/*void Node::GTSourceCallback(const nav_msgs::OdometryConstPtr& msg)
 {
-//    ROS_INFO("New source GT msg");
 }
 
 void Node::GTTargetCallback(const nav_msgs::OdometryConstPtr& msg)
 {
-//    ROS_INFO("New target GT msg");
-}
+}*/
 
 
 
@@ -95,11 +83,11 @@ void Node::track(bool called_from_detection)
     update_timer.stop();
 
     ROS_INFO("---------------------------------------------");
+    ROS_INFO("debug track counter: %d", debug_track_counter);
     if(!called_from_detection)
     {
         ROS_WARN("Tracking called from timer, no new detections");
     }
-    auto latest_image = image_buffer_.back();
 
     darknet_ros_msgs::BoundingBoxes latest_detection;
     if(called_from_detection)
@@ -122,33 +110,27 @@ void Node::track(bool called_from_detection)
 
     if(track_init)
     {
+        ROS_WARN("Tracker not initialized");
         for (uint d=0; d<detections.size(); d++)
         {
             prev_unassoc_detections.push_back(detections[d]);
         }
-        track_init = false;
 
         //create_tracks_test_input();//ttt       
 
         if(called_from_detection)
         {
-            last_timestamp_synchronized = latest_detection.header.stamp.toSec(); //testing new timestamp method
+            last_timestamp_synchronized = latest_detection.header.stamp.toSec();
             last_timestamp_from_rostime = ros::Time::now().toSec();
             last_track_from_detection = true;
+            ROS_INFO("Tracker initialized");
+            track_init = false;
         }
-        else
-        {
-            last_timestamp_synchronized = latest_image->header.stamp.toSec(); //
-            last_timestamp_from_rostime = ros::Time::now().toSec();
-            last_track_from_detection = false;
-        }
-
     }
     else
     {
         cout << "Currently tracked tracks indexes: " << endl; for(auto tr : tracks_){cout << tr.getId() << " ";} cout << endl;
         double time_step;
-        
         if(called_from_detection && last_track_from_detection)
         {
             time_step = latest_detection.header.stamp.toSec() - last_timestamp_synchronized; // testing new timestamp method
@@ -157,7 +139,6 @@ void Node::track(bool called_from_detection)
         {
             time_step = ros::Time::now().toSec() - last_timestamp_from_rostime;
         }
-        
         ROS_INFO("tracking called with time step %f, detection boxes nb: %d", time_step, (int)detections.size());
 
         if(time_step < 0)
@@ -165,74 +146,79 @@ void Node::track(bool called_from_detection)
             ROS_FATAL("Negative time step! %f", time_step);// Should not happen anymore
             exit(0);    
         }
-
-        //ROS_INFO("Real measured time step: %f", ros::Time::now().toSec() - last_timestamp_from_rostime);
-        auto omega = compute_angular_velocity((double)(last_timestamp_synchronized + time_step));
-        
-        //PREDICTION
-        for(uint t=0; t<tracks_.size(); t++)
+        if(time_step != 0.0)//Sometimes Darknet ros publishes consecutive detections (bounding boxes and detections) with same timestamp, this happens when no new image is available in the yolo's buffer of images to perform detection
         {
-            tracks_[t].predict(time_step, omega);
-        }
-        //------------
 
-
-        //UPDATE
-
-        auto assoc_mat = association_matrix(detections);
-        std::cout << "assoc_mat: " << endl << assoc_mat << endl;
-
-        auto hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
-        auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
-        ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
-
-/*        cout << "hypothesis matrices and their respective probabilities:" << endl;
-        for(uint h=0; h<hypothesis_mats.size(); h++)
-        {
-            cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
-        }*/
-
-        auto betas_matrix = compute_betas_matrix(hypothesis_mats, hypothesis_probs);
-        cout << "betas_matrix: " << endl << betas_matrix << endl;
-
-
-        std::vector<double> betas_0;
-        for(uint t=0; t<tracks_.size(); t++)
-        {
-            std::vector<double> beta(betas_matrix.rows());
-            double beta_0 = 1.0;
-            for(int m=0; m<betas_matrix.rows(); m++)
+            auto omega = compute_angular_velocity((double)(last_timestamp_synchronized + time_step));
+            
+            //PREDICTION
+            for(uint t=0; t<tracks_.size(); t++)
             {
-                beta[m] = betas_matrix(m, t+1);
-                beta_0 -= betas_matrix(m, t+1);
+                tracks_[t].predict(time_step, omega);
             }
-            betas_0.push_back(beta_0);
-            tracks_[t].update(detections, beta, beta_0);
+            
+
+            //------------
+            //UPDATE
+
+            auto assoc_mat = association_matrix(detections);
+            std::cout << "assoc_mat: " << endl << assoc_mat << endl;
+
+            auto hypothesis_mats = generate_hypothesis_matrices(assoc_mat);
+            auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
+            ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
+
+    /*        cout << "hypothesis matrices and their respective probabilities:" << endl;
+            for(uint h=0; h<hypothesis_mats.size(); h++)
+            {
+                cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
+            }*/
+
+            auto betas_matrix = compute_betas_matrix(hypothesis_mats, hypothesis_probs);
+            cout << "betas_matrix: " << endl << betas_matrix << endl;
+
+
+            std::vector<double> betas_0;
+            for(uint t=0; t<tracks_.size(); t++)
+            {
+                std::vector<double> beta(betas_matrix.rows());
+                double beta_0 = 1.0;
+                for(int m=0; m<betas_matrix.rows(); m++)
+                {
+                    beta[m] = betas_matrix(m, t+1);
+                    beta_0 -= betas_matrix(m, t+1);
+                }
+                betas_0.push_back(beta_0);
+                tracks_[t].update(detections, beta, beta_0);
+            }
+            std::vector<double> alphas_0; for(int m=0; m<betas_matrix.rows(); m++){alphas_0.push_back(betas_matrix(m, 0));} // betas 0 are probabilities that track t has not been detected. Alphas 0 are probabilities that measurement m was generated by clutter noise. So beta 0 does NOT correspond to first column  of betas matrix
+
+
+            draw_tracks_publish_image(detections, (double)(last_timestamp_synchronized + time_step));
+            publishTracks((double)(last_timestamp_synchronized + time_step));
+
+            manage_new_old_tracks(detections, alphas_0, betas_0, omega, time_step); //ttt
+
+            //Update of variables for next call
+            if(called_from_detection)
+            {
+                last_timestamp_synchronized = latest_detection.header.stamp.toSec();
+                last_track_from_detection = true;
+            }
+            else
+            {
+                last_timestamp_synchronized += ros::Time::now().toSec() - last_timestamp_from_rostime;
+                last_track_from_detection = false;
+            }
+            last_timestamp_from_rostime = ros::Time::now().toSec();
+
         }
-        std::vector<double> alphas_0; for(int m=0; m<betas_matrix.rows(); m++){alphas_0.push_back(betas_matrix(m, 0));} // betas 0 are probabilities that track t has not been detected. Alphas 0 are probabilities that measurement m was generated by clutter noise. So beta 0 does NOT correspond to first column  of betas matrix
 
-
-        draw_tracks_publish_image(latest_image, detections);
-        publishTracks((double)(last_timestamp_synchronized + time_step));
-
-        manage_new_old_tracks(detections, alphas_0, betas_0, omega, time_step); //ttt
-
-        //Update of variables for next call
-        if(called_from_detection)
-        {
-            last_timestamp_synchronized = latest_detection.header.stamp.toSec();// testing new timestamp method
-            last_track_from_detection = true;
-        }
-        else
-        {
-            last_timestamp_synchronized += ros::Time::now().toSec() - last_timestamp_from_rostime;
-            last_track_from_detection = false;
-        }
-        last_timestamp_from_rostime = ros::Time::now().toSec();
     }
 
     bounding_boxes_msgs_buffer_.clear();
-    image_buffer_.clear();
+
+    debug_track_counter++;
 
     update_timer.start();
 }
@@ -242,9 +228,6 @@ Eigen::MatrixXf Node::association_matrix(const std::vector<Detection> detections
 {
     Eigen::MatrixXf q(detections.size(), tracks_.size()+1);
     q.setZero();
-
-    //Eigen::MatrixXf evaluation_mat(detections.size(), tracks_.size());
-    //evaluation_mat.setZero();
 
     for(uint i=0; i<detections.size(); i++) {q(i,0)=1;} // Setting first column to 1
     
@@ -258,10 +241,8 @@ Eigen::MatrixXf Node::association_matrix(const std::vector<Detection> detections
             {
                 q(i, j+1)=1;
             }
-            //evaluation_mat(i,j) = (measure-prediction).transpose() * tracks_[j].S().inverse() * (measure-prediction);
         }
     }
-    //std::cout << "evaluation_mat computed: " << endl << evaluation_mat << endl;
     return q;
 }
 
@@ -602,11 +583,11 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
 
                     auto speed_offset = B*omega;
 
-                    const float& vx = (unassoc_detections.at(j).x()-prev_unassoc_detections.at(i).x())/time_step + speed_offset(0); 
-                    const float& vy = (unassoc_detections.at(j).y()-prev_unassoc_detections.at(i).y())/time_step + speed_offset(1);
+                    const float& vx = (unassoc_detections.at(j).x()-prev_unassoc_detections.at(i).x())/time_step - speed_offset(0); 
+                    const float& vy = (unassoc_detections.at(j).y()-prev_unassoc_detections.at(i).y())/time_step - speed_offset(1);
                     Track tr(unassoc_detections.at(j).x(), unassoc_detections.at(j).y(), vx, vy, params);
                     new_tracks.push_back(tr);
-                    ROS_INFO("created new track!");
+                    ROS_INFO("created new track with position %f %f, speed %f %f", unassoc_detections.at(j).x(), unassoc_detections.at(j).y(), vx, vy);
                 }
             }
         }
@@ -630,28 +611,28 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
     }
 }
 
-Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp)
+Eigen::Vector3f Node::compute_angular_velocity(double detection_timestamp)
 {
     ROS_INFO("Imu buffer length: %d", (int)imu_buffer_.size());
-    ROS_INFO("Detection timestamp: %f", detection_time_stamp);
+    //ROS_INFO("Detection timestamp: %f", detection_timestamp);
 
-    if(!imu_buffer_ok(detection_time_stamp))
+    if(!imu_buffer_ok(detection_timestamp))
     {
-        Eigen::Vector3f omega_from_W(0, 0, 0);
-        return omega_from_W;
+        Eigen::Vector3f omega(0, 0, 0);
+        return omega;
     }
 
     int imu_buffer_index = 0;
     while(imu_buffer_index != (int)imu_buffer_.size()-1)
     {
-        if((double)imu_buffer_[imu_buffer_index].header.stamp.toSec() >= detection_time_stamp)
+        if((double)imu_buffer_[imu_buffer_index].header.stamp.toSec() >= detection_timestamp)
         {
             break;
         }
         imu_buffer_index++;
     }
 
-    ROS_INFO("Selected pose buffer timestamps: %f", imu_buffer_[imu_buffer_index].header.stamp.toSec());
+    //ROS_INFO("Selected imu buffer timestamp: %f", imu_buffer_[imu_buffer_index].header.stamp.toSec());
     
     Eigen::Vector3f omega_imu;
     omega_imu << imu_buffer_[imu_buffer_index].angular_velocity.x, imu_buffer_[imu_buffer_index].angular_velocity.y, imu_buffer_[imu_buffer_index].angular_velocity.z;
@@ -672,7 +653,7 @@ Eigen::Vector3f Node::compute_angular_velocity(double detection_time_stamp)
     return omega_cam;
 }
 
-bool Node::imu_buffer_ok(double detection_time_stamp)
+bool Node::imu_buffer_ok(double detection_timestamp)
 {
     if((int)imu_buffer_.size() > 1000)
     {
@@ -684,12 +665,13 @@ bool Node::imu_buffer_ok(double detection_time_stamp)
         ROS_ERROR("Imu buffer length is 0. Assuming no orientation change");
         return false;
     }
-    else if(detection_time_stamp - imu_buffer_.back().header.stamp.toSec() > 0) 
+    else if(detection_timestamp - imu_buffer_.back().header.stamp.toSec() > 0) 
     {
-        ROS_FATAL("Imu buffer is running too late compaired to the detections");
-        exit(0);
+        ROS_ERROR("Imu buffer is running too late compaired to the detections");
+//        exit(0);
+        return false;
     }
-    else if(detection_time_stamp - imu_buffer_.front().header.stamp.toSec() < 0) 
+    else if(detection_timestamp - imu_buffer_.front().header.stamp.toSec() < 0) 
     {
         ROS_WARN("Imu buffer doesn't contain elements prior to the detection. Assuming to angular velocity. This should  happen only in the begining");
         return false;
@@ -700,9 +682,32 @@ bool Node::imu_buffer_ok(double detection_time_stamp)
     }
 }
 
-void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_image, std::vector<Detection> detections)
+void Node::draw_tracks_publish_image(std::vector<Detection> detections, double detection_timestamp)
 {
-    cv_bridge::CvImageConstPtr im_ptr_ = cv_bridge::toCvShare(latest_image, "rgb8");
+    ROS_INFO("Image buffer length: %d", (int)image_buffer_.size());
+    //ROS_INFO("Detection timestamp: %f", detection_timestamp);
+
+    if(!image_buffer_ok(detection_timestamp))
+    {
+        ROS_INFO("No corresponding image in the buffer!");
+        return;
+    }
+
+    int image_buffer_index = 0;
+    while(image_buffer_index != (int)image_buffer_.size()-1)
+    {
+        if((double)image_buffer_[image_buffer_index]->header.stamp.toSec() >= detection_timestamp)
+        {
+            break;
+        }
+        image_buffer_index++;
+    }
+
+    //ROS_INFO("Selected image buffer timestamp: %f", image_buffer_[image_buffer_index]->header.stamp.toSec());
+
+    auto sync_image_ptr = image_buffer_[image_buffer_index];
+
+    cv_bridge::CvImageConstPtr im_ptr_ = cv_bridge::toCvShare(sync_image_ptr, "rgb8");
     cv::Mat im = im_ptr_->image;
 
     if(im.empty()) return;
@@ -738,18 +743,58 @@ void Node::draw_tracks_publish_image(const sensor_msgs::ImageConstPtr latest_ima
         cv::circle(im, detections[d](), 2, cv::Scalar(255, 20, 150), 2); 
     }
 
+    cv::Point2f counter_pos(10, 30);
+    putText(im, to_string(debug_track_counter), counter_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, cvScalar(0, 0, 0), 1, CV_AA);
+
     cv_bridge::CvImage processed_image_bridge;
-    processed_image_bridge.header.stamp = latest_image->header.stamp;
+    processed_image_bridge.header.stamp = sync_image_ptr->header.stamp;
     processed_image_bridge.image = im;
     processed_image_bridge.encoding = sensor_msgs::image_encodings::RGB8;
     sensor_msgs::ImagePtr im_msg = processed_image_bridge.toImageMsg();
     image_pub_.publish(im_msg);
 
+    std::vector<sensor_msgs::ImageConstPtr> temp;
+    for(int i=image_buffer_index; i<(int)image_buffer_.size(); i++)
+    {
+        temp.push_back(image_buffer_[i]);
+    }
+    image_buffer_.clear();
+    image_buffer_ = temp;
 
     return;
 }
 
-void Node::publishTracks(double detection_time_stamp)
+
+bool Node::image_buffer_ok(double detection_timestamp)
+{
+    if((int)image_buffer_.size() > 1000)
+    {
+        ROS_FATAL("Image buffer is too long, there is a problem somewhere");
+        exit(1);
+    }
+    else if((int)image_buffer_.size() == 0)
+    {
+        ROS_ERROR("Image buffer length is 0.");
+        return false;
+    }
+    else if(detection_timestamp - image_buffer_.back()->header.stamp.toSec() > 0) 
+    {
+        ROS_FATAL("Image buffer is running too late compaired to the detections");
+        //exit(0);
+        return false;
+    }
+    else if(detection_timestamp - image_buffer_.front()->header.stamp.toSec() < 0) 
+    {
+        ROS_WARN("Image buffer doesn't contain elements prior to the detection. This should  happen only in the begining");
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+void Node::publishTracks(double detection_timestamp)
 {
 
     jpdaf_tracker_msgs::Tracks trs_msg;
@@ -765,7 +810,7 @@ void Node::publishTracks(double detection_time_stamp)
             trs_msg.tracks.push_back(tr_msg);
         }
     }
-    ros::Time timestamp(detection_time_stamp);
+    ros::Time timestamp(detection_timestamp);
     trs_msg.header.stamp = timestamp;
     
     tracks_pub_.publish(trs_msg);
@@ -859,46 +904,6 @@ void Node::create_tracks_test_input()
     tracks_.push_back(tr25);
 }
 
-
-Eigen::Matrix<double, 3,3> Node::yprToRot(const Eigen::Matrix<double,3,1>& ypr)
-{
-    double c, s;
-    Eigen::Matrix<double,3,3> Rz;
-    Rz.setZero();
-    double y = ypr(0,0);
-    c = cos(y);
-    s = sin(y);
-    Rz(0,0) =  c;
-    Rz(1,0) =  s;
-    Rz(0,1) = -s;
-    Rz(1,1) =  c;
-    Rz(2,2) =  1;
-
-    Eigen::Matrix<double,3,3> Ry;
-    Ry.setZero();
-    double p = ypr(1,0);
-    c = cos(p);
-    s = sin(p);
-    Ry(0,0) =  c;
-    Ry(2,0) = -s;
-    Ry(0,2) =  s;
-    Ry(2,2) =  c;
-    Ry(1,1) =  1;
-
-    Eigen::Matrix<double, 3,3> Rx;
-    Rx.setZero();
-    double r = ypr(2,0);
-    c = cos(r);
-    s = sin(r);
-    Rx(1,1) =  c;
-    Rx(2,1) =  s;
-    Rx(1,2) = -s;
-    Rx(2,2) =  c;
-    Rx(0,0) =  1;
-
-    Eigen::Matrix<double, 3,3> R = Rz*Ry*Rx;
-    return R;
-}
 
 
 }

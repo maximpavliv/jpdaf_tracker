@@ -1,8 +1,7 @@
 <launch>
 
   <arg name="detection_topic" default="/darknet_ros/bounding_boxes"/>
-  <arg name="image_topic" default="/darknet_ros/detection_image"/>
-  <!--arg name="image_topic" default="/gaze/image_resized"/-->
+  <arg name="image_topic" default="/gaze/image_resized"/>
   <arg name="imu_topic" default="/gaze/imu"/>
   <!--arg name="gt_topic" default="/"/-->
 

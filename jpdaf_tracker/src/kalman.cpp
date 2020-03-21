@@ -36,7 +36,6 @@ Kalman::Kalman(const float& px, const float& py, const float& vx, const float& v
   z = C * x;
   P = params.P_0;
 
-  //cout << "x_update" << endl << x_update << endl;
   //cout << "P" << endl << P << endl;
   
 }
@@ -49,14 +48,6 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
        0, 1, 0, 0,
        0, 0, 1, dt,
        0, 0, 0, 1;
-  Eigen::MatrixXf G;
-  G = Eigen::MatrixXf(4, 2);
-  /*G << std::pow(dt, 2) / 2, 0,
-        	dt, 0,
-        	0, std::pow(dt, 2) / 2,
-        	0, dt;
-  Eigen::Matrix4f Q;
-  Q = G * T * G.transpose();*/
 
   //Lets try an other way:
   Eigen::Matrix4f Q;
@@ -66,7 +57,7 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
        0, 0, 0, dt*T(1);
 
 
-  //cout << "Q: " << endl << Q << endl;//Q has very low position variances and very high speed variances
+  cout << "Q: " << endl << Q << endl;//Q has very low position variances and very high speed variances
 
   //Need to write input here
   Eigen::Vector3f u = omega*dt;
@@ -82,13 +73,15 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
 
 
   
-  //cout << "B*u: " << endl << B*u << endl;
+//  cout << "B*u: " << endl << B*u << endl;
 
   x = A*x + B*u;
+
+//  cout << "x predict:" << endl << x << endl;
   
   P = A * P * A.transpose() + Q;  //ttt
   
-  //cout << "P: " << endl << P << endl;
+//  cout << "P: " << endl << P << endl;
 
   //the following bugs should not happen anymore, but I leave the checks in case some bug percists
   if(P.determinant() < 0)
@@ -112,13 +105,6 @@ void Kalman::predict(const float dt, const Eigen::Vector3f omega)
   //cout << "S: " << endl << S << endl; 
 
 
-  //the following bugs should not happen anymore, but I leave the checks in case some bug percists
-  if(S.determinant() < 0)
-  {
-    ROS_FATAL("S determinant is negative! %f", S.determinant());
-    exit(0);
-  }
-
   z = C * x;
 
   return;
@@ -130,25 +116,25 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
 {
 
   K = P * C.transpose() * S.inverse();
-
+  cout << "K:" << endl << K << endl;
 
   std::vector<Eigen::Vector2f> nus;
   for(uint i=0; i<detections.size(); i++)
   {
-      nus.push_back(detections[i].getVect()-z);
+    Eigen::Vector2f nu_i = detections[i].getVect() - z;
+    nus.push_back(nu_i);
   }
 
   Eigen::Vector2f nu;
   nu << 0, 0;
   for(uint i=0; i<detections.size(); i++)
   {
-      nu += beta[i] * nus[i];
+    nu += beta[i] * nus[i];
   }
     
   x = x + K * nu;
-  //x_update = x_predict;//ttt
 
-  //cout << "x_update" << endl << x_update << endl;
+  cout << "x update:" << endl << x << endl;
 
   Eigen::Matrix4f P_c;
   P_c = P - K * S * K.transpose(); //Changed here, there is an error in the PhD thesis! It should be - instead of +
@@ -164,7 +150,6 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
   temp_sum -= nu*nu.transpose();
 
   P_tild = K * temp_sum * K.transpose();
-
                 
   P = beta_0*P + (1-beta_0)*P_c + P_tild;
   //cout << "P" << endl << P << endl;
@@ -176,6 +161,17 @@ void Kalman::update(const std::vector<Detection> detections, const std::vector<d
     ROS_FATAL("Update covariance determinant is negative! %f", P.determinant());
     exit(0);
   }
+  if((isnan(P.array())).any())
+  {
+    ROS_FATAL("P contains NaNs");
+    exit(0);
+  }
+  if((isinf(P.array())).any())
+  {
+    ROS_FATAL("P contains infs");
+    exit(0);
+  }
+
 
   z = C * x; //ttt
 
