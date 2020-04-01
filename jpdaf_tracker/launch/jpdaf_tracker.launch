@@ -12,8 +12,7 @@
       <!--remap from="~gt" to="$(arg gt_topic)"/-->
 
       <param name="pd" value="0.952662721893"/>
-      <param name="gamma" value="50"/>
-      <!-- param name="false_measurements_density" value="3.03404259668e-08"/-->
+      <param name="gamma" value="10"/>
       <param name="false_measurements_density" value="0.00000003034"/>
       <param name="beta_0_threshold" value="0.5"/>
       <param name="alpha_0_threshold" value="0.95"/>
@@ -21,7 +20,8 @@
       <param name="min_acceptance_rate" value="15"/>
       <rosparam param="R"> [2, 2]</rosparam>
 
-      <rosparam param="T"> [50000, 50000]</rosparam>
+      <!--rosparam param="T"> [50000, 50000]</rosparam-->
+      <rosparam param="T"> [30000, 30000]</rosparam>
       <rosparam param="P_0"> [20, 8, 20, 8]</rosparam>
       <param name="nb_drones" value="3"/>
       <param name="assoc_cost" value="50"/>

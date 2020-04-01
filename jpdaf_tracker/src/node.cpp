@@ -172,7 +172,7 @@ void Node::track(bool called_from_detection)
             auto hypothesis_probs = compute_probabilities_of_hypothesis_matrices(hypothesis_mats, detections);
             ROS_INFO("Nb of hypotheses: %d", (int)hypothesis_mats.size());
 
-    /*        cout << "hypothesis matrices and their respective probabilities:" << endl;
+            /*cout << "hypothesis matrices and their respective probabilities:" << endl;
             for(uint h=0; h<hypothesis_mats.size(); h++)
             {
                 cout << hypothesis_mats[h] << endl << "prob: " <<hypothesis_probs[h] << endl << endl;
@@ -562,7 +562,7 @@ std::vector<Track> Node::create_new_tracks(std::vector<Detection> detections, st
         assigmentsBin.setZero();
         for(uint i = 0; i < assSize; ++i)
         {
-            if( assignments[i] != -1 && costMat(i, assignments[i]) < params.assoc_cost)
+            if( assignments[i] != -1 && costMat(i, assignments[i]) < params.assoc_cost)//TODO: should add offset due to motion into comparison 
             {
             	assigmentsBin(i, assignments[i]) = 1;
             }
@@ -679,7 +679,7 @@ bool Node::imu_buffer_ok(double detection_timestamp)
     }
     else if(detection_timestamp - imu_buffer_.front().header.stamp.toSec() < 0) 
     {
-        ROS_WARN("Imu buffer doesn't contain elements prior to the detection. Assuming to angular velocity. This should  happen only in the begining");
+        ROS_WARN("Imu buffer doesn't contain elements prior to the detection. Assuming to angular velocity");
         return false;
     }
     else
@@ -813,7 +813,7 @@ bool Node::image_buffer_ok(double detection_timestamp)
     }
     else if(detection_timestamp - image_buffer_.front()->header.stamp.toSec() < 0) 
     {
-        ROS_WARN("Image buffer doesn't contain elements prior to the detection. This should  happen only in the begining");
+        ROS_WARN("Image buffer doesn't contain elements prior to the detections");
         return false;
     }
     else
