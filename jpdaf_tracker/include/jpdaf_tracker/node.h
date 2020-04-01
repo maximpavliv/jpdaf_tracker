@@ -110,7 +110,7 @@ class Node {
         Eigen::MatrixXf tau(Eigen::MatrixXf hypothesis);//THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
         Eigen::MatrixXf delta(Eigen::MatrixXf hypothesis);    //THIS FUNCTION ASSUMES A VALID HYPOTHESIS MATRIX, NO CHECKS ARE PERFORMED
 
-        void draw_tracks_publish_image(std::vector<Detection> detections, double detection_time_stamp);
+        void draw_tracks_publish_image(std::vector<Detection> detections, double detection_time_stamp, std::vector<Eigen::Vector2f> projected_predictions);
 
         std::vector<int> get_nonzero_indexes_row(Eigen::MatrixXf mat);
 
@@ -119,7 +119,7 @@ class Node {
 
         void create_tracks_test_input();
 
-
+        void writeToFile();
 
 };
 
