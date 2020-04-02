@@ -46,7 +46,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     ROS_INFO("Node initialized successfully");
 
 
-    output_file_.open(params.root_ + params.output_file_name_ + ".txt", ios::out | ios::app);
+    output_file_.open(params.root_ + params.output_file_name_ + ".txt", ios::out | ios::trunc);
     assert(output_file_.is_open());
 
 
@@ -860,7 +860,20 @@ void Node::publishTracks(double detection_timestamp)
 
 void Node::writeToFile(int nb_detections, Eigen::Vector3f omega_cam)
 {
-    output_file_ << nb_detections << " " << (int)tracks_.size() << " " << omega_cam.x() << " " << omega_cam.y() << " " << omega_cam.z() << endl;
+    int tracks_id = 0;
+    int tracks_no_id = 0;
+    for(int t=0; t<(int)tracks_.size(); t++)
+    {
+        if(tracks_[t].getId() == -1)
+        {
+            tracks_no_id++;
+        }
+        else
+        {
+            tracks_id++;
+        }
+    }
+    output_file_ << nb_detections << " " << tracks_no_id << " " << tracks_id << " " << omega_cam.x() << " " << omega_cam.y() << " " << omega_cam.z() << endl;
     return;
 }
 
