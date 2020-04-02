@@ -38,6 +38,10 @@ namespace jpdaf
       string source_odom_name;
       std::vector<string> target_odom_names;
 
+      string root_;
+      string output_file_name_;
+
+
       TrackerParam(ros::NodeHandle nh_priv_);
       TrackerParam(){};
 

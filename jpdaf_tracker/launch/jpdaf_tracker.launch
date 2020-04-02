@@ -36,6 +36,10 @@
       <param name="source_odom_name" value="/Tobii_Glasses/odom"/>
       <rosparam param="target_odom_names"> ["/Dragon_Fly1/odom", "/Dragon_Fly5/odom"]</rosparam>
 
+      <param name="root" value="/home/arpl/jpdaf_output/"/>
+      <param name="output_file_name" value="jpdaf_output"/>
+
+
   </node>
   
 </launch>

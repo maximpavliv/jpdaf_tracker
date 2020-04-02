@@ -27,6 +27,7 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     update_timer = nh.createTimer(ros::Duration(params.max_update_time_rate), &Node::timer_callback, this);
 
     image_pub_ = it_.advertise("image_tracked", 1);
+    image_debug_pub_ = it_.advertise("image_tracked_debug", 1);
     tracks_pub_ = nh.advertise<jpdaf_tracker_msgs::Tracks>("jpdaf_tracks", 1);
 
     track_init = true;
@@ -43,6 +44,10 @@ Node::Node(ros::NodeHandle nh, ros::NodeHandle nh_priv):
     debug_track_counter = 0;
 
     ROS_INFO("Node initialized successfully");
+
+
+    output_file_.open(params.root_ + params.output_file_name_ + ".txt", ios::out | ios::app);
+    assert(output_file_.is_open());
 
 
 }
@@ -201,7 +206,7 @@ void Node::track(bool called_from_detection)
             draw_tracks_publish_image(detections, (double)(last_timestamp_synchronized + time_step), projected_predictions);
             publishTracks((double)(last_timestamp_synchronized + time_step));
 
-            writeToFile();
+            writeToFile((int)detections.size(), omega);
 
             manage_new_old_tracks(detections, alphas_0, betas_0, omega, time_step); //ttt
 
@@ -771,15 +776,24 @@ void Node::draw_tracks_publish_image(std::vector<Detection> detections, double d
         }
     }
 
-    cv::Point2f counter_pos(10, 30);
-    putText(im, to_string(debug_track_counter), counter_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, cvScalar(0, 0, 0), 1, CV_AA);
-
     cv_bridge::CvImage processed_image_bridge;
     processed_image_bridge.header.stamp = sync_image_ptr->header.stamp;
     processed_image_bridge.image = im;
     processed_image_bridge.encoding = sensor_msgs::image_encodings::RGB8;
     sensor_msgs::ImagePtr im_msg = processed_image_bridge.toImageMsg();
     image_pub_.publish(im_msg);
+
+
+    cv::Point2f counter_pos(10, 30);
+    putText(im, to_string(debug_track_counter), counter_pos, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, cvScalar(0, 0, 0), 1, CV_AA);
+
+    cv_bridge::CvImage processed_image_debug_bridge;
+    processed_image_debug_bridge.header.stamp = sync_image_ptr->header.stamp;
+    processed_image_debug_bridge.image = im;
+    processed_image_debug_bridge.encoding = sensor_msgs::image_encodings::RGB8;
+    sensor_msgs::ImagePtr im_debug_msg = processed_image_debug_bridge.toImageMsg();
+    image_debug_pub_.publish(im_debug_msg);
+
 
     std::vector<sensor_msgs::ImageConstPtr> temp;
     for(int i=image_buffer_index; i<(int)image_buffer_.size(); i++)
@@ -844,8 +858,9 @@ void Node::publishTracks(double detection_timestamp)
     tracks_pub_.publish(trs_msg);
 }
 
-void Node::writeToFile()
+void Node::writeToFile(int nb_detections, Eigen::Vector3f omega_cam)
 {
+    output_file_ << nb_detections << " " << (int)tracks_.size() << " " << omega_cam.x() << " " << omega_cam.y() << " " << omega_cam.z() << endl;
     return;
 }
 

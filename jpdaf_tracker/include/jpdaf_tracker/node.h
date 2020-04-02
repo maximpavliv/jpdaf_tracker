@@ -26,6 +26,9 @@
 #include <jpdaf_tracker_msgs/Track.h>
 #include <jpdaf_tracker_msgs/Tracks.h>
 
+#include <fstream>
+#include <iostream>
+
 namespace jpdaf {
 
 class Node {
@@ -51,6 +54,7 @@ class Node {
         std::vector<sensor_msgs::Imu> imu_buffer_;
 
         image_transport::Publisher image_pub_;
+        image_transport::Publisher image_debug_pub_;
         ros::Publisher tracks_pub_;
 
         double last_timestamp_synchronized;
@@ -69,6 +73,8 @@ class Node {
         Eigen::Matrix3f R_cam_imu;
 
         int debug_track_counter;
+
+        fstream output_file_;
 
 //----------------------------
 
@@ -119,7 +125,7 @@ class Node {
 
         void create_tracks_test_input();
 
-        void writeToFile();
+        void writeToFile(int nb_detections, Eigen::Vector3f omega_cam);
 
 };
 
